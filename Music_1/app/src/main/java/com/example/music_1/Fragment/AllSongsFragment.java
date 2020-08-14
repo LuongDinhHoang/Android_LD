@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.music_1.Adapter.SongAdapter;
@@ -32,7 +33,9 @@ import java.util.List;
 public class AllSongsFragment extends Fragment {
     private RecyclerView mRecycle;
     private List<Song> mList;
-    private SongAdapter adapter;
+    private SongAdapter mAdapter;
+    private LinearLayout mllBottom;
+    private int mPosition;
 
     @Nullable
     @Override
@@ -42,29 +45,40 @@ public class AllSongsFragment extends Fragment {
         return view;
     }
 
-    private void initView(View view) {
+    private void initView(final View view) {
         mList = new ArrayList<>();
         getSong();
         mRecycle = view.findViewById(R.id.Rcv_View);
+        mllBottom= view.findViewById(R.id.ll_bottom);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(RecyclerView.VERTICAL);
         mRecycle.setLayoutManager(manager);
-        adapter = new SongAdapter(getActivity(), mList);
-        mRecycle.setAdapter(adapter);
-//        adapter.SongAdapter(new SongAdapter.IIClick() {
+
+        mAdapter = new SongAdapter(getActivity(), mList);
+        mRecycle.setAdapter(mAdapter);
+        mAdapter.SongAdapter(new SongAdapter.IIClick() {
+            @Override
+            public void ItemClick(Song song, int pos) {
+                mllBottom.setVisibility(view.VISIBLE);
+                mPosition=pos;
+            }
+        });
+
+
+
 //            @Override
-//            public void onItemClick(Song song) {
-//                Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
-//
-//                FragmentManager fragmentManager = getFragmentManager();
-//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//                MediaPlaybackFragment mediaPlaybackFragment = new MediaPlaybackFragment();
-//                //getSupportActionBar().hide();  // hide action bar
-//                fragmentTransaction.replace(R.id.ll_content, mediaPlaybackFragment);           // get fragment MediaPlayBackFragment vào activity main
-//                fragmentTransaction.commit();
-//            }
-//        });
+////            public void onItemClick(Song song) {
+////                Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
+////
+////                FragmentManager fragmentManager = getFragmentManager();
+////                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+////
+////                MediaPlaybackFragment mediaPlaybackFragment = new MediaPlaybackFragment();
+////                getSupportActionBar().hide();  // hide action bar
+////                fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);           // get fragment MediaPlayBackFragment vào activity main
+////                fragmentTransaction.commit();
+////            }
+////        });
     }
 
     public void getSong() {

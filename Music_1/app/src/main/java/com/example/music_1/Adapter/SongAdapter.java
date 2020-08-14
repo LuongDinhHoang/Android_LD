@@ -20,11 +20,14 @@ private Context context;
 private List<Song> mList;
 private IIClick mClick;
 
+    public void SongAdapter(IIClick mClick) {
+        this.mClick = mClick;
+    }
+
     public SongAdapter(Context context, List<Song> mList) {
         this.context = context;
         this.mList = mList;
     }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,19 +54,25 @@ private IIClick mClick;
             mSongID=itemView.findViewById(R.id.Song_Id);
 
         }
-        public void binData(final Song song ,int pos) {
+
+        public void binData(final Song song , final int pos) {
+            int a;
             mSongName.setText(song.getSongName()+"");
             mSongID.setText(pos+1+"");        //set dữ liệu cho từng item
-            String c = song.getSongTime()/60000 +":"+song.getSongTime()%60000;
+            mSongTime.setText(song.getTimeDurationString(song.getSongTime()));
 
-
-            mSongTime.setText(c);
-
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mClick.ItemClick(song,pos);
+                }
+            });
         }
+
     }
     public  interface  IIClick
     {
-        void ItemClick(Song song);
+        void ItemClick(Song song,int pos);
 
     }
 }

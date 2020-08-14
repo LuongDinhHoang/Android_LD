@@ -56,10 +56,19 @@ public class Song {
     public void setSongImage(Bitmap mSongImage) {
         this.mSongImage = mSongImage;
     }
-    public  String getTimeDurationString()
+    public  String getTimeDurationString(long s )
     {
-        String mm = String.valueOf(mSongTime/60000);
-        String ss =
+        int mm=0;
+        String Time ;
+        s=s/1000;
+        while (s>=60)
+        {
+            ++mm;
+            s-=60;
+        }
+        Time = mm+":"+s;
+        return Time;
+//        String mm = String.valueOf(mSongTime/60000);
     }
 }
 
