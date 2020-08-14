@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/Name"
-            android:textSize="20sp"
+            android:textSize="12dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="#000000"
             android:text="Name" />
@@ -39,7 +39,6 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:id="@+id/Time"
-            android:textSize="15sp"
             android:text="time" />
 
     </LinearLayout>

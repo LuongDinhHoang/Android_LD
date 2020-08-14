@@ -41,7 +41,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull SongAdapter.ViewHolder holder, int position) {
            holder.binData(mListSong.get(position));
-    }
+}
 
     @Override
     public int getItemCount() {

@@ -1,6 +1,7 @@
 package com.example.music_1.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import java.util.List;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 private Context context;
 private List<Song> mList;
+private IIClick mClick;
 
     public SongAdapter(Context context, List<Song> mList) {
         this.context = context;
@@ -50,10 +52,18 @@ private List<Song> mList;
 
         }
         public void binData(final Song song ,int pos) {
-            mSongName.setText(song.getmSongName()+"");
+            mSongName.setText(song.getSongName()+"");
             mSongID.setText(pos+1+"");        //set dữ liệu cho từng item
-            mSongTime.setText(song.getmSongArtist());
+            String c = song.getSongTime()/60000 +":"+song.getSongTime()%60000;
+
+
+            mSongTime.setText(c);
 
         }
+    }
+    public  interface  IIClick
+    {
+        void ItemClick(Song song);
+
     }
 }

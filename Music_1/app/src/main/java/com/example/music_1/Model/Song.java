@@ -5,11 +5,11 @@ import android.graphics.Bitmap;
 public class Song {
     private long mSongID;
     private String mSongName;
-    private String mSongTime;
+    private long mSongTime;
     private String mSongArtist;
     private Bitmap mSongImage;
 
-    public Song(long mSongID, String mSongName, String mSongTime, String mSongArtist, Bitmap mSongImage) {
+    public Song(long mSongID, String mSongName, long mSongTime, String mSongArtist, Bitmap mSongImage) {
         this.mSongID = mSongID;
         this.mSongName = mSongName;
         this.mSongTime = mSongTime;
@@ -17,44 +17,49 @@ public class Song {
         this.mSongImage = mSongImage;
     }
 
-    public long getmSongID() {
+    public long getSongID() {
         return mSongID;
     }
 
-    public void setmSongID(long mSongID) {
+    public void setSongID(long mSongID) {
         this.mSongID = mSongID;
     }
 
-    public String getmSongName() {
+    public String getSongName() {
         return mSongName;
     }
 
-    public void setmSongName(String mSongName) {
+    public void setSongName(String mSongName) {
         this.mSongName = mSongName;
     }
 
-    public String getmSongTime() {
+    public long getSongTime() {
         return mSongTime;
     }
 
-    public void setmSongTime(String mSongTime) {
+    public void setSongTime(long mSongTime) {
         this.mSongTime = mSongTime;
     }
 
-    public String getmSongArtist() {
+    public String getSongArtist() {
         return mSongArtist;
     }
 
-    public void setmSongArtist(String mSongArtist) {
+    public void setSongArtist(String mSongArtist) {
         this.mSongArtist = mSongArtist;
     }
 
-    public Bitmap getmSongImage() {
+    public Bitmap getSongImage() {
         return mSongImage;
     }
 
-    public void setmSongImage(Bitmap mSongImage) {
+    public void setSongImage(Bitmap mSongImage) {
         this.mSongImage = mSongImage;
+    }
+    public  String getTimeDurationString()
+    {
+        String mm = String.valueOf(mSongTime/60000);
+        String ss =
     }
 }
 

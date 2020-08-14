@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,15 +74,15 @@ public class AllSongsFragment extends Fragment {
 
         if (songCursor != null && songCursor.moveToFirst()) {
             if (songCursor != null && songCursor.moveToFirst()) {
-                int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-                int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-                int songTime = songCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME);
 
                 do {
+                    int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+                    int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+                    long songTime = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
                     long currentId = songCursor.getLong(songID);
                     String currentName = songCursor.getString(songName);
-                    String currentTime = songCursor.getString(songTime);
-                    mList.add(new Song(currentId, currentName, currentTime, null, null));
+                    Log.d("HoangLD", "getSong: "+songTime);
+                    mList.add(new Song(currentId, currentName, songTime, null, null));
                 } while (songCursor.moveToNext());
             }
 
