@@ -27,6 +27,7 @@
         android:orientation="horizontal">
         <ImageView
             android:layout_width="0dp"
+            android:id="@+id/ImagePlay"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
             android:src="@mipmap/sontung"
@@ -41,6 +42,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/NamePlay"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:text="hello"></TextView>
 
@@ -48,6 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="chao"
+                android:id="@+id/TimePlay"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"></TextView>
 
 
@@ -59,7 +62,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:padding="5dp"
-            android:src="@drawable/pause_music"></ImageView>
+            android:src="@drawable/ic_pause_black_large"></ImageView>
     </LinearLayout>
 
 
