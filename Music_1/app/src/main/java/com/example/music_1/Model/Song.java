@@ -7,9 +7,9 @@ public class Song {
     private String mSongName;
     private long mSongTime;
     private String mSongArtist;
-    private Bitmap mSongImage;
+    private String mSongImage;
 
-    public Song(long mSongID, String mSongName, long mSongTime, String mSongArtist, Bitmap mSongImage) {
+    public Song(long mSongID, String mSongName, long mSongTime, String mSongArtist, String mSongImage) {
         this.mSongID = mSongID;
         this.mSongName = mSongName;
         this.mSongTime = mSongTime;
@@ -49,11 +49,11 @@ public class Song {
         this.mSongArtist = mSongArtist;
     }
 
-    public Bitmap getSongImage() {
+    public String getSongImage() {
         return mSongImage;
     }
 
-    public void setSongImage(Bitmap mSongImage) {
+    public void setSongImage(String mSongImage) {
         this.mSongImage = mSongImage;
     }
     public  String getTimeDurationString(long s )
