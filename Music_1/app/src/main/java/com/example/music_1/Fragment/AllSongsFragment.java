@@ -13,6 +13,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,11 +47,26 @@ public class AllSongsFragment extends Fragment {
     private ImageView mImagePlay;
     private TextView mNameSongPlay,mSongArtistPlay;
 
+
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_songs, container, false);
         initView(view);
+        mllBottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Song song = mList.get(mPosition);
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(),song.getSongArtist());
+                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();  // hide action bar
+                fragmentTransaction.replace(R.id.ll_out,mediaPlaybackFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+
+            }
+        });
         return view;
     }
 
@@ -77,6 +93,7 @@ public class AllSongsFragment extends Fragment {
                 mNameSongPlay.setText(song.getSongName());
                 mSongArtistPlay.setText(song.getSongArtist());
                 byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
+
                 if(songArt != null)
                 {
                     Glide.with(view.getContext()).asBitmap()
