@@ -40,7 +40,7 @@ private ImageView mImage;
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.binData(mList.get(position),position);
-        
+
     }
 
 
