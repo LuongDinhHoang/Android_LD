@@ -57,7 +57,7 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/buttonn"
+            android:id="@+id/Button_Play"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"

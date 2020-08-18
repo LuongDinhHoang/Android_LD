@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 private Context context;
 private List<Song> mList;
 private IIClick mClick;
+private ImageView mImage;
 
     public void SongAdapter(IIClick mClick) {
         this.mClick = mClick;
@@ -38,7 +40,9 @@ private IIClick mClick;
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.binData(mList.get(position),position);
+        
     }
+
 
     @Override
     public int getItemCount() {
@@ -52,6 +56,7 @@ private IIClick mClick;
             mSongName =itemView.findViewById(R.id.Name);
             mSongTime=itemView.findViewById(R.id.Time);
             mSongID=itemView.findViewById(R.id.Song_Id);
+            mImage=itemView.findViewById(R.id.Play_Id);
 
         }
 
@@ -67,6 +72,7 @@ private IIClick mClick;
                     mClick.ItemClick(song,pos);
                 }
             });
+
         }
 
     }

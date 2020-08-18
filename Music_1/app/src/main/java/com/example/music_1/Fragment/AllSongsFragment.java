@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,7 +46,8 @@ public class AllSongsFragment extends Fragment {
     private LinearLayout mllBottom;
     private int mPosition;
     private ImageView mImagePlay;
-    private TextView mNameSongPlay,mSongArtistPlay;
+    private TextView mNameSongPlay,mSongArtistPlay,mSongID;
+    private ImageView btn_play;
 
 
     @Nullable
@@ -57,14 +59,21 @@ public class AllSongsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Song song = mList.get(mPosition);
+                Log.d("HoangLD", "onClick: ");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(),song.getSongArtist());
+                MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(),song.getSongArtist(),song.getSongImage());
                 ((AppCompatActivity) getActivity()).getSupportActionBar().hide();  // hide action bar
                 fragmentTransaction.replace(R.id.ll_out,mediaPlaybackFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
 
+            }
+        });
+        btn_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btn_play.setImageResource(R.drawable.ic_pause_black_large);
             }
         });
         return view;
@@ -73,6 +82,8 @@ public class AllSongsFragment extends Fragment {
     private void initView(final View view) {
         mList = new ArrayList<>();
         getSong();
+        mSongID=view.findViewById(R.id.Song_Id);
+        btn_play=view.findViewById(R.id.Button_Play);
         mImagePlay = view.findViewById(R.id.ImagePlay);
         mNameSongPlay = view.findViewById(R.id.NamePlay);
         mSongArtistPlay=view.findViewById(R.id.ArtistPlay);
@@ -92,37 +103,20 @@ public class AllSongsFragment extends Fragment {
                 mPosition=pos;
                 mNameSongPlay.setText(song.getSongName());
                 mSongArtistPlay.setText(song.getSongArtist());
-                byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
+                final byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
 
-                if(songArt != null)
-                {
+//                if(songArt != null)
+//                {
                     Glide.with(view.getContext()).asBitmap()
                             .load(songArt)
+                            .error(R.drawable.ic_zing)
                             .into(mImagePlay);
-                }
-                else
-                {
-                    mImagePlay.setImageDrawable(getContext().getDrawable(R.drawable.ic_zing));
-                }
 
 
             }
         });
 
 
-//            @Override
-////            public void onItemClick(Song song) {
-////                Toast.makeText(getActivity(), "Click", Toast.LENGTH_SHORT).show();
-////
-////                FragmentManager fragmentManager = getFragmentManager();
-////                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-////
-////                MediaPlaybackFragment mediaPlaybackFragment = new MediaPlaybackFragment();
-////                getSupportActionBar().hide();  // hide action bar
-////                fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);           // get fragment MediaPlayBackFragment vào activity main
-////                fragmentTransaction.commit();
-////            }
-////        });
     }
     public static byte[] getAlbumArt(String uri) {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
