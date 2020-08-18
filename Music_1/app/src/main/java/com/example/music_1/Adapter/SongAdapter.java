@@ -65,7 +65,6 @@ private ImageView mImage;
             mSongName.setText(song.getSongName()+"");
             mSongID.setText(pos+1+"");        //set dữ liệu cho từng item
             mSongTime.setText(song.getTimeDurationString(song.getSongTime()));
-
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

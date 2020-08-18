@@ -133,14 +133,14 @@ public class AllSongsFragment extends Fragment {
 
         if (songCursor != null && songCursor.moveToFirst()) {
             if (songCursor != null && songCursor.moveToFirst()) {
-                int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-                int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-                long songTime = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                int songAuthor = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-                int songArt = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+
 
                 do {
-
+                    int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+                    int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+                    long songTime = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                    int songAuthor = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+                    int songArt = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
                     long currentId = songCursor.getLong(songID);
                     String currentName = songCursor.getString(songName);
                     String currentAuthor = songCursor.getString(songAuthor);
