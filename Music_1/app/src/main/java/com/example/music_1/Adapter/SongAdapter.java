@@ -33,7 +33,9 @@ private ImageView mImage;
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item,parent,false);// khai báo vẽ view
+        View view = null;
+        view = LayoutInflater.from(context).inflate(R.layout.item,parent,false);// khai báo vẽ view
+
         return new ViewHolder(view);
     }
 
@@ -63,7 +65,7 @@ private ImageView mImage;
         public void binData(final Song song , final int pos) {
             int a;
             mSongName.setText(song.getSongName()+"");
-            mSongID.setText(pos+1+"");        //set dữ liệu cho từng item
+            mSongID.setText(String.valueOf(pos +1));        //set dữ liệu cho từng item
             mSongTime.setText(song.getTimeDurationString(song.getSongTime()));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

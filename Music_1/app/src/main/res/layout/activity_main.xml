@@ -6,8 +6,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"></include>
 
     <FrameLayout
+        android:layout_below="@+id/toolbar"
         android:id="@+id/ll_out"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

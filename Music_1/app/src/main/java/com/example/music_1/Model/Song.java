@@ -8,14 +8,7 @@ public class Song {
     private long mSongTime;
     private String mSongArtist;
     private String mSongImage;
-
-    public Song(long mSongID, String mSongName, long mSongTime, String mSongArtist, String mSongImage) {
-        this.mSongID = mSongID;
-        this.mSongName = mSongName;
-        this.mSongTime = mSongTime;
-        this.mSongArtist = mSongArtist;
-        this.mSongImage = mSongImage;
-    }
+    private boolean isPlay;
 
     public long getSongID() {
         return mSongID;
@@ -56,6 +49,24 @@ public class Song {
     public void setSongImage(String mSongImage) {
         this.mSongImage = mSongImage;
     }
+
+    public boolean isPlay() {
+        return isPlay;
+    }
+
+    public void setPlay(boolean play) {
+        isPlay = play;
+    }
+
+    public Song(long mSongID, String mSongName, long mSongTime, String mSongArtist, String mSongImage, boolean isPlay) {
+        this.mSongID = mSongID;
+        this.mSongName = mSongName;
+        this.mSongTime = mSongTime;
+        this.mSongArtist = mSongArtist;
+        this.mSongImage = mSongImage;
+        this.isPlay = isPlay;
+    }
+
     public  String getTimeDurationString(long s )
     {
         int mm=0;

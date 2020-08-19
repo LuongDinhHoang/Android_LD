@@ -99,6 +99,10 @@ public class AllSongsFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void ItemClick(Song song, int pos) {
+                for (int i = 0; i < mList.size(); i++) {
+                    mList.get(i).setPlay(false);
+                }
+                mList.get(pos).setPlay(true);
                 mllBottom.setVisibility(view.VISIBLE);
                 mPosition=pos;
                 mNameSongPlay.setText(song.getSongName());
@@ -147,7 +151,7 @@ public class AllSongsFragment extends Fragment {
                     String currentArt = songCursor.getString(songArt);
 
                     Log.d("HoangLD", "getSong: "+songTime);
-                    mList.add(new Song(currentId, currentName, songTime,currentAuthor, currentArt));
+                    mList.add(new Song(currentId, currentName, songTime,currentAuthor, currentArt,false));
                 } while (songCursor.moveToNext());
             }
 
