@@ -103,6 +103,8 @@ public class AllSongsFragment extends Fragment {
                     mList.get(i).setPlay(false);
                 }
                 mList.get(pos).setPlay(true);
+                mAdapter.notifyDataSetChanged();
+//                mAdapter.setPos(pos);
                 mllBottom.setVisibility(view.VISIBLE);
                 mPosition=pos;
                 mNameSongPlay.setText(song.getSongName());

@@ -70,14 +70,17 @@ public class Song {
     public  String getTimeDurationString(long s )
     {
         int mm=0;
-        String Time ;
+        String Time = null;
         s=s/1000;
         while (s>=60)
         {
             ++mm;
             s-=60;
         }
-        Time = mm+":"+s;
+        if(mm<10)
+        {
+            Time = mm+":"+s;
+        }
         return Time;
 //        String mm = String.valueOf(mSongTime/60000);
     }

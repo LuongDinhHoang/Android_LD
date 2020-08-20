@@ -1,6 +1,7 @@
 package com.example.music_1.Adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 private Context context;
 private List<Song> mList;
 private IIClick mClick;
-private ImageView mImage;
+private int mPossition = -1;
 
     public void SongAdapter(IIClick mClick) {
         this.mClick = mClick;
@@ -30,11 +31,25 @@ private ImageView mImage;
         this.context = context;
         this.mList = mList;
     }
+
+    public int getPos() {
+        return mPossition;
+    }
+
+    public void setPos(int pos) {
+        mPossition = pos;
+        Log.d("SongAdapter", "setPos: "+pos);
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
-        view = LayoutInflater.from(context).inflate(R.layout.item,parent,false);// khai báo vẽ view
+
+            view = LayoutInflater.from(context).inflate(R.layout.item,parent,false);// khai báo vẽ view
+
+
+
 
         return new ViewHolder(view);
     }
@@ -53,12 +68,15 @@ private ImageView mImage;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView mSongName,mSongTime,mSongID;
+        ImageView mImage;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mSongName =itemView.findViewById(R.id.Name);
             mSongTime=itemView.findViewById(R.id.Time);
             mSongID=itemView.findViewById(R.id.Song_Id);
-            mImage=itemView.findViewById(R.id.Play_Id);
+            mImage=itemView.findViewById(R.id.Image_Id);
+
 
         }
 
@@ -67,6 +85,15 @@ private ImageView mImage;
             mSongName.setText(song.getSongName()+"");
             mSongID.setText(String.valueOf(pos +1));        //set dữ liệu cho từng item
             mSongTime.setText(song.getTimeDurationString(song.getSongTime()));
+            mSongID.setVisibility(View.VISIBLE);
+            mImage.setVisibility(View.INVISIBLE);
+            mSongName.setTypeface(null, Typeface.NORMAL);
+            if(song.isPlay())
+            {
+                mSongID.setVisibility(View.INVISIBLE);
+                mImage.setVisibility(View.VISIBLE);
+                mSongName.setTypeface(null, Typeface.BOLD);
+            }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
