@@ -23,7 +23,7 @@ public class MediaPlaybackFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private TextView mName,mArtist;
-    ImageView mImage;
+    ImageView mImage,mBackground;
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
 
@@ -40,11 +40,16 @@ public class MediaPlaybackFragment extends Fragment {
         mName = view.findViewById(R.id.NameSong);
         mArtist = view.findViewById(R.id.ArtistSong);
         mImage=view.findViewById(R.id.ImagePlaying);
+        mBackground=view.findViewById(R.id.background_Image);
         final byte[] songArt = getAlbumArt(Image);
         Glide.with(view.getContext()).asBitmap()
                 .load(songArt)
                 .error(R.drawable.ic_zing)
                 .into(mImage);
+        Glide.with(view.getContext()).asBitmap()
+                .load(songArt)
+                .error(R.drawable.background)
+                .into(mBackground);
         mName.setText(Name);
         mArtist.setText(Artist);
         return view;

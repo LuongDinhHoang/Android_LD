@@ -69,20 +69,13 @@ public class Song {
 
     public  String getTimeDurationString(long s )
     {
-        int mm=0;
-        String Time = null;
-        s=s/1000;
-        while (s>=60)
-        {
-            ++mm;
-            s-=60;
-        }
-        if(mm<10)
-        {
-            Time = mm+":"+s;
-        }
-        return Time;
+
 //        String mm = String.valueOf(mSongTime/60000);
+        String seconds = String.valueOf((s/1000) % 60);
+        String minutes = String.valueOf((s/1000) / 60);
+        if (minutes.length() <= 1) minutes = "0" + minutes;
+        if (seconds.length() <= 1) seconds = "0" + seconds;
+        return minutes +":"+seconds;
     }
 }
 

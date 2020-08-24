@@ -2,7 +2,10 @@ package com.example.music_1.Fragment;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -19,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Fragment;
 
+import android.os.Handler;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +43,10 @@ import com.example.music_1.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Services.MediaPlaybackService;
+
+import static android.content.Context.BIND_AUTO_CREATE;
+
 
 public class AllSongsFragment extends Fragment {
     private RecyclerView mRecycle;
@@ -48,6 +57,15 @@ public class AllSongsFragment extends Fragment {
     private ImageView mImagePlay;
     private TextView mNameSongPlay,mSongArtistPlay,mSongID;
     private ImageView btn_play;
+    private MediaPlaybackService mediaPlaybackService;
+    private Handler mHandler = new Handler();
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            updateUI();
+            mHandler.postDelayed(this, 300);
+        }
+    };
 
 
     @Nullable
@@ -62,8 +80,8 @@ public class AllSongsFragment extends Fragment {
                 Log.d("HoangLD", "onClick: ");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(),song.getSongArtist(),song.getSongImage());
-                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();  // hide action bar
+                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+                MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(),song.getSongArtist(),song.getSongImage());// hide action bar
                 fragmentTransaction.replace(R.id.ll_out,mediaPlaybackFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
@@ -78,7 +96,41 @@ public class AllSongsFragment extends Fragment {
         });
         return view;
     }
+    @Override
+    public void onStart() {
+        setService();
+        super.onStart();
+    }
 
+    private void setService() {
+        Intent intent = new Intent(getActivity(), MediaPlaybackService.class);
+        getActivity().startService(intent);
+        getActivity().bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+        mHandler.postDelayed(runnable, 300);
+    }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
+            mediaPlaybackService = binder.getMusicService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mediaPlaybackService = null;
+        }
+    };
+    private void updateUI() {
+        if (mediaPlaybackService != null) {
+
+//            tvDuration.setText(currentTime + "/" + totalTime);
+//            tvSongName.setText(song.getName());
+//            sbMusic.setMax(Integer.parseInt(song.getDuration()));
+//            sbMusic.setProgress(currentPosition);
+        }
+    }
+    ////////////////////////////////////
     private void initView(final View view) {
         mList = new ArrayList<>();
         getSong();
@@ -103,6 +155,11 @@ public class AllSongsFragment extends Fragment {
                     mList.get(i).setPlay(false);
                 }
                 mList.get(pos).setPlay(true);
+                if(mediaPlaybackService != null)
+                {
+                    mediaPlaybackService.getMediaManager().playSong(song.getSongImage());
+                }
+
                 mAdapter.notifyDataSetChanged();
 //                mAdapter.setPos(pos);
                 mllBottom.setVisibility(view.VISIBLE);
