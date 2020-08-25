@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.music_1.Adapter.SongAdapter;
+import com.example.music_1.MainActivity;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
@@ -44,11 +46,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Services.MediaPlaybackService;
+import Services.SongManager;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
 
-public class AllSongsFragment extends Fragment {
+public class AllSongsFragment extends Fragment implements View.OnClickListener{
     private RecyclerView mRecycle;
     private List<Song> mList;
     private SongAdapter mAdapter;
@@ -73,29 +76,10 @@ public class AllSongsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_songs, container, false);
         initView(view);
-        mllBottom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Song song = mList.get(mPosition);
-                Log.d("HoangLD", "onClick: ");
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-                MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(),song.getSongArtist(),song.getSongImage());// hide action bar
-                fragmentTransaction.replace(R.id.ll_out,mediaPlaybackFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
 
-            }
-        });
-        btn_play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btn_play.setImageResource(R.drawable.ic_pause_black_large);
-            }
-        });
         return view;
     }
+
     @Override
     public void onStart() {
         setService();
@@ -141,6 +125,8 @@ public class AllSongsFragment extends Fragment {
         mSongArtistPlay=view.findViewById(R.id.ArtistPlay);
         mRecycle = view.findViewById(R.id.Rcv_View);
         mllBottom= view.findViewById(R.id.ll_bottom);
+        mllBottom.setOnClickListener(this);
+        btn_play.setOnClickListener(this);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(RecyclerView.VERTICAL);
         mRecycle.setLayoutManager(manager);
@@ -155,10 +141,14 @@ public class AllSongsFragment extends Fragment {
                     mList.get(i).setPlay(false);
                 }
                 mList.get(pos).setPlay(true);
+                //service
                 if(mediaPlaybackService != null)
                 {
-                    mediaPlaybackService.getMediaManager().playSong(song.getSongImage());
+                        mediaPlaybackService.getMediaManager().playSong(song.getSongImage());
+                         btn_play.setImageResource(R.drawable.ic_pause_black_large);
                 }
+
+                //////////////
 
                 mAdapter.notifyDataSetChanged();
 //                mAdapter.setPos(pos);
@@ -172,7 +162,7 @@ public class AllSongsFragment extends Fragment {
 //                {
                     Glide.with(view.getContext()).asBitmap()
                             .load(songArt)
-                            .error(R.drawable.ic_zing)
+                            .error(R.drawable.cute)
                             .into(mImagePlay);
 
 
@@ -215,5 +205,37 @@ public class AllSongsFragment extends Fragment {
             }
 
         }
+    }
+    @Override
+    public  void onClick(View view)
+    {
+        switch (view.getId()){
+            case R.id.ll_bottom :{
+                Song song = mList.get(mPosition);
+                Log.d("HoangLD", "onClick: ");
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();// hide action bar
+                MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(),song.getSongArtist(),song.getSongImage());
+                fragmentTransaction.replace(R.id.ll_out,mediaPlaybackFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+            break;
+            case R.id.Button_Play:{
+                if(mediaPlaybackService.getMediaManager().isStatusPlaying())
+                {
+                    mediaPlaybackService.getMediaManager().pauseSong();
+                    btn_play.setImageResource(R.drawable.ic_play_black);
+                }
+                else
+                {
+                    mediaPlaybackService.getMediaManager().resumeSong();
+                    btn_play.setImageResource(R.drawable.ic_pause_black_large);
+                }
+            }
+        }
+
+
     }
 }

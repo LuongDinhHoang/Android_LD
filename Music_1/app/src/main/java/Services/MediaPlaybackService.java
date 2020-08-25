@@ -19,7 +19,7 @@ public class MediaPlaybackService extends Service {
     }
     public class   MusicBinder extends Binder {
         public MediaPlaybackService getMusicService() {
-            return MediaPlaybackService.this;
+            return MediaPlaybackService.this;//tra ve cac phuong thuc o service
         }
     }
 

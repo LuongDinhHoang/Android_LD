@@ -1,6 +1,7 @@
 package Services;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 
 import com.example.music_1.Fragment.AllSongsFragment;
@@ -19,6 +20,16 @@ public class SongManager {
     private final int STATUS_PLAYING = 2;
     private final int STATUS_PAUSED = 3;
     private final int STATUS_STOP = 4;
+    private boolean StatusPlaying;
+
+    public boolean isStatusPlaying() {
+        return StatusPlaying;
+    }
+
+    public void setStatusPlaying(boolean statusPlaying) {
+        StatusPlaying = statusPlaying;
+    }
+
     private AllSongsFragment allSongsFragment = new AllSongsFragment();
 
     private Context mContext;
@@ -30,6 +41,7 @@ public class SongManager {
     }
 
     private void initMediaPlayer() {
+        StatusPlaying = true;
         mPlayer = new MediaPlayer();
         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -42,6 +54,7 @@ public class SongManager {
 
     public void playSong(String path) {
         mPlayer.reset();
+
         try {
             mPlayer.setDataSource(path);
             mPlayer.prepare();
@@ -51,14 +64,19 @@ public class SongManager {
     }
 
     public void pauseSong() {
+        StatusPlaying=false;
         mPlayer.pause();
-        currentStatus = STATUS_PAUSED;
     }
 
     public void stop() {
         mPlayer.stop();
         mPlayer.reset();
         mPlayer.release();
+    }
+    public  void resumeSong()
+    {
+        StatusPlaying=true;
+        mPlayer.start();
     }
     public List<Song> getDataMusic(){
         return mListSong;
