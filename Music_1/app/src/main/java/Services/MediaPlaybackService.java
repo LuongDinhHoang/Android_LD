@@ -9,6 +9,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.music_1.Fragment.AllSongsFragment;
+import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.example.music_1.Model.Song;
 
 import java.security.Provider;
@@ -17,12 +19,19 @@ import java.util.List;
 
 public class MediaPlaybackService extends Service  implements MediaPlayer.OnCompletionListener {
     private SongManager mSongManager;
+    private MediaPlaybackFragment mMedia;
     private MusicBinder binder = new MusicBinder();
+
+    public List<Song> getList() {
+        return mList;
+    }
+
     private List<Song> mList = new ArrayList<>();
 
     public void setList(List<Song> list) {
         this.mList = list;
         mSongManager.setListSong(mList);
+
     }
 
     @Nullable

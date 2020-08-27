@@ -98,6 +98,8 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
         public void onServiceConnected(ComponentName name, IBinder service) {
             MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
             mMediaPlaybackService = binder.getMusicService();
+            mMediaPlaybackService.getMediaManager().setListSong(mList);
+
         }
 
         @Override
@@ -114,6 +116,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
 //            sbMusic.setProgress(currentPosition);
         }
     }
+
     ////////////////////////////////////
     private void initView(final View view) {
         mList = new ArrayList<>();
@@ -182,7 +185,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
                 //service
                 if(mMediaPlaybackService != null)
                 {
-                    mMediaPlaybackService.setList(mList);
+                     //đưa list vào list service nếu service chạy
                         mMediaPlaybackService.getMediaManager().playSong(song.getSongImage());
                          btn_play.setImageResource(R.drawable.ic_pause_black_large);
                          mMediaPlaybackService.getMediaManager().setCurrentSong(pos);

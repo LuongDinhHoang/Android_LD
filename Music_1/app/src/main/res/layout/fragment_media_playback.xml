@@ -215,14 +215,14 @@
                     android:layout_weight="1"
                     android:gravity="center_horizontal">
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/PlayMedia"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="-5dp"
-                        android:background="@drawable/ic_pause_media">
+                        android:src="@drawable/ic_play_media">
 
-                    </ImageButton>
+                    </ImageView>
                 </LinearLayout>
 
                 <LinearLayout

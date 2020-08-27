@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SongManager{
+
+
     private List<Song> mListSong = new ArrayList<>();
     private MediaPlayer mPlayer;
     private int currentSong;
@@ -25,6 +27,9 @@ public class SongManager{
 
     public void setListSong(List<Song> mListSong) {
         this.mListSong = mListSong;
+    }
+    public List<Song> getmListSong() {
+        return mListSong;
     }
 
     public boolean isStatusPlaying() {

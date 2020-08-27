@@ -1,30 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="3"
     android:orientation="horizontal"
     tools:context=".MainActivity">
 
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"></include>
 
-
-<!--    <FrameLayout-->
-<!--        android:layout_below="@+id/toolbar"-->
-<!--        android:id="@+id/ll_out"-->
-<!--        android:layout_weight="1"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="match_parent" />-->
-
-
-<!--    <FrameLayout-->
-<!--        android:layout_below="@+id/toolbar"-->
-<!--        android:id="@+id/ll_out1"-->
-<!--        android:layout_weight="2"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="match_parent" />-->
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_below="@+id/toolbar"
+    android:weightSum="3"
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:layout_width="0dp"
@@ -41,5 +31,8 @@
 
     </FrameLayout>
 
-
 </LinearLayout>
+
+
+
+</RelativeLayout>
