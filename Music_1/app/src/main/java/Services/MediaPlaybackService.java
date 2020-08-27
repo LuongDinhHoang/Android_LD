@@ -2,16 +2,29 @@ package Services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import java.security.Provider;
+import com.example.music_1.Model.Song;
 
-public class MediaPlaybackService extends Service {
+import java.security.Provider;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MediaPlaybackService extends Service  implements MediaPlayer.OnCompletionListener {
     private SongManager mSongManager;
     private MusicBinder binder = new MusicBinder();
+    private List<Song> mList = new ArrayList<>();
+
+    public void setList(List<Song> list) {
+        this.mList = list;
+        mSongManager.setListSong(mList);
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -60,5 +73,13 @@ public class MediaPlaybackService extends Service {
 
     public SongManager getMediaManager() {
         return mSongManager;
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        int pos = mSongManager.getCurrentSong();
+        pos++;
+        mediaPlayer.reset();
+        mSongManager.playSong(mSongManager.getListSong().get(pos).getSongImage());
     }
 }

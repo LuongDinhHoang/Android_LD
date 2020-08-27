@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,8 +35,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     ImageView mImage,mBackground;
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
-    private MediaPlaybackService mediaPlaybackService;
-    private ImageButton mPlayMedia;
+    private MediaPlaybackService mMediaPlaybackService;
+    private ImageButton mPlayMedia,mNextMedia,mBackMedia;
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override
@@ -68,28 +67,37 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mName = view.findViewById(R.id.NameSong);
         mArtist = view.findViewById(R.id.ArtistSong);
         mImage=view.findViewById(R.id.ImagePlaying);
+        mNextMedia=view.findViewById(R.id.btn_next_media);
+        mBackMedia=view.findViewById(R.id.btn_pre_media);
         mPlayMedia=view.findViewById(R.id.PlayMedia);
         mBackground=view.findViewById(R.id.background_Image);
         mPlayMedia.setOnClickListener(this);
-        final byte[] songArt = getAlbumArt(Image);
-        Glide.with(view.getContext()).asBitmap()
-                .load(songArt)
-                .error(R.drawable.cute)
-                .into(mImage);
-        Glide.with(view.getContext()).asBitmap()
-                .load(songArt)
-                .error(R.drawable.background)
-                .into(mBackground);
+        mBackMedia.setOnClickListener(this);
+        mNextMedia.setOnClickListener(this);
+        if(Image != null)
+        {
+            final byte[] songArt = getAlbumArt(Image);
+            Glide.with(view.getContext()).asBitmap()
+                    .load(songArt)
+                    .error(R.drawable.cute)
+                    .into(mImage);
+            Glide.with(view.getContext()).asBitmap()
+                    .load(songArt)
+                    .error(R.drawable.background)
+                    .into(mBackground);
+        }
+
         mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
         mName.setText(Name);
         mArtist.setText(Artist);
-        if(mediaPlaybackService != null && mediaPlaybackService.getMediaManager().isStatusPlaying())
-        {
-            mPlayMedia.setImageResource(R.drawable.ic_pause_media);
-        }
-        if(mediaPlaybackService != null && !mediaPlaybackService.getMediaManager().isStatusPlaying())
-        {
-            mPlayMedia.setImageResource(R.drawable.ic_play_media);
+
+        if(mMediaPlaybackService != null){
+            if(mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()){
+                mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+
+            }else {
+                mPlayMedia.setImageResource(R.drawable.ic_play_media);
+            }
         }
 
     }
@@ -111,16 +119,16 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
-            mediaPlaybackService = binder.getMusicService();
+            mMediaPlaybackService = binder.getMusicService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mediaPlaybackService = null;
+            mMediaPlaybackService = null;
         }
     };
     private void updateUI() {
-        if (mediaPlaybackService != null) {
+        if (mMediaPlaybackService != null) {
 
 //            tvDuration.setText(currentTime + "/" + totalTime);
 //            tvSongName.setText(song.getName());
@@ -159,16 +167,26 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         switch (view.getId()){
             case R.id.PlayMedia:
             {
-                if(mediaPlaybackService.getMediaManager().isStatusPlaying()){
-                    mediaPlaybackService.getMediaManager().pauseSong();
+                if(mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()){
+                    mMediaPlaybackService.getMediaManager().pauseSong();
                     mPlayMedia.setBackgroundResource(R.drawable.ic_play_media);
 
                 }
                 else {
-                    mediaPlaybackService.getMediaManager().resumeSong();
+                    mMediaPlaybackService.getMediaManager().resumeSong();
                     mPlayMedia.setBackgroundResource(R.drawable.ic_pause_media);
                 }
                 break;
+            }
+            case R.id.btn_next_media:
+            {
+                Log.d("HoangLD", "onClick: next");
+                mMediaPlaybackService.getMediaManager().nextSong();
+            }
+            case R.id.btn_pre_media:
+            {
+
+                mMediaPlaybackService.getMediaManager().previousSong();
             }
         }
 

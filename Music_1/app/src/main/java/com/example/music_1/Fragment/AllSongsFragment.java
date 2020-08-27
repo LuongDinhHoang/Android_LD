@@ -8,12 +8,10 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -30,15 +28,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.music_1.Adapter.SongAdapter;
-import com.example.music_1.MainActivity;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
@@ -46,7 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Services.MediaPlaybackService;
-import Services.SongManager;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -60,7 +54,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
     private ImageView mImagePlay;
     private TextView mNameSongPlay,mSongArtistPlay,mSongID;
     private ImageView btn_play;
-    private MediaPlaybackService mediaPlaybackService;
+    private MediaPlaybackService mMediaPlaybackService;
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override
@@ -76,14 +70,20 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_songs, container, false);
         initView(view);
+        setService();
 
         return view;
     }
 
     @Override
     public void onStart() {
-        setService();
         super.onStart();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     private void setService() {
@@ -97,16 +97,16 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
-            mediaPlaybackService = binder.getMusicService();
+            mMediaPlaybackService = binder.getMusicService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mediaPlaybackService = null;
+            mMediaPlaybackService = null;
         }
     };
     private void updateUI() {
-        if (mediaPlaybackService != null) {
+        if (mMediaPlaybackService != null) {
 
 //            tvDuration.setText(currentTime + "/" + totalTime);
 //            tvSongName.setText(song.getName());
@@ -133,12 +133,12 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
 
         mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
-        if(mediaPlaybackService != null && mediaPlaybackService.getMediaManager().isStatusPlaying())
+        if(mMediaPlaybackService != null && mMediaPlaybackService.getMediaManager().isStatusPlaying())
         {
             mllBottom.setVisibility(view.VISIBLE);
-            mNameSongPlay.setText(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
-            mSongArtistPlay.setText(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
-            final byte[] songArt = getAlbumArt(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+            mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
+            mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
+            final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
             Glide.with(view.getContext()).asBitmap()
                     .load(songArt)
                     .error(R.drawable.cute)
@@ -147,17 +147,17 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
             for (int i = 0; i < mList.size(); i++) {
                 mList.get(i).setPlay(false);
             }
-            mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
+            mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
             mAdapter.notifyDataSetChanged();
 
 
         }
-        if(mediaPlaybackService != null && !mediaPlaybackService.getMediaManager().isStatusPlaying())
+        if(mMediaPlaybackService != null && !mMediaPlaybackService.getMediaManager().isStatusPlaying())
         {
             mllBottom.setVisibility(view.VISIBLE);
-            mNameSongPlay.setText(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
-            mSongArtistPlay.setText(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
-            final byte[] songArt = getAlbumArt(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+            mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
+            mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
+            final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
             Glide.with(view.getContext()).asBitmap()
                     .load(songArt)
                     .error(R.drawable.cute)
@@ -166,7 +166,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
             for (int i = 0; i < mList.size(); i++) {
                 mList.get(i).setPlay(false);
             }
-            mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
+            mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
             mAdapter.notifyDataSetChanged();
 
         }
@@ -180,11 +180,12 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
                 }
                 mList.get(pos).setPlay(true);
                 //service
-                if(mediaPlaybackService != null)
+                if(mMediaPlaybackService != null)
                 {
-                        mediaPlaybackService.getMediaManager().playSong(song.getSongImage());
+                    mMediaPlaybackService.setList(mList);
+                        mMediaPlaybackService.getMediaManager().playSong(song.getSongImage());
                          btn_play.setImageResource(R.drawable.ic_pause_black_large);
-                         mediaPlaybackService.getMediaManager().setCurrentSong(pos);
+                         mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
                 }
                 mllBottom.setVisibility(view.VISIBLE);
                 mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
@@ -259,15 +260,16 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
             }
             break;
             case R.id.Button_Play:{
-                if(mediaPlaybackService.getMediaManager().isStatusPlaying())
+                if(mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
                 {
-                    mediaPlaybackService.getMediaManager().pauseSong();
+                    mMediaPlaybackService.getMediaManager().pauseSong();
                     btn_play.setImageResource(R.drawable.ic_play_black);
                 }
                 else
                 {
-                    mediaPlaybackService.getMediaManager().resumeSong();
+                    mMediaPlaybackService.getMediaManager().resumeSong();
                     btn_play.setImageResource(R.drawable.ic_pause_black_large);
+
                 }
             }
         }

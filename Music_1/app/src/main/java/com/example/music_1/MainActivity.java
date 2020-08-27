@@ -13,8 +13,10 @@ import android.widget.FrameLayout;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.music_1.Fragment.AllSongsFragment;
+import com.example.music_1.Fragment.MediaPlaybackFragment;
 
 public class MainActivity extends AppCompatActivity {
+    private  int mOrientation;
     FragmentManager fragmentManager = getFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -47,10 +49,21 @@ public class MainActivity extends AppCompatActivity {
 
     public void addFragmentList()
     {
+        mOrientation = getResources().getConfiguration().orientation;
+        if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            AllSongsFragment allSongsFragment =new AllSongsFragment();
+            fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
+            fragmentTransaction.commit();
 
-        AllSongsFragment allSongsFragment =new AllSongsFragment();
-        fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
-        fragmentTransaction.commit();
+
+        } else {
+            AllSongsFragment allSongsFragment =new AllSongsFragment();
+            fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
+            MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
+            fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
+            fragmentTransaction.commit();
+
+        }
 
     }
 }
