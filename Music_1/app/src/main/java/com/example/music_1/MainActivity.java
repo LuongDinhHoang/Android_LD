@@ -1,10 +1,12 @@
 package com.example.music_1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.FrameLayout;
@@ -15,15 +17,13 @@ import com.example.music_1.Fragment.AllSongsFragment;
 public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager = getFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    private FrameLayout frameLayout;
-    private RecyclerView recyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recyclerView = (RecyclerView)findViewById(R.id.Rcv_View);
-        frameLayout = (FrameLayout)findViewById(R.id.ll_out);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         addFragmentList();
@@ -34,6 +34,17 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
+    @Override
+    public void onBackPressed() {
+        getSupportActionBar().show();                 //setActionBar
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
     public void addFragmentList()
     {
 

@@ -9,11 +9,10 @@
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar"></include>
 
-    <FrameLayout
-        android:layout_below="@+id/toolbar"
-        android:id="@+id/ll_out"
+    <fragment
+        android:id="@+id/fragment"
+        android:name="com.example.music_1.Fragment.AllSongsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
 </RelativeLayout>

@@ -133,6 +133,44 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
 
         mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
+        if(mediaPlaybackService != null && mediaPlaybackService.getMediaManager().isStatusPlaying())
+        {
+            mllBottom.setVisibility(view.VISIBLE);
+            mNameSongPlay.setText(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
+            mSongArtistPlay.setText(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
+            final byte[] songArt = getAlbumArt(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+            Glide.with(view.getContext()).asBitmap()
+                    .load(songArt)
+                    .error(R.drawable.cute)
+                    .into(mImagePlay);
+            btn_play.setImageResource(R.drawable.ic_pause_black_large);
+            for (int i = 0; i < mList.size(); i++) {
+                mList.get(i).setPlay(false);
+            }
+            mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
+            mAdapter.notifyDataSetChanged();
+
+
+        }
+        if(mediaPlaybackService != null && !mediaPlaybackService.getMediaManager().isStatusPlaying())
+        {
+            mllBottom.setVisibility(view.VISIBLE);
+            mNameSongPlay.setText(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
+            mSongArtistPlay.setText(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
+            final byte[] songArt = getAlbumArt(mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+            Glide.with(view.getContext()).asBitmap()
+                    .load(songArt)
+                    .error(R.drawable.cute)
+                    .into(mImagePlay);
+            btn_play.setImageResource(R.drawable.ic_play_black);
+            for (int i = 0; i < mList.size(); i++) {
+                mList.get(i).setPlay(false);
+            }
+            mList.get(mediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
+            mAdapter.notifyDataSetChanged();
+
+        }
+
         mAdapter.SongAdapter(new SongAdapter.IIClick() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -146,24 +184,22 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener{
                 {
                         mediaPlaybackService.getMediaManager().playSong(song.getSongImage());
                          btn_play.setImageResource(R.drawable.ic_pause_black_large);
+                         mediaPlaybackService.getMediaManager().setCurrentSong(pos);
                 }
+                mllBottom.setVisibility(view.VISIBLE);
+                mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
+                mSongArtistPlay.setText(song.getSongArtist());
+                byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
+                Glide.with(view.getContext()).asBitmap()
+                        .load(songArt)
+                        .error(R.drawable.cute)
+                        .into(mImagePlay);
 
                 //////////////
+                mPosition=pos;
 
                 mAdapter.notifyDataSetChanged();
 //                mAdapter.setPos(pos);
-                mllBottom.setVisibility(view.VISIBLE);
-                mPosition=pos;
-                mNameSongPlay.setText(song.getSongName());
-                mSongArtistPlay.setText(song.getSongArtist());
-                final byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
-
-//                if(songArt != null)
-//                {
-                    Glide.with(view.getContext()).asBitmap()
-                            .load(songArt)
-                            .error(R.drawable.cute)
-                            .into(mImagePlay);
 
 
             }

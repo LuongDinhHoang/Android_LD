@@ -26,8 +26,13 @@ public class SongManager {
         return StatusPlaying;
     }
 
-    public void setStatusPlaying(boolean statusPlaying) {
-        StatusPlaying = statusPlaying;
+
+    public void setCurrentSong(int currentSong) {
+        this.currentSong = currentSong;
+    }
+
+    public int getCurrentSong() {
+        return currentSong;
     }
 
     private AllSongsFragment allSongsFragment = new AllSongsFragment();

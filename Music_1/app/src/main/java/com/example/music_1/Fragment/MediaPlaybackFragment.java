@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,7 +27,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 import static com.example.music_1.Fragment.AllSongsFragment.getAlbumArt;
 
 
-public class MediaPlaybackFragment extends Fragment {
+public class MediaPlaybackFragment extends Fragment implements View.OnClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,6 +37,7 @@ public class MediaPlaybackFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
     private MediaPlaybackService mediaPlaybackService;
+    private ImageButton mPlayMedia;
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override
@@ -49,15 +52,25 @@ public class MediaPlaybackFragment extends Fragment {
     private String Name;
     private String Artist;
     private String Image;
-
+        View view;
+    public MediaPlaybackFragment() {
+        // Required empty public constructor
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_media_playback, container, false);
+        view  = inflater.inflate(R.layout.fragment_media_playback, container, false);
+        init();
+        return view;
+    }
+    public void init()
+    {
         mName = view.findViewById(R.id.NameSong);
         mArtist = view.findViewById(R.id.ArtistSong);
         mImage=view.findViewById(R.id.ImagePlaying);
+        mPlayMedia=view.findViewById(R.id.PlayMedia);
         mBackground=view.findViewById(R.id.background_Image);
+        mPlayMedia.setOnClickListener(this);
         final byte[] songArt = getAlbumArt(Image);
         Glide.with(view.getContext()).asBitmap()
                 .load(songArt)
@@ -70,11 +83,17 @@ public class MediaPlaybackFragment extends Fragment {
         mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
         mName.setText(Name);
         mArtist.setText(Artist);
-        return view;
+        if(mediaPlaybackService != null && mediaPlaybackService.getMediaManager().isStatusPlaying())
+        {
+            mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+        }
+        if(mediaPlaybackService != null && !mediaPlaybackService.getMediaManager().isStatusPlaying())
+        {
+            mPlayMedia.setImageResource(R.drawable.ic_play_media);
+        }
+
     }
-    public MediaPlaybackFragment() {
-        // Required empty public constructor
-    }
+
     @Override
     public void onStart() {
         setService();
@@ -134,4 +153,25 @@ public class MediaPlaybackFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.PlayMedia:
+            {
+                if(mediaPlaybackService.getMediaManager().isStatusPlaying()){
+                    mediaPlaybackService.getMediaManager().pauseSong();
+                    mPlayMedia.setBackgroundResource(R.drawable.ic_play_media);
+
+                }
+                else {
+                    mediaPlaybackService.getMediaManager().resumeSong();
+                    mPlayMedia.setBackgroundResource(R.drawable.ic_pause_media);
+                }
+                break;
+            }
+        }
+
+
+    }
 }
