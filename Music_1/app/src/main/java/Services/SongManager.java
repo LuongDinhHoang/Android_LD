@@ -127,7 +127,7 @@ public class SongManager{
         } else {
             currentSong--;
         }
-        Log.d("HoangLD", "previousSong2: "+currentSong);
+        Log.d("HoangLD1", "previousSong2: "+currentSong);
         playSong(mListSong.get(currentSong).getSongImage());
     }
 

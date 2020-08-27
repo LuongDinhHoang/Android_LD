@@ -179,15 +179,15 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 break;
             }
             case R.id.btn_next_media:
-            {
                 Log.d("HoangLD", "onClick: next");
                 mMediaPlaybackService.getMediaManager().nextSong();
-            }
+                break;
+
+
             case R.id.btn_pre_media:
-            {
 
                 mMediaPlaybackService.getMediaManager().previousSong();
-            }
+                break;
         }
 
 
