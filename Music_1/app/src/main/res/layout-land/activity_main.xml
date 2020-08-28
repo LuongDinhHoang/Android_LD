@@ -13,19 +13,19 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_below="@+id/toolbar"
-    android:weightSum="3"
+    android:weightSum="5"
     android:layout_height="match_parent">
 
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:id="@+id/ll_out">
 
     </FrameLayout>
     <FrameLayout
         android:layout_width="0dp"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:layout_height="match_parent"
         android:id="@+id/ll_out_land">
 

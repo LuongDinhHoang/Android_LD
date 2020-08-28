@@ -9,6 +9,7 @@ import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.widget.FrameLayout;
 import androidx.appcompat.widget.Toolbar;
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             AllSongsFragment allSongsFragment =new AllSongsFragment();
             fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
+           // mllBottom.setVisibility(view.VISIBLE);
             MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
             fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
             fragmentTransaction.commit();

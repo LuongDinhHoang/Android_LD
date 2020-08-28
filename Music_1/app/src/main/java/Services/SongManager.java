@@ -28,6 +28,9 @@ public class SongManager{
     public void setListSong(List<Song> mListSong) {
         this.mListSong = mListSong;
     }
+
+
+
     public List<Song> getmListSong() {
         return mListSong;
     }
@@ -43,7 +46,6 @@ public class SongManager{
     public void setCurrentSong(int currentSong) {
         this.currentSong = currentSong;
     }
-
     public int getCurrentSong() {
         return currentSong;
     }

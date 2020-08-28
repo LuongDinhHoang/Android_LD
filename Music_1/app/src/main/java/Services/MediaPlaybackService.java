@@ -19,6 +19,11 @@ import java.util.List;
 
 public class MediaPlaybackService extends Service  implements MediaPlayer.OnCompletionListener {
     private SongManager mSongManager;
+
+    public MediaPlaybackFragment getMedia() {
+        return mMedia;
+    }
+
     private MediaPlaybackFragment mMedia;
     private MusicBinder binder = new MusicBinder();
 
@@ -28,11 +33,11 @@ public class MediaPlaybackService extends Service  implements MediaPlayer.OnComp
 
     private List<Song> mList = new ArrayList<>();
 
-    public void setList(List<Song> list) {
-        this.mList = list;
-        mSongManager.setListSong(mList);
-
-    }
+//    public void setList(List<Song> list) {
+//        this.mList = list;
+//        mSongManager.setListSong(mList);
+//
+//    }
 
     @Nullable
     @Override
@@ -50,6 +55,7 @@ public class MediaPlaybackService extends Service  implements MediaPlayer.OnComp
     public void onCreate() {
         super.onCreate();
         mSongManager = new SongManager(this);
+        mMedia=new MediaPlaybackFragment();
     }
 /*
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -87,6 +93,7 @@ public class MediaPlaybackService extends Service  implements MediaPlayer.OnComp
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         int pos = mSongManager.getCurrentSong();
+        Log.d("HoangLD", "onCompletion: "+pos);
         pos++;
         mediaPlayer.reset();
         mSongManager.playSong(mSongManager.getListSong().get(pos).getSongImage());

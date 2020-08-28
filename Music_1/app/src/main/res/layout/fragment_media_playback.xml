@@ -119,6 +119,7 @@
         android:layout_above="@+id/ll_bottom"
         android:background="#A9FFFFFF"
         android:layout_weight="1.5"
+        android:layout_marginBottom="-2dp"
         android:thumbTint="#F44336"
         android:progressTint="#F44336">
 

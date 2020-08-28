@@ -44,6 +44,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private ImageView mPlayMedia;
 
 
+    public void setListMedia(List<Song> mListMedia) {
+        this.mListMedia = mListMedia;
+    }
+
     private List<Song> mListMedia = new ArrayList<>();
     private ImageButton mNextMedia, mBackMedia;
     private Handler mHandler = new Handler();
@@ -97,16 +101,21 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     .into(mBackground);
         }
 
-        mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
         mName.setText(Name);
         mArtist.setText(Artist);
+        mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
+        //  mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
 
 
     }
 
     @Override
     public void onStart() {
-        setService();
+        if(!mIsConnect) {
+            setService();
+        }
         super.onStart();
     }
 
@@ -117,18 +126,28 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mHandler.postDelayed(runnable, 300);
     }
 
+    private boolean mIsConnect;
+
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
             mMediaPlaybackService = binder.getMusicService();
             mListMedia= mMediaPlaybackService.getMediaManager().getmListSong();
-            setData();
+            if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+                mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+
+            } else {
+                mPlayMedia.setImageResource(R.drawable.ic_play_media);
+            }
+            mIsConnect = true;
+            //setData();
 
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            mIsConnect = false;
             mMediaPlaybackService = null;
         }
     };
@@ -149,13 +168,28 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
 
             if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
-                mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+                mPlayMedia.setImageResource(R.drawable.ic_play_media);
 
             } else {
-                mPlayMedia.setImageResource(R.drawable.ic_play_media);
+                mPlayMedia.setImageResource(R.drawable.ic_pause_media);
             }
+
             //int mCurrent = mMediaPlaybackService.getMediaManager().getCurrentSong();
+            Log.d("HoangLD", "setData: "+mName);
             mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
+            mArtist.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
+            final byte[] songArt = getAlbumArt(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+            Glide.with(view.getContext()).asBitmap()
+                    .load(songArt)
+                    .error(R.drawable.cute)
+                    .into(mImage);
+            Glide.with(view.getContext()).asBitmap()
+                    .load(songArt)
+                    .error(R.drawable.background)
+                    .into(mBackground);
+            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
         }
 
     }
@@ -201,12 +235,14 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             case R.id.btn_next_media:
                 Log.d("HoangLD", "onClick: next");
                 mMediaPlaybackService.getMediaManager().nextSong();
+                setData();
                 break;
 
 
             case R.id.btn_pre_media:
 
                 mMediaPlaybackService.getMediaManager().previousSong();
+                setData();
                 break;
         }
 
