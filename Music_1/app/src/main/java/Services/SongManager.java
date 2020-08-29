@@ -50,7 +50,7 @@ public class SongManager{
         return currentSong;
     }
 
-    private AllSongsFragment allSongsFragment = new AllSongsFragment();
+    //private AllSongsFragment allSongsFragment = new AllSongsFragment();
 
     private Context mContext;
 

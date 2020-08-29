@@ -31,15 +31,15 @@ private int mPossition = -1;
         this.context = context;
         this.mList = mList;
     }
-
-    public int getPos() {
-        return mPossition;
-    }
-
-    public void setPos(int pos) {
-        mPossition = pos;
-        Log.d("SongAdapter", "setPos: "+pos);
-    }
+//
+//    public int getPos() {
+//        return mPossition;
+//    }
+//
+//    public void setPos(int pos) {
+//        mPossition = pos;
+//        Log.d("SongAdapter", "setPos: "+pos);
+//    }
 
     @NonNull
     @Override

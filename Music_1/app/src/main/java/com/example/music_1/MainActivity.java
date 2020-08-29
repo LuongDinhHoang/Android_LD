@@ -20,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
     private  int mOrientation;
     FragmentManager fragmentManager = getFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    AllSongsFragment allSongsFragment =new AllSongsFragment();
+    MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
+
+
 
 
     @Override
@@ -52,20 +56,25 @@ public class MainActivity extends AppCompatActivity {
     {
         mOrientation = getResources().getConfiguration().orientation;
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            AllSongsFragment allSongsFragment =new AllSongsFragment();
             fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
             fragmentTransaction.commit();
 
 
         } else {
-            AllSongsFragment allSongsFragment =new AllSongsFragment();
             fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
            // mllBottom.setVisibility(view.VISIBLE);
-            MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
             fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
             fragmentTransaction.commit();
 
         }
 
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // setpossion =
+        /*AllSongsFragment.savePos*/
+       // allSongsFragment.set
     }
 }

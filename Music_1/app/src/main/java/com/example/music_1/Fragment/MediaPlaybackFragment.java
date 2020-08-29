@@ -3,6 +3,7 @@ package com.example.music_1.Fragment;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import android.app.Fragment;
@@ -89,6 +90,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mPlayMedia.setOnClickListener(this);
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
+
         if (Image != null) {
             final byte[] songArt = getAlbumArt(Image);
             Glide.with(view.getContext()).asBitmap()
@@ -113,44 +115,46 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onStart() {
-        if(!mIsConnect) {
+        if(mServiceConnection == null) {
+
             setService();
         }
         super.onStart();
     }
 
     private void setService() {
+        mServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
+                mMediaPlaybackService = binder.getMusicService();
+                mListMedia= mMediaPlaybackService.getMediaManager().getmListSong();
+                if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+                    mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+
+                } else {
+                    mPlayMedia.setImageResource(R.drawable.ic_play_media);
+                }
+                mIsConnect = true;
+                //setData();
+
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mIsConnect = false;
+                mMediaPlaybackService = null;
+            }
+        };
         Intent intent = new Intent(getActivity(), MediaPlaybackService.class);
         getActivity().startService(intent);
-        getActivity().bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+        getActivity().bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
         mHandler.postDelayed(runnable, 300);
     }
 
     private boolean mIsConnect;
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
-            mMediaPlaybackService = binder.getMusicService();
-            mListMedia= mMediaPlaybackService.getMediaManager().getmListSong();
-            if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
-                mPlayMedia.setImageResource(R.drawable.ic_pause_media);
-
-            } else {
-                mPlayMedia.setImageResource(R.drawable.ic_play_media);
-            }
-            mIsConnect = true;
-            //setData();
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mIsConnect = false;
-            mMediaPlaybackService = null;
-        }
-    };
+    private ServiceConnection mServiceConnection;
 
     private void updateUI() {
         if (mMediaPlaybackService != null) {
@@ -247,5 +251,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         }
 
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }

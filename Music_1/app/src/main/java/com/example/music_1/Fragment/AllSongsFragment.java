@@ -86,6 +86,8 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
         super.onResume();
     }
 
+
+
     private void setService() {
         Intent intent = new Intent(getActivity(), MediaPlaybackService.class);
         getActivity().startService(intent);
@@ -98,7 +100,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
         public void onServiceConnected(ComponentName name, IBinder service) {
             MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
             mMediaPlaybackService = binder.getMusicService();
-            mMediaPlaybackService.getMediaManager().setCurrentSong(mPosition);
             mMediaPlaybackService.getMediaManager().setListSong(mList);                     //đưa list vào list service nếu service chạy
             mMediaPlaybackService.getMedia().setListMedia(mList);
             if(mMediaPlaybackService !=null && mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
@@ -106,6 +107,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
                 for (int i = 0; i < mList.size(); i++) {
                     mList.get(i).setPlay(false);
                 }
+                Log.d("HoangLD", "onServiceConnected: current " + mMediaPlaybackService.getMediaManager().getCurrentSong());
                 mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
                 mAdapter.notifyDataSetChanged();
             }
@@ -184,7 +186,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
                     mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
                     //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
                 }
-                mllBottom.setVisibility(view.VISIBLE);
+                mllBottom.setVisibility(View.VISIBLE);
                 mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
                 mSongArtistPlay.setText(song.getSongArtist());
                 byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
@@ -195,7 +197,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
 
                 //////////////
                 mPosition = pos;
-
                 mAdapter.notifyDataSetChanged();
 //                mAdapter.setPos(pos);
 
@@ -221,8 +222,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
 
         if (songCursor != null && songCursor.moveToFirst()) {
             if (songCursor != null && songCursor.moveToFirst()) {
-
-
                 do {
                     int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
                     int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
@@ -234,7 +233,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
                     String currentAuthor = songCursor.getString(songAuthor);
                     String currentArt = songCursor.getString(songArt);
 
-                    Log.d("HoangLD", "getSong: " + songTime);
+
                     mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false));
                 } while (songCursor.moveToNext());
             }
@@ -270,5 +269,15 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
         }
 
 
+    }
+
+    public static int savePos;
+
+    public static int getSavePos() {
+        return savePos;
+    }
+
+    public static void setSavePos(int savePos) {
+        AllSongsFragment.savePos = savePos;
     }
 }

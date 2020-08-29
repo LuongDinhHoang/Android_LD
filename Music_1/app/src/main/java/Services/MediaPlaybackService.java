@@ -54,6 +54,7 @@ public class MediaPlaybackService extends Service  implements MediaPlayer.OnComp
 
     public void onCreate() {
         super.onCreate();
+        Log.d("HoangLD", "onCreate: service");
         mSongManager = new SongManager(this);
         mMedia=new MediaPlaybackFragment();
     }
@@ -93,7 +94,6 @@ public class MediaPlaybackService extends Service  implements MediaPlayer.OnComp
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         int pos = mSongManager.getCurrentSong();
-        Log.d("HoangLD", "onCompletion: "+pos);
         pos++;
         mediaPlayer.reset();
         mSongManager.playSong(mSongManager.getListSong().get(pos).getSongImage());
