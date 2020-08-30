@@ -102,15 +102,28 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
             mMediaPlaybackService = binder.getMusicService();
             mMediaPlaybackService.getMediaManager().setListSong(mList);                     //đưa list vào list service nếu service chạy
             mMediaPlaybackService.getMedia().setListMedia(mList);
-            if(mMediaPlaybackService !=null && mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
+            if(mMediaPlaybackService !=null )
             {
-                for (int i = 0; i < mList.size(); i++) {
-                    mList.get(i).setPlay(false);
+                mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
+                mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
+                final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+//                Glide.with(getContext()).asBitmap()
+//                        .load(songArt)
+//                        .error(R.drawable.cute)
+//                        .into(mImagePlay);
+                if(mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
+                {
+                    mllBottom.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < mList.size(); i++) {
+                        mList.get(i).setPlay(false);
+                    }
+                    Log.d("HoangLD", "onServiceConnected: current " + mMediaPlaybackService.getMediaManager().getCurrentSong());
+                    mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
+                    mAdapter.notifyDataSetChanged();
                 }
-                Log.d("HoangLD", "onServiceConnected: current " + mMediaPlaybackService.getMediaManager().getCurrentSong());
-                mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
-                mAdapter.notifyDataSetChanged();
+
             }
+
         }
 
         @Override

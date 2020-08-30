@@ -129,13 +129,17 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
                 mMediaPlaybackService = binder.getMusicService();
                 mListMedia= mMediaPlaybackService.getMediaManager().getmListSong();
-                if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
-                    mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+                if(mMediaPlaybackService != null)
+                {
+                    if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+                        mPlayMedia.setImageResource(R.drawable.ic_pause_media);
 
-                } else {
-                    mPlayMedia.setImageResource(R.drawable.ic_play_media);
+                    } else {
+                        mPlayMedia.setImageResource(R.drawable.ic_play_media);
+                    }
+                    //mIsConnect = true;
                 }
-                mIsConnect = true;
+
                 //setData();
 
             }
