@@ -19,8 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Fragment;
 
+
+import android.app.Fragment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -64,6 +65,11 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
         }
     };
 
+    public void setCheck(boolean mCheck) {
+        this.isVertical = mCheck;
+    }
+
+    private  boolean isVertical;
 
     @Nullable
     @Override
@@ -102,11 +108,26 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
             mMediaPlaybackService = binder.getMusicService();
             mMediaPlaybackService.getMediaManager().setListSong(mList);                     //đưa list vào list service nếu service chạy
             mMediaPlaybackService.getMedia().setListMedia(mList);
-            if(mMediaPlaybackService !=null )
+            if(mMediaPlaybackService !=null)
             {
+                if(isVertical)
+                {
+                    if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying() )
+                    {
+                        mllBottom.setVisibility(View.VISIBLE);
+                    }
+                }
+                else {
+                    mllBottom.setVisibility(View.GONE);
+                }
+                if (!mMediaPlaybackService.getMediaManager().isStatusPlaying()) {
+                    mBtnPlay.setImageResource(R.drawable.ic_play_black);
+                } else {
+                    mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
+                }
                 mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
                 mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
-                final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+//                final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
 //                Glide.with(getContext()).asBitmap()
 //                        .load(songArt)
 //                        .error(R.drawable.cute)
@@ -161,9 +182,16 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
 
         mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
-
         if (mMediaPlaybackService != null) {
-            mllBottom.setVisibility(view.VISIBLE);
+            if(isVertical )
+            {
+                    mllBottom.setVisibility(View.VISIBLE);
+            }
+            if(!isVertical)
+            {
+                mllBottom.setVisibility(View.GONE);
+            }
+
             mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
             mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
             final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
@@ -199,17 +227,43 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
                     mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
                     //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
                 }
-                mllBottom.setVisibility(View.VISIBLE);
-                mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
-                mSongArtistPlay.setText(song.getSongArtist());
-                byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
-                Glide.with(view.getContext()).asBitmap()
-                        .load(songArt)
-                        .error(R.drawable.cute)
-                        .into(mImagePlay);
+                if(isVertical)
+                {
+                    mllBottom.setVisibility(View.VISIBLE);
+                    mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
+                    mSongArtistPlay.setText(song.getSongArtist());
+                    byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
+                    Glide.with(view.getContext()).asBitmap()
+                            .load(songArt)
+                            .error(R.drawable.cute)
+                            .into(mImagePlay);
+                    //////////////
+                    mPosition = pos;
+                }
+                else
+                {
+                    mllBottom.setVisibility(View.GONE);
+                    TextView mNameMedia = getActivity().findViewById(R.id.NameSong);
+                    TextView mArtistMedia = getActivity().findViewById(R.id.ArtistSong);
+                    ImageView mImageMedia = getActivity().findViewById(R.id.ImagePlaying);
+                    ImageView mImageBackground = getActivity().findViewById(R.id.background_Image);
 
-                //////////////
-                mPosition = pos;
+
+                    mArtistMedia.setText(song.getSongArtist());
+                    mNameMedia.setText(song.getSongName());
+                    byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
+                    Glide.with(view.getContext()).asBitmap()
+                            .load(songArt)
+                            .error(R.drawable.cute)
+                            .into(mImageBackground);
+                    Glide.with(view.getContext()).asBitmap()
+                            .load(songArt)
+                            .error(R.drawable.cute)
+                            .into(mImageMedia);
+
+                }
+
+
                 mAdapter.notifyDataSetChanged();
 //                mAdapter.setPos(pos);
 

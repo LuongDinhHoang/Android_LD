@@ -17,6 +17,18 @@ import com.example.music_1.Fragment.AllSongsFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    public boolean mCheck;
+
+    public boolean getCheck() {
+        return mCheck;
+    }
+
+    public void setCheck(boolean mCheck) {
+        this.mCheck = mCheck;
+    }
+
     private  int mOrientation;
     FragmentManager fragmentManager = getFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -56,16 +68,18 @@ public class MainActivity extends AppCompatActivity {
     {
         mOrientation = getResources().getConfiguration().orientation;
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            allSongsFragment.setCheck(true);
+            mediaPlaybackFragment.setVertical(true);
             fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
             fragmentTransaction.commit();
-
-
-        } else {
+        }
+        else {
+            allSongsFragment.setCheck(false);
+            mediaPlaybackFragment.setVertical(false);
             fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
            // mllBottom.setVisibility(view.VISIBLE);
             fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
             fragmentTransaction.commit();
-
         }
 
     }

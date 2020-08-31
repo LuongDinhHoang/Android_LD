@@ -44,6 +44,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private MediaPlaybackService mMediaPlaybackService;
     private ImageView mPlayMedia;
 
+    public void setVertical(boolean vertical) {
+        isVertical = vertical;
+    }
+    private  boolean isVertical;
+
 
     public void setListMedia(List<Song> mListMedia) {
         this.mListMedia = mListMedia;
@@ -105,7 +110,15 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
         mName.setText(Name);
         mArtist.setText(Artist);
-        mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        if(isVertical)
+        {
+            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
+        else {
+            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        }
 
 
         //  mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
@@ -195,7 +208,14 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     .load(songArt)
                     .error(R.drawable.background)
                     .into(mBackground);
-            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+            if(isVertical)
+            {
+                mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+            }
+            else {
+                mBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            }
 
 
         }
