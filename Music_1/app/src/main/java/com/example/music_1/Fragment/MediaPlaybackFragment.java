@@ -6,8 +6,9 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
-import android.app.Fragment;
-
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Services.MediaPlaybackService;
-import Services.SongManager;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.example.music_1.Fragment.AllSongsFragment.getAlbumArt;
@@ -95,32 +95,31 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mPlayMedia.setOnClickListener(this);
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
-
-        if (Image != null) {
-            final byte[] songArt = getAlbumArt(Image);
-            Glide.with(view.getContext()).asBitmap()
-                    .load(songArt)
-                    .error(R.drawable.cute)
-                    .into(mImage);
-            Glide.with(view.getContext()).asBitmap()
-                    .load(songArt)
-                    .error(R.drawable.background)
-                    .into(mBackground);
-        }
-
-        mName.setText(Name);
-        mArtist.setText(Artist);
-
-        if(isVertical)
-        {
-            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
-        }
-        else {
-            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
-
-        }
-
-
+//
+//        if (Image != null) {
+//            final byte[] songArt = getAlbumArt(Image);
+//            Glide.with(view.getContext()).asBitmap()
+//                    .load(songArt)
+//                    .error(R.drawable.cute)
+//                    .into(mImage);
+//            Glide.with(view.getContext()).asBitmap()
+//                    .load(songArt)
+//                    .error(R.drawable.background)
+//                    .into(mBackground);
+//        }
+//
+//        mName.setText(Name);
+//        mArtist.setText(Artist);
+//
+//        if(isVertical)
+//        {
+//            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+//        }
+//        else {
+//            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+//
+//        }
+        setData();
         //  mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
 
 
@@ -142,18 +141,18 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
                 mMediaPlaybackService = binder.getMusicService();
                 mListMedia= mMediaPlaybackService.getMediaManager().getmListSong();
-                if(mMediaPlaybackService != null)
-                {
-                    if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
-                        mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+//                if(mMediaPlaybackService != null)
+//                {
+//                    if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+//                        mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+//
+//                    } else {
+//                        mPlayMedia.setImageResource(R.drawable.ic_play_media);
+//                    }
+//                    //mIsConnect = true;
+//                }
 
-                    } else {
-                        mPlayMedia.setImageResource(R.drawable.ic_play_media);
-                    }
-                    //mIsConnect = true;
-                }
-
-                //setData();
+                setData();
 
             }
 
@@ -175,7 +174,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     private void updateUI() {
         if (mMediaPlaybackService != null) {
-
 //            tvDuration.setText(currentTime + "/" + totalTime);
 //            tvSongName.setText(song.getName());
 //            sbMusic.setMax(Integer.parseInt(song.getDuration()));
@@ -186,15 +184,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     ////////////////////////////////////
     public void setData() {
         if (mMediaPlaybackService != null) {
-
-
             if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
-                mPlayMedia.setImageResource(R.drawable.ic_play_media);
-
-            } else {
                 mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+            } else {
+                mPlayMedia.setImageResource(R.drawable.ic_play_media);
             }
-
             //int mCurrent = mMediaPlaybackService.getMediaManager().getCurrentSong();
             Log.d("HoangLD", "setData: "+mName);
             mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
@@ -210,11 +204,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     .into(mBackground);
             if(isVertical)
             {
-                mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+                mBackground.setScaleType(ImageView.ScaleType.CENTER);
             }
             else {
-                mBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
+                mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
             }
 
 
@@ -264,6 +257,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 Log.d("HoangLD", "onClick: next");
                 mMediaPlaybackService.getMediaManager().nextSong();
                 setData();
+                if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+                    mPlayMedia.setImageResource(R.drawable.ic_play_media);
+                } else {
+                    mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+                }
                 break;
 
 
@@ -271,6 +269,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
                 mMediaPlaybackService.getMediaManager().previousSong();
                 setData();
+                if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+                    mPlayMedia.setImageResource(R.drawable.ic_play_media);
+                } else {
+                    mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+                }
                 break;
         }
 

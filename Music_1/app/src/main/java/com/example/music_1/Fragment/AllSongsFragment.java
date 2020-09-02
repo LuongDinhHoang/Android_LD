@@ -1,7 +1,5 @@
 package com.example.music_1.Fragment;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -21,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -108,14 +108,11 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
             mMediaPlaybackService = binder.getMusicService();
             mMediaPlaybackService.getMediaManager().setListSong(mList);                     //đưa list vào list service nếu service chạy
             mMediaPlaybackService.getMedia().setListMedia(mList);
-            if(mMediaPlaybackService !=null)
+            if(mMediaPlaybackService !=null && mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
             {
                 if(isVertical)
                 {
-                    if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying() )
-                    {
-                        mllBottom.setVisibility(View.VISIBLE);
-                    }
+                    mllBottom.setVisibility(View.VISIBLE);
                 }
                 else {
                     mllBottom.setVisibility(View.GONE);
@@ -127,21 +124,17 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
                 }
                 mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
                 mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
-//                final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+//                byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
 //                Glide.with(getContext()).asBitmap()
-//                        .load(songArt)
 //                        .error(R.drawable.cute)
+//                        .load(songArt)
 //                        .into(mImagePlay);
-                if(mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
-                {
-                    mllBottom.setVisibility(View.VISIBLE);
                     for (int i = 0; i < mList.size(); i++) {
                         mList.get(i).setPlay(false);
                     }
                     Log.d("HoangLD", "onServiceConnected: current " + mMediaPlaybackService.getMediaManager().getCurrentSong());
                     mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
                     mAdapter.notifyDataSetChanged();
-                }
 
             }
 
@@ -186,10 +179,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
             if(isVertical )
             {
                     mllBottom.setVisibility(View.VISIBLE);
-            }
-            if(!isVertical)
-            {
-                mllBottom.setVisibility(View.GONE);
             }
 
             mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());

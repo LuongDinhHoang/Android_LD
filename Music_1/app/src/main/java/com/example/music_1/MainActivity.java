@@ -2,10 +2,10 @@ package com.example.music_1;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private  int mOrientation;
-    FragmentManager fragmentManager = getFragmentManager();
+    FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
     AllSongsFragment allSongsFragment =new AllSongsFragment();
     MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
