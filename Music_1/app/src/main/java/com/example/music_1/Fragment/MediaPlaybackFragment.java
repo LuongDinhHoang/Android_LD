@@ -42,7 +42,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
     private MediaPlaybackService mMediaPlaybackService;
-    private ImageView mPlayMedia;
+    private ImageView mPlayMedia,mButtonShuffle,mButtonRepeat;
 
     public void setVertical(boolean vertical) {
         isVertical = vertical;
@@ -92,6 +92,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mBackMedia = view.findViewById(R.id.btn_pre_media);
         mPlayMedia = view.findViewById(R.id.PlayMedia);
         mBackground = view.findViewById(R.id.background_Image);
+        mButtonShuffle=view.findViewById(R.id.button_Shuffle);
+        mButtonRepeat=view.findViewById(R.id.button_Repeat);
+        mButtonRepeat.setOnClickListener(this);
+        mButtonShuffle.setOnClickListener(this);
         mPlayMedia.setOnClickListener(this);
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
@@ -274,6 +278,17 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 } else {
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
+                break;
+            case R.id.button_Shuffle:
+                if(mMediaPlaybackService.getMediaManager().getShuffle())
+                {
+                    mButtonShuffle.setImageResource(R.drawable.ic_play_shuffle_orange);
+                    mMediaPlaybackService.getMediaManager().setShuffle(false);
+                }else {
+                    mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
+                    mMediaPlaybackService.getMediaManager().setShuffle(true);
+                }
+
                 break;
         }
 

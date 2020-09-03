@@ -92,24 +92,26 @@
         android:layout_above="@+id/ll_bottom"
         android:orientation="vertical">
 
-        <Button
+        <ImageView
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_alignParentBottom="true"
             android:layout_margin="32dp"
+            android:id="@+id/button_Repeat"
             android:background="@drawable/ic_repeat_white">
 
-        </Button>
+        </ImageView>
 
-        <Button
+        <ImageView
             android:layout_width="25dp"
             android:layout_height="25dp"
+            android:id="@+id/button_Shuffle"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_margin="32dp"
             android:background="@drawable/ic_shuffle_white">
 
-        </Button>
+        </ImageView>
 
 
     </RelativeLayout>

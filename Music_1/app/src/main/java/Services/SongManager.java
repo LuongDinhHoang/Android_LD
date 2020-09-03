@@ -25,11 +25,20 @@ public class SongManager{
     private final int STATUS_STOP = 4;
     private boolean StatusPlaying;
 
+
     public void setListSong(List<Song> mListSong) {
         this.mListSong = mListSong;
     }
 
+    public boolean getShuffle() {
+        return isShuffle;
+    }
 
+    public void setShuffle(boolean shuffle) {
+        isShuffle = shuffle;
+    }
+
+    public boolean isShuffle = false;
 
     public List<Song> getmListSong() {
         return mListSong;
