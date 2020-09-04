@@ -18,10 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -42,11 +42,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Services.MediaPlaybackService;
+import Services.SongManager;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
 
-public class AllSongsFragment extends Fragment implements View.OnClickListener {
+public class AllSongsFragment extends Fragment implements View.OnClickListener, SongManager.SongManageListener {
     private RecyclerView mRecycle;
     private List<Song> mList;
     private SongAdapter mAdapter;
@@ -55,6 +56,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
     private ImageView mImagePlay;
     private TextView mNameSongPlay, mSongArtistPlay, mSongID;
     private ImageView mBtnPlay;
+    private View view;
     private MediaPlaybackService mMediaPlaybackService;
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
@@ -64,18 +66,19 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
             mHandler.postDelayed(this, 300);
         }
     };
+    private boolean mIsBound;
 
     public void setCheck(boolean mCheck) {
         this.isVertical = mCheck;
     }
 
-    private  boolean isVertical;
+    private boolean isVertical;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_all_songs, container, false);
-        initView(view);
+         view = inflater.inflate(R.layout.fragment_all_songs, container, false);
+        initView();
         setService();
 
         return view;
@@ -93,7 +96,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
     private void setService() {
         Intent intent = new Intent(getActivity(), MediaPlaybackService.class);
         getActivity().startService(intent);
@@ -108,13 +110,12 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
             mMediaPlaybackService = binder.getMusicService();
             mMediaPlaybackService.getMediaManager().setListSong(mList);                     //đưa list vào list service nếu service chạy
             mMediaPlaybackService.getMedia().setListMedia(mList);
-            if(mMediaPlaybackService !=null && mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
-            {
-                if(isVertical)
-                {
+            mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
+//            if(mIsBound){
+            if (mMediaPlaybackService != null && mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+                if (isVertical) {
                     mllBottom.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     mllBottom.setVisibility(View.GONE);
                 }
                 if (!mMediaPlaybackService.getMediaManager().isStatusPlaying()) {
@@ -122,26 +123,19 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
                 } else {
                     mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
                 }
-                mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
-                mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
-//                byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
-//                Glide.with(getContext()).asBitmap()
-//                        .error(R.drawable.cute)
-//                        .load(songArt)
-//                        .into(mImagePlay);
-                    for (int i = 0; i < mList.size(); i++) {
-                        mList.get(i).setPlay(false);
-                    }
-                    Log.d("HoangLD", "onServiceConnected: current " + mMediaPlaybackService.getMediaManager().getCurrentSong());
-                    mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
-                    mAdapter.notifyDataSetChanged();
+               UpdateUI();
+                mAdapter.notifyDataSetChanged();
 
+//                }
             }
+
+            mIsBound = true;
 
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            mIsBound = false;
             mMediaPlaybackService = null;
         }
     };
@@ -157,7 +151,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
     }
 
     ////////////////////////////////////
-    private void initView(final View view) {
+    private void initView() {
         mList = new ArrayList<>();
         getSong();
         mSongID = view.findViewById(R.id.Song_Id);
@@ -176,27 +170,11 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
         mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
         if (mMediaPlaybackService != null) {
-            if(isVertical )
-            {
-                    mllBottom.setVisibility(View.VISIBLE);
+            if (isVertical) {
+                mllBottom.setVisibility(View.VISIBLE);
             }
 
-            mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
-            mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
-            final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
-            Glide.with(view.getContext()).asBitmap()
-                    .load(songArt)
-                    .error(R.drawable.cute)
-                    .into(mImagePlay);
-            for (int i = 0; i < mList.size(); i++) {
-                mList.get(i).setPlay(false);
-            }
-            if (!mMediaPlaybackService.getMediaManager().isStatusPlaying()) {
-                mBtnPlay.setImageResource(R.drawable.ic_play_black);
-            } else {
-                mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
-            }
-            mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
+            UpdateUI();
             mAdapter.notifyDataSetChanged();
 
         }
@@ -216,8 +194,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
                     mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
                     //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
                 }
-                if(isVertical)
-                {
+                if (isVertical) {
                     mllBottom.setVisibility(View.VISIBLE);
                     mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
                     mSongArtistPlay.setText(song.getSongArtist());
@@ -228,9 +205,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
                             .into(mImagePlay);
                     //////////////
                     mPosition = pos;
-                }
-                else
-                {
+                } else {
                     mllBottom.setVisibility(View.GONE);
                     TextView mNameMedia = getActivity().findViewById(R.id.NameSong);
                     TextView mArtistMedia = getActivity().findViewById(R.id.ArtistSong);
@@ -262,7 +237,25 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
 
 
     }
-
+    public  void UpdateUI()
+    {
+        mNameSongPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
+        mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
+        final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
+        Glide.with(view.getContext()).asBitmap()
+                .load(songArt)
+                .error(R.drawable.cute)
+                .into(mImagePlay);
+        for (int i = 0; i < mList.size(); i++) {
+            mList.get(i).setPlay(false);
+        }
+        if (!mMediaPlaybackService.getMediaManager().isStatusPlaying()) {
+            mBtnPlay.setImageResource(R.drawable.ic_play_black);
+        } else {
+            mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
+        }
+        mList.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).setPlay(true);
+    }
     public static byte[] getAlbumArt(String uri) {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(uri);
@@ -327,13 +320,10 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public static int savePos;
+    @Override
+    public void updateUiSongPlay(int pos) {
+        UpdateUI();
+        mAdapter.notifyDataSetChanged();
 
-    public static int getSavePos() {
-        return savePos;
-    }
-
-    public static void setSavePos(int savePos) {
-        AllSongsFragment.savePos = savePos;
     }
 }

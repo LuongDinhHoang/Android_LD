@@ -17,7 +17,7 @@ import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MediaPlaybackService extends Service  implements MediaPlayer.OnCompletionListener {
+public class MediaPlaybackService extends Service   {
     private SongManager mSongManager;
 
     public MediaPlaybackFragment getMedia() {
@@ -91,11 +91,5 @@ public class MediaPlaybackService extends Service  implements MediaPlayer.OnComp
         return mSongManager;
     }
 
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        int pos = mSongManager.getCurrentSong();
-        pos++;
-        mediaPlayer.reset();
-        mSongManager.playSong(mSongManager.getListSong().get(pos).getSongImage());
-    }
+
 }

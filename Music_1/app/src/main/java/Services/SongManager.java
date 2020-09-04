@@ -1,20 +1,21 @@
 package Services;
 
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
 
-import com.example.music_1.Fragment.AllSongsFragment;
+
 import com.example.music_1.Model.Song;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class SongManager{
+public class SongManager {
 
-
+    public static final String SONG_PLAY_COMPLETE = "song_play_complete";
+    public static final String MESSAGE_SONG_PLAY_COMPLETE = "message_song_play_complete";
     private List<Song> mListSong = new ArrayList<>();
     private MediaPlayer mPlayer;
     private int currentSong;
@@ -38,7 +39,23 @@ public class SongManager{
         isShuffle = shuffle;
     }
 
-    public boolean isShuffle = false;
+    public boolean isRepeat() {
+        return isRepeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        isRepeat = repeat;
+    }
+
+    public boolean isRepeatAll() {
+        return isRepeatAll;
+    }
+
+    public void setRepeatAll(boolean repeatAll) {
+        isRepeatAll = repeatAll;
+    }
+
+    public boolean isShuffle,isRepeat=false,isRepeatAll =false;
 
     public List<Song> getmListSong() {
         return mListSong;
@@ -55,6 +72,7 @@ public class SongManager{
     public void setCurrentSong(int currentSong) {
         this.currentSong = currentSong;
     }
+
     public int getCurrentSong() {
         return currentSong;
     }
@@ -63,7 +81,7 @@ public class SongManager{
 
     private Context mContext;
 
-    public MediaPlayer getMediaPlayer(){
+    public MediaPlayer getMediaPlayer() {
         return mPlayer;
     }
 
@@ -83,6 +101,25 @@ public class SongManager{
                 currentStatus = STATUS_PLAYING;
             }
         });
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                String state = "play_normal" ;
+                if (currentSong >= mListSong.size() - 1) {
+                    currentSong = 0;
+                } else {
+                    currentSong++;
+                }
+                playSong(getListSong().get(currentSong).getSongImage());
+//                Intent intent = new Intent(SONG_PLAY_COMPLETE);
+//                intent.putExtra(MESSAGE_SONG_PLAY_COMPLETE,state);
+//                LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(intent);
+                if(mListener != null){
+                    mListener.updateUiSongPlay(currentSong);
+                }
+
+            }
+        });
     }
 
     public void playSong(String path) {
@@ -97,7 +134,7 @@ public class SongManager{
     }
 
     public void pauseSong() {
-        StatusPlaying=false;
+        StatusPlaying = false;
         mPlayer.pause();
     }
 
@@ -106,12 +143,13 @@ public class SongManager{
         mPlayer.reset();
         mPlayer.release();
     }
-    public  void resumeSong()
-    {
-        StatusPlaying=true;
+
+    public void resumeSong() {
+        StatusPlaying = true;
         mPlayer.start();
     }
-    public List<Song> getDataMusic(){
+
+    public List<Song> getDataMusic() {
         return mListSong;
     }
 
@@ -123,31 +161,47 @@ public class SongManager{
         mPlayer.seekTo(position);
     }
 
-
+    Random rd = new Random();
 
     public void nextSong() {
-        Log.d("HoangLD", "nextSong: "+currentSong);
-        if (currentSong >= mListSong.size() - 1) {
-            currentSong = 0;
-        } else {
-            currentSong++;
-        }
-        Log.d("HoangLD", "nextSong: "+currentSong);
+//        if (isShuffle) {
+//            int number = rd.nextInt(3);
+//            currentSong = currentSong + number;
+//        } else {
+            Log.d("HoangLD", "nextSong: ");
+            if (currentSong >= mListSong.size() - 1) {
+                currentSong = 0;
+            } else {
+                currentSong++;
+            }
+       // }
         playSong(mListSong.get(currentSong).getSongImage());
     }
 
     public void previousSong() {
-        Log.d("HoangLD", "previousSong1: "+currentSong);
-        if (currentSong <= 0) {
-            currentSong = mListSong.size() - 1;
-        } else {
-            currentSong--;
+        Log.d("HoangLD", "previousSong1: " + currentSong);
+//        if (isShuffle) {
+//            int number = rd.nextInt(3);
+//            currentSong = currentSong - number;
+//        } else {
+            if (currentSong <= 0) {
+                currentSong = mListSong.size() - 1;
+            } else {
+                currentSong--;
+//            }
         }
-        Log.d("HoangLD1", "previousSong2: "+currentSong);
+
+        Log.d("HoangLD1", "previousSong2: " + currentSong);
         playSong(mListSong.get(currentSong).getSongImage());
     }
 
+    public interface SongManageListener {
+        void updateUiSongPlay(int pos);
+    }
 
+    private SongManageListener mListener;
 
-
+    public void setListener(SongManageListener mListener) {
+        this.mListener = mListener;
+    }
 }

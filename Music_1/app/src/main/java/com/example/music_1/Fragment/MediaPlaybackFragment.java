@@ -27,12 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Services.MediaPlaybackService;
+import Services.SongManager;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 import static com.example.music_1.Fragment.AllSongsFragment.getAlbumArt;
 
 
-public class MediaPlaybackFragment extends Fragment implements View.OnClickListener {
+public class MediaPlaybackFragment extends Fragment implements View.OnClickListener , SongManager.SongManageListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -99,6 +100,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mPlayMedia.setOnClickListener(this);
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
+
+
 //
 //        if (Image != null) {
 //            final byte[] songArt = getAlbumArt(Image);
@@ -145,6 +148,14 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
                 mMediaPlaybackService = binder.getMusicService();
                 mListMedia= mMediaPlaybackService.getMediaManager().getmListSong();
+                mMediaPlaybackService.getMediaManager().setListener(MediaPlaybackFragment.this);//get vao
+                if(mMediaPlaybackService.getMediaManager().getShuffle())
+                {
+                    mButtonShuffle.setImageResource(R.drawable.ic_play_shuffle_orange);
+                }else {
+                    mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
+                }
+
 //                if(mMediaPlaybackService != null)
 //                {
 //                    if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
@@ -215,6 +226,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             }
 
 
+
         }
 
     }
@@ -245,6 +257,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+
         switch (view.getId()) {
             case R.id.PlayMedia: {
                 if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
@@ -282,11 +295,31 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             case R.id.button_Shuffle:
                 if(mMediaPlaybackService.getMediaManager().getShuffle())
                 {
-                    mButtonShuffle.setImageResource(R.drawable.ic_play_shuffle_orange);
+                    mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
                     mMediaPlaybackService.getMediaManager().setShuffle(false);
                 }else {
-                    mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
+                    mButtonShuffle.setImageResource(R.drawable.ic_play_shuffle_orange);
                     mMediaPlaybackService.getMediaManager().setShuffle(true);
+                }
+
+                break;
+            case R.id.button_Repeat:
+                if(mMediaPlaybackService.getMediaManager().isRepeatAll())
+                {
+                    mMediaPlaybackService.getMediaManager().setRepeat(false);
+                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_white);
+                    mMediaPlaybackService.getMediaManager().setRepeatAll(false);
+                }else if(mMediaPlaybackService.getMediaManager().isRepeat) {
+
+                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_dark_selected);
+                    mMediaPlaybackService.getMediaManager().setRepeatAll(true);
+                    mMediaPlaybackService.getMediaManager().setRepeat(false);
+                }
+                else
+                {
+                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
+                    mMediaPlaybackService.getMediaManager().setRepeat(true);
+                    mMediaPlaybackService.getMediaManager().setRepeatAll(false);
                 }
 
                 break;
@@ -298,5 +331,16 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void updateUiSongPlay(int pos) {
+        setData();
+        if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+            mPlayMedia.setImageResource(R.drawable.ic_play_media);
+        } else {
+            mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+        }
+
     }
 }
