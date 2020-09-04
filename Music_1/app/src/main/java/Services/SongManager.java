@@ -104,16 +104,32 @@ public class SongManager {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                String state = "play_normal" ;
-                if (currentSong >= mListSong.size() - 1) {
-                    currentSong = 0;
-                } else {
-                    currentSong++;
+                Random rd = new Random();
+                int random = rd.nextInt(5);
+                Log.d("TAG", "onCompletion: "+isShuffle);
+                if(isShuffle)
+                {
+                    currentSong=currentStatus+random;
+                    if(currentSong>= mListSong.size() - 1)
+                    {
+                        currentSong = 0;
+                    }
+                }else
+                {
+                    if (currentSong >= mListSong.size() - 1) {
+                        currentSong = 0;
+                    } else {
+                        currentSong++;
+                    }
                 }
+                if(isRepeatAll)
+                {
+                    currentSong--;
+                }
+                else if(isRepeat)
+                {}
+
                 playSong(getListSong().get(currentSong).getSongImage());
-//                Intent intent = new Intent(SONG_PLAY_COMPLETE);
-//                intent.putExtra(MESSAGE_SONG_PLAY_COMPLETE,state);
-//                LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(intent);
                 if(mListener != null){
                     mListener.updateUiSongPlay(currentSong);
                 }

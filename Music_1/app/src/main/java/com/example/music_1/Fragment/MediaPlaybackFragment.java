@@ -155,6 +155,15 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 }else {
                     mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
                 }
+                if(mMediaPlaybackService.getMediaManager().isRepeat)
+                {
+                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
+                }
+                if (mMediaPlaybackService.getMediaManager().isRepeatAll)
+                {
+                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_dark_selected);
+
+                }
 
 //                if(mMediaPlaybackService != null)
 //                {
