@@ -292,7 +292,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                     mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false));
                 } while (songCursor.moveToNext());
             }
-
         }
     }
 

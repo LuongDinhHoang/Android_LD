@@ -124,6 +124,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ll_bottom"
         android:layout_weight="1.5"
+        android:layout_marginLeft="-15dp"
+        android:layout_marginRight="-15dp"
+        android:progress="30"
         android:background="#A9FFFFFF"
         android:progressTint="#F44336"
         android:thumbTint="#F44336">
