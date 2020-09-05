@@ -92,6 +92,9 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onResume() {
+        if(mIsBound) {
+            mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
+        }
         super.onResume();
     }
 
@@ -110,7 +113,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
             mMediaPlaybackService = binder.getMusicService();
             mMediaPlaybackService.getMediaManager().setListSong(mList);                     //đưa list vào list service nếu service chạy
             mMediaPlaybackService.getMedia().setListMedia(mList);
-            mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
 //            if(mIsBound){
             if (mMediaPlaybackService != null && mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
                 if (isVertical) {
@@ -128,7 +130,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 
 //                }
             }
-
+            mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
             mIsBound = true;
 
         }
@@ -169,6 +171,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 
         mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
+        //mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
         if (mMediaPlaybackService != null) {
             if (isVertical) {
                 mllBottom.setVisibility(View.VISIBLE);
@@ -211,10 +214,13 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                     TextView mArtistMedia = getActivity().findViewById(R.id.ArtistSong);
                     ImageView mImageMedia = getActivity().findViewById(R.id.ImagePlaying);
                     ImageView mImageBackground = getActivity().findViewById(R.id.background_Image);
+                    TextView mTimeEnd = getActivity().findViewById(R.id.end_time);
+
 
 
                     mArtistMedia.setText(song.getSongArtist());
                     mNameMedia.setText(song.getSongName());
+                    mTimeEnd.setText(song.getTimeDurationString(song.getSongTime()));
                     byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
                     Glide.with(view.getContext()).asBitmap()
                             .load(songArt)
@@ -317,11 +323,12 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
             }
         }
 
-
     }
 
     @Override
     public void updateUiSongPlay(int pos) {
+        Log.d("HoangLDpp", "updateUiSongPlay: "+pos);
+        mPosition = pos;
         UpdateUI();
         mAdapter.notifyDataSetChanged();
 

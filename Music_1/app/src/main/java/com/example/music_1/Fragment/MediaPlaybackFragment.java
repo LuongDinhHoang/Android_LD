@@ -6,9 +6,10 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
+
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -33,7 +34,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 import static com.example.music_1.Fragment.AllSongsFragment.getAlbumArt;
 
 
-public class MediaPlaybackFragment extends Fragment implements View.OnClickListener , SongManager.SongManageListener {
+public class MediaPlaybackFragment extends Fragment implements View.OnClickListener, SongManager.SongManageListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,12 +44,13 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
     private MediaPlaybackService mMediaPlaybackService;
-    private ImageView mPlayMedia,mButtonShuffle,mButtonRepeat;
+    private ImageView mPlayMedia, mButtonShuffle, mButtonRepeat, mButtonList;
 
     public void setVertical(boolean vertical) {
         isVertical = vertical;
     }
-    private  boolean isVertical;
+
+    private boolean isVertical;
 
 
     public void setListMedia(List<Song> mListMedia) {
@@ -57,6 +59,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     private List<Song> mListMedia = new ArrayList<>();
     private ImageButton mNextMedia, mBackMedia;
+    private TextView mEndTime;
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override
@@ -93,8 +96,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mBackMedia = view.findViewById(R.id.btn_pre_media);
         mPlayMedia = view.findViewById(R.id.PlayMedia);
         mBackground = view.findViewById(R.id.background_Image);
-        mButtonShuffle=view.findViewById(R.id.button_Shuffle);
-        mButtonRepeat=view.findViewById(R.id.button_Repeat);
+        mButtonShuffle = view.findViewById(R.id.button_Shuffle);
+        mButtonRepeat = view.findViewById(R.id.button_Repeat);
+        mButtonList = view.findViewById(R.id.btn_backList);
+        mEndTime = view.findViewById(R.id.end_time);
+        mButtonList.setOnClickListener(this);
         mButtonRepeat.setOnClickListener(this);
         mButtonShuffle.setOnClickListener(this);
         mPlayMedia.setOnClickListener(this);
@@ -134,7 +140,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onStart() {
-        if(mServiceConnection == null) {
+        if (mServiceConnection == null) {
 
             setService();
         }
@@ -147,20 +153,17 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             public void onServiceConnected(ComponentName name, IBinder service) {
                 MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
                 mMediaPlaybackService = binder.getMusicService();
-                mListMedia= mMediaPlaybackService.getMediaManager().getmListSong();
+                mListMedia = mMediaPlaybackService.getMediaManager().getmListSong();
                 mMediaPlaybackService.getMediaManager().setListener(MediaPlaybackFragment.this);//get vao
-                if(mMediaPlaybackService.getMediaManager().getShuffle())
-                {
+                if (mMediaPlaybackService.getMediaManager().getShuffle()) {
                     mButtonShuffle.setImageResource(R.drawable.ic_play_shuffle_orange);
-                }else {
+                } else {
                     mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
                 }
-                if(mMediaPlaybackService.getMediaManager().isRepeat)
-                {
+                if (mMediaPlaybackService.getMediaManager().isRepeat) {
                     mButtonRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
                 }
-                if (mMediaPlaybackService.getMediaManager().isRepeatAll)
-                {
+                if (mMediaPlaybackService.getMediaManager().isRepeatAll) {
                     mButtonRepeat.setImageResource(R.drawable.ic_repeat_dark_selected);
 
                 }
@@ -204,7 +207,16 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 //            sbMusic.setProgress(currentPosition);
         }
     }
+    public  String getTimeDurationString(long s )
+    {
 
+//        String mm = String.valueOf(mSongTime/60000);
+        String seconds = String.valueOf((s/1000) % 60);
+        String minutes = String.valueOf((s/1000) / 60);
+        if (minutes.length() <= 1) minutes = "0" + minutes;
+        if (seconds.length() <= 1) seconds = "0" + seconds;
+        return minutes +":"+seconds;
+    }
     ////////////////////////////////////
     public void setData() {
         if (mMediaPlaybackService != null) {
@@ -214,9 +226,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 mPlayMedia.setImageResource(R.drawable.ic_play_media);
             }
             //int mCurrent = mMediaPlaybackService.getMediaManager().getCurrentSong();
-            Log.d("HoangLD", "setData: "+mName);
+            Log.d("HoangLD", "setData: " + mName);
             mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
             mArtist.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
+            mEndTime.setText(getTimeDurationString(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongTime()));
             final byte[] songArt = getAlbumArt(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongImage());
             Glide.with(view.getContext()).asBitmap()
                     .load(songArt)
@@ -226,14 +239,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     .load(songArt)
                     .error(R.drawable.background)
                     .into(mBackground);
-            if(isVertical)
-            {
+            if (isVertical) {
                 mBackground.setScaleType(ImageView.ScaleType.CENTER);
-            }
-            else {
+            } else {
                 mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
             }
-
 
 
         }
@@ -302,39 +312,36 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 }
                 break;
             case R.id.button_Shuffle:
-                if(mMediaPlaybackService.getMediaManager().getShuffle())
-                {
+                if (mMediaPlaybackService.getMediaManager().getShuffle()) {
                     mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
                     mMediaPlaybackService.getMediaManager().setShuffle(false);
-                }else {
+                } else {
                     mButtonShuffle.setImageResource(R.drawable.ic_play_shuffle_orange);
                     mMediaPlaybackService.getMediaManager().setShuffle(true);
                 }
 
                 break;
             case R.id.button_Repeat:
-                if(mMediaPlaybackService.getMediaManager().isRepeatAll())
-                {
+                if (mMediaPlaybackService.getMediaManager().isRepeat()) {
                     mMediaPlaybackService.getMediaManager().setRepeat(false);
                     mButtonRepeat.setImageResource(R.drawable.ic_repeat_white);
                     mMediaPlaybackService.getMediaManager().setRepeatAll(false);
-                }else if(mMediaPlaybackService.getMediaManager().isRepeat) {
-
+                } else if (mMediaPlaybackService.getMediaManager().isRepeatAll) {
+                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
+                    mMediaPlaybackService.getMediaManager().setRepeat(true);
+                    mMediaPlaybackService.getMediaManager().setRepeatAll(false);
+                } else {
                     mButtonRepeat.setImageResource(R.drawable.ic_repeat_dark_selected);
                     mMediaPlaybackService.getMediaManager().setRepeatAll(true);
                     mMediaPlaybackService.getMediaManager().setRepeat(false);
                 }
-                else
-                {
-                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
-                    mMediaPlaybackService.getMediaManager().setRepeat(true);
-                    mMediaPlaybackService.getMediaManager().setRepeatAll(false);
-                }
 
                 break;
+            case R.id.btn_backList:
+                getActivity().getSupportFragmentManager().popBackStack();
+                ((AppCompatActivity) getActivity()).getSupportActionBar().show();// hide action bar
+
         }
-
-
     }
 
     @Override
@@ -352,4 +359,5 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         }
 
     }
+
 }

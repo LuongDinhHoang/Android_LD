@@ -4,19 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
-import android.widget.FrameLayout;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.music_1.Fragment.AllSongsFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
 
     public boolean mCheck;
@@ -91,4 +89,6 @@ public class MainActivity extends AppCompatActivity {
         /*AllSongsFragment.savePos*/
        // allSongsFragment.set
     }
+
+
 }

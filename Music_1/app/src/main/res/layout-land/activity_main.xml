@@ -9,11 +9,9 @@
 
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar"></include>
-
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_below="@+id/toolbar"
-    android:weightSum="5"
     android:layout_height="match_parent">
 
     <FrameLayout

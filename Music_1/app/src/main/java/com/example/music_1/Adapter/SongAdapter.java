@@ -80,6 +80,10 @@ private int mPossition = -1;
 
         }
 
+        public TextView getSongTime() {
+            return mSongTime;
+        }
+
         public void binData(final Song song , final int pos) {
             int a;
             mSongName.setText(song.getSongName()+"");
@@ -104,6 +108,7 @@ private int mPossition = -1;
         }
 
     }
+
     public  interface  IIClick
     {
         void ItemClick(Song song,int pos);

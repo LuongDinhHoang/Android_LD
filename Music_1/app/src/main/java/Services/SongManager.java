@@ -24,6 +24,7 @@ public class SongManager {
     private final int STATUS_PLAYING = 2;
     private final int STATUS_PAUSED = 3;
     private final int STATUS_STOP = 4;
+    private boolean mRepeat = false;
     private boolean StatusPlaying;
 
 
@@ -55,7 +56,7 @@ public class SongManager {
         isRepeatAll = repeatAll;
     }
 
-    public boolean isShuffle,isRepeat=false,isRepeatAll =false;
+    public boolean isShuffle, isRepeat = false, isRepeatAll = false;
 
     public List<Song> getmListSong() {
         return mListSong;
@@ -104,34 +105,42 @@ public class SongManager {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
+
                 Random rd = new Random();
-                int random = rd.nextInt(5);
-                Log.d("TAG", "onCompletion: "+isShuffle);
-                if(isShuffle)
-                {
-                    currentSong=currentStatus+random;
-                    if(currentSong>= mListSong.size() - 1)
-                    {
-                        currentSong = 0;
+                int random = rd.nextInt(2);
+                Log.d("TAG", "onCompletion: " + isShuffle);
+                if (isShuffle) {
+                    if ( isRepeat) {
+                        currentSong = currentSong;
+                    } else {
+                        currentSong = currentSong + random;
+                        if (currentSong >= mListSong.size() - 1) {
+                            currentSong = 0;
+                        }
                     }
-                }else
-                {
+
+                } else {
                     if (currentSong >= mListSong.size() - 1) {
                         currentSong = 0;
                     } else {
                         currentSong++;
                     }
                 }
-                if(isRepeatAll)
-                {
-                    currentSong--;
-                }
-                else if(isRepeat)
-                {}
+                if (isRepeatAll) {
+                    if (currentSong >= mListSong.size() - 1) {
+                        currentSong = 0;
+                    }
+                    Log.d("HoangLD", "RepeatAll"+currentSong);
 
+                } else if (isRepeat) {
+                    Log.d("HoangLD", "Repeat: ");
+                    currentSong --;
+                }
                 playSong(getListSong().get(currentSong).getSongImage());
-                if(mListener != null){
+                if (mListener != null) {
+                    Log.d("HoangLD", "nhay");
                     mListener.updateUiSongPlay(currentSong);
+                    setCurrentSong(currentSong);
                 }
 
             }
@@ -184,13 +193,13 @@ public class SongManager {
 //            int number = rd.nextInt(3);
 //            currentSong = currentSong + number;
 //        } else {
-            Log.d("HoangLD", "nextSong: ");
-            if (currentSong >= mListSong.size() - 1) {
-                currentSong = 0;
-            } else {
-                currentSong++;
-            }
-       // }
+        Log.d("HoangLD", "nextSong: ");
+        if (currentSong >= mListSong.size() - 1) {
+            currentSong = 0;
+        } else {
+            currentSong++;
+        }
+        // }
         playSong(mListSong.get(currentSong).getSongImage());
     }
 
@@ -200,10 +209,10 @@ public class SongManager {
 //            int number = rd.nextInt(3);
 //            currentSong = currentSong - number;
 //        } else {
-            if (currentSong <= 0) {
-                currentSong = mListSong.size() - 1;
-            } else {
-                currentSong--;
+        if (currentSong <= 0) {
+            currentSong = mListSong.size() - 1;
+        } else {
+            currentSong--;
 //            }
         }
 
