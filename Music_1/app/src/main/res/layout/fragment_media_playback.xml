@@ -123,6 +123,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ll_bottom"
+        android:id="@+id/media_seek_bar"
         android:layout_weight="1.5"
         android:layout_marginLeft="-15dp"
         android:layout_marginRight="-15dp"

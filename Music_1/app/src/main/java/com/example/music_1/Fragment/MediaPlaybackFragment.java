@@ -12,12 +12,14 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -59,15 +61,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     private List<Song> mListMedia = new ArrayList<>();
     private ImageButton mNextMedia, mBackMedia;
-    private TextView mEndTime;
-    private Handler mHandler = new Handler();
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            updateUI();
-            mHandler.postDelayed(this, 300);
-        }
-    };
+    private TextView mEndTime,mStartTime;
+
+
+    private SeekBar mMediaSeekBar;
+    private UpdateSeekBarThread mUpdateSeekBarThread;
 
 
     // TODO: Rename and change types of parameters
@@ -100,6 +98,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mButtonRepeat = view.findViewById(R.id.button_Repeat);
         mButtonList = view.findViewById(R.id.btn_backList);
         mEndTime = view.findViewById(R.id.end_time);
+        mStartTime=view.findViewById(R.id.start_time);
+//        mMediaSeekBar.setMax((int) (mSongCurrentDuration));
+//        mMediaSeekBar.setProgress((int) (mSongCurrentStreamPossition));
+        mMediaSeekBar = view.findViewById(R.id.media_seek_bar);
         mButtonList.setOnClickListener(this);
         mButtonRepeat.setOnClickListener(this);
         mButtonShuffle.setOnClickListener(this);
@@ -107,32 +109,25 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
 
-
-//
-//        if (Image != null) {
-//            final byte[] songArt = getAlbumArt(Image);
-//            Glide.with(view.getContext()).asBitmap()
-//                    .load(songArt)
-//                    .error(R.drawable.cute)
-//                    .into(mImage);
-//            Glide.with(view.getContext()).asBitmap()
-//                    .load(songArt)
-//                    .error(R.drawable.background)
-//                    .into(mBackground);
-//        }
-//
-//        mName.setText(Name);
-//        mArtist.setText(Artist);
-//
-//        if(isVertical)
-//        {
-//            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
-//        }
-//        else {
-//            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
-//
-//        }
         setData();
+        mMediaSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (mMediaPlaybackService != null && b) {
+                    mMediaPlaybackService.getMediaManager().seekTo(i);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         //  mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
 
 
@@ -145,6 +140,12 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             setService();
         }
         super.onStart();
+    }
+
+    @Override
+    public void onDestroy() {
+        mUpdateSeekBarThread.exit();
+        super.onDestroy();
     }
 
     private void setService() {
@@ -165,19 +166,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 }
                 if (mMediaPlaybackService.getMediaManager().isRepeatAll) {
                     mButtonRepeat.setImageResource(R.drawable.ic_repeat_dark_selected);
-
                 }
-
-//                if(mMediaPlaybackService != null)
-//                {
-//                    if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
-//                        mPlayMedia.setImageResource(R.drawable.ic_pause_media);
-//
-//                    } else {
-//                        mPlayMedia.setImageResource(R.drawable.ic_play_media);
-//                    }
-//                    //mIsConnect = true;
-//                }
 
                 setData();
 
@@ -192,7 +181,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         Intent intent = new Intent(getActivity(), MediaPlaybackService.class);
         getActivity().startService(intent);
         getActivity().bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
-        mHandler.postDelayed(runnable, 300);
     }
 
     private boolean mIsConnect;
@@ -201,12 +189,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     private void updateUI() {
         if (mMediaPlaybackService != null) {
-//            tvDuration.setText(currentTime + "/" + totalTime);
-//            tvSongName.setText(song.getName());
-//            sbMusic.setMax(Integer.parseInt(song.getDuration()));
-//            sbMusic.setProgress(currentPosition);
+//
         }
     }
+
     public  String getTimeDurationString(long s )
     {
 
@@ -225,6 +211,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             } else {
                 mPlayMedia.setImageResource(R.drawable.ic_play_media);
             }
+//            mStartTime.setText(getTimeDurationString(mSongCurrentDuration));
+//            mEndTime.setText(getTimeDurationString(mSongCurrentDuration));
             //int mCurrent = mMediaPlaybackService.getMediaManager().getCurrentSong();
             Log.d("HoangLD", "setData: " + mName);
             mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
@@ -244,10 +232,17 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             } else {
                 mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
             }
+            UpdateUIRunSeeBar();
 
 
         }
 
+    }
+    public  void UpdateUIRunSeeBar()
+    {
+        if (mMediaPlaybackService != null) {
+            mUpdateSeekBarThread.updateSeekBar();
+        }
     }
 
     // TODO: Rename and change types and number of parameters
@@ -262,6 +257,56 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         fragment.setArguments(args);
         return fragment;
     }
+    public class UpdateSeekBarThread extends Thread {
+        private Handler handler;
+
+        @Override
+        public void run() {
+            super.run();
+            Looper.prepare();
+            handler = new Handler();
+            Looper.loop();
+        }
+
+        public void updateSeekBar() {
+            if (mMediaPlaybackService != null) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
+                            while (mMediaPlaybackService.getMediaManager().getPlayer() != null) {
+                                try {
+                                    long current = -1;
+                                    try {
+                                        current = mMediaPlaybackService.getMediaManager().getCurrentStreamPosition();
+                                    } catch (IllegalStateException e) {
+//                                    e.printStackTrace();
+                                    }
+                                    if (getActivity() != null) {
+                                        final long finalCurrent = current;
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mMediaSeekBar.setMax((int) (mMediaPlaybackService.getMediaManager().getDuration()));
+                                                mMediaSeekBar.setProgress((int) (finalCurrent));
+                                                mStartTime.setText(getTimeDurationString(finalCurrent));
+                                            }
+                                        });
+                                    }
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        public void exit() {
+            handler.getLooper().quit();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -271,6 +316,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             Artist = getArguments().getString(ARG_PARAM2);
             Image = getArguments().getString(ARG_PARAM3);
         }
+        mUpdateSeekBarThread = new UpdateSeekBarThread();
+        mUpdateSeekBarThread.start();
     }
 
 
@@ -299,7 +346,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
                 break;
-
 
             case R.id.btn_pre_media:
 
@@ -351,13 +397,13 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void updateUiSongPlay(int pos) {
+        Log.d("HoangLD", "updateUiSongPlay:media");
         setData();
         if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
             mPlayMedia.setImageResource(R.drawable.ic_play_media);
         } else {
             mPlayMedia.setImageResource(R.drawable.ic_pause_media);
         }
-
     }
 
 }

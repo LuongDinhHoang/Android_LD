@@ -77,6 +77,12 @@ public class SongManager {
     public int getCurrentSong() {
         return currentSong;
     }
+    public  int getCurrentStreamPosition(){
+        if(mPlayer!=null)
+            return mPlayer.getCurrentPosition();  //trả về vtri đang phát
+
+        return 0;
+    }
 
     //private AllSongsFragment allSongsFragment = new AllSongsFragment();
 
@@ -173,6 +179,12 @@ public class SongManager {
         StatusPlaying = true;
         mPlayer.start();
     }
+    public long getDuration(){
+        if(mPlayer!=null)
+            return mPlayer.getDuration();      //trả về vtri cuối
+
+        return 0;
+    }
 
     public List<Song> getDataMusic() {
         return mListSong;
@@ -185,6 +197,7 @@ public class SongManager {
     public void seekTo(int position) {
         mPlayer.seekTo(position);
     }
+
 
     Random rd = new Random();
 
@@ -223,7 +236,6 @@ public class SongManager {
     public interface SongManageListener {
         void updateUiSongPlay(int pos);
     }
-
     private SongManageListener mListener;
 
     public void setListener(SongManageListener mListener) {
