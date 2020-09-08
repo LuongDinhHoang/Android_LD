@@ -179,11 +179,14 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
         //mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
-        if (mMediaPlaybackService != null) {
-            if (isVertical) {
-                mllBottom.setVisibility(View.VISIBLE);
-            }
-            mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
+        Log.d("HoangLD", "initView: alll"+isVertical);
+
+
+            if (mMediaPlaybackService != null) {
+                if (isVertical) {
+                    mllBottom.setVisibility(View.VISIBLE);
+                }
+                mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
 
             UpdateUI();
             mAdapter.notifyDataSetChanged();
@@ -319,6 +322,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 ((AppCompatActivity) getActivity()).getSupportActionBar().hide();// hide action bar
                 MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(), song.getSongArtist(), song.getSongImage());
                 fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);
+                mediaPlaybackFragment.setVertical(true);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }

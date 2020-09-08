@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity  {
         mOrientation = getResources().getConfiguration().orientation;
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
             allSongsFragment.setCheck(true);
-            mediaPlaybackFragment.setVertical(true);
             fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
             fragmentTransaction.commit();
         }

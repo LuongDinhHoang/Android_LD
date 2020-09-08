@@ -113,7 +113,7 @@ public class SongManager {
             public void onCompletion(MediaPlayer mediaPlayer) {
 
                 Random rd = new Random();
-                int random = rd.nextInt(2);
+                int random = rd.nextInt(8);
                 Log.d("TAG", "onCompletion: " + isShuffle);
                 if (isShuffle) {
                     if ( isRepeat) {

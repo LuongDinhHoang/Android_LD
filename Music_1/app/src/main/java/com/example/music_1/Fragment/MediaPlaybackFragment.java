@@ -51,7 +51,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public void setVertical(boolean vertical) {
         isVertical = vertical;
     }
-
     private boolean isVertical;
 
 
@@ -108,7 +107,13 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mPlayMedia.setOnClickListener(this);
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
-
+        Log.d("HoangLD", "initView:medisa "+isVertical);
+        if (isVertical) {
+            mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+        } else {
+            mBackground.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            mButtonList.setVisibility(View.INVISIBLE);
+        }
         setData();
         mMediaSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -117,7 +122,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     mMediaPlaybackService.getMediaManager().seekTo(i);
                 }
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
 
@@ -169,7 +173,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 }
 
                 setData();
-
             }
 
             @Override
@@ -211,9 +214,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             } else {
                 mPlayMedia.setImageResource(R.drawable.ic_play_media);
             }
-//            mStartTime.setText(getTimeDurationString(mSongCurrentDuration));
-//            mEndTime.setText(getTimeDurationString(mSongCurrentDuration));
-            //int mCurrent = mMediaPlaybackService.getMediaManager().getCurrentSong();
             Log.d("HoangLD", "setData: " + mName);
             mName.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongName());
             mArtist.setText(mListMedia.get(mMediaPlaybackService.getMediaManager().getCurrentSong()).getSongArtist());
@@ -227,14 +227,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     .load(songArt)
                     .error(R.drawable.background)
                     .into(mBackground);
-            if (isVertical) {
-                mBackground.setScaleType(ImageView.ScaleType.CENTER);
-            } else {
-                mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
-            }
+
             UpdateUIRunSeeBar();
-
-
         }
 
     }

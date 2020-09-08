@@ -92,6 +92,7 @@ private int mPossition = -1;
             mSongID.setVisibility(View.VISIBLE);
             mImage.setVisibility(View.INVISIBLE);
             mSongName.setTypeface(null, Typeface.NORMAL);
+
             if(song.isPlay())
             {
                 mSongID.setVisibility(View.INVISIBLE);
