@@ -9,6 +9,20 @@
     <RelativeLayout
         android:layout_width="80dp"
         android:layout_height="wrap_content">
+        <es.claucookie.miniequalizerlibrary.EqualizerView
+            xmlns:custom="http://schemas.android.com/apk/res-auto"
+            custom:foregroundColor="@color/link_text_material_light"
+            custom:animDuration="3500"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/Image_Id"
+            android:layout_marginLeft="15dp"
+            android:visibility="invisible"/>
         <TextView
             android:id="@+id/Song_Id"
             android:layout_width="wrap_content"
@@ -22,7 +36,7 @@
             android:layout_alignParentLeft="true"
             />
         <ImageView
-            android:id="@+id/Image_Id"
+            android:id="@+id/Image_Pause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_play_music"

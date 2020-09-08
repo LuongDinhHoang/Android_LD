@@ -126,7 +126,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 } else {
                     mllBottom.setVisibility(View.GONE);
                 }
-                if (!mMediaPlaybackService.getMediaManager().isStatusPlaying()) {
+                if (!mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
                     mBtnPlay.setImageResource(R.drawable.ic_play_black);
                 } else {
                     mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
@@ -334,8 +334,8 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 } else {
                     mMediaPlaybackService.getMediaManager().resumeSong();
                     mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
-
                 }
+
             }
         }
     }

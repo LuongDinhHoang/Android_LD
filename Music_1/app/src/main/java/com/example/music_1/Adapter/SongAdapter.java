@@ -12,15 +12,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
 import java.util.List;
 
+import Services.MediaPlaybackService;
+import es.claucookie.miniequalizerlibrary.EqualizerView;
+
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 private Context context;
 private List<Song> mList;
 private IIClick mClick;
+private MediaPlaybackService mMediaPlaybackService;
 private int mPossition = -1;
 
     public void SongAdapter(IIClick mClick) {
@@ -68,13 +73,15 @@ private int mPossition = -1;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView mSongName,mSongTime,mSongID;
-        ImageView mImage;
+        EqualizerView mImage;
+        ImageView mImagePause;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mSongName =itemView.findViewById(R.id.Name);
             mSongTime=itemView.findViewById(R.id.Time);
             mSongID=itemView.findViewById(R.id.Song_Id);
+            mImagePause=itemView.findViewById(R.id.Image_Pause);
             mImage=itemView.findViewById(R.id.Image_Id);
 
 
@@ -95,10 +102,18 @@ private int mPossition = -1;
 
             if(song.isPlay())
             {
-                mSongID.setVisibility(View.INVISIBLE);
-                mImage.setVisibility(View.VISIBLE);
-                mSongName.setTypeface(null, Typeface.BOLD);
+                    mSongID.setVisibility(View.INVISIBLE);
+                    mImage.setVisibility(View.VISIBLE);
+                    mImage.animateBars();
+                    mSongName.setTypeface(null, Typeface.BOLD);
+                    if(mMediaPlaybackService !=null && !mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
+                    {
+                        mImage.setVisibility(View.INVISIBLE);
+                        mImagePause.setVisibility(View.VISIBLE);
+
+                    }
             }
+            else mImage.stopBars();
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
