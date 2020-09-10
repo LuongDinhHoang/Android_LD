@@ -331,6 +331,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 break;
             }
             case R.id.btn_next_media:
+
+                if(mListenerMedia!=null)
+                mListenerMedia.updateUiSongPlayMedia();
+
                 Log.d("HoangLD", "onClick: next");
                 mMediaPlaybackService.getMediaManager().nextSong();
                 setData();
@@ -343,6 +347,16 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 Song song = mListMedia.get(mCurrentNext);
                 mMediaPlaybackService.createChannel();
                 mMediaPlaybackService.createNotification(getActivity(),song,mCurrentNext+1);
+//                if (mListenerMedia != null) {
+//                    Log.d("HoangLD", "nhay");
+//
+//                    mMediaPlaybackService.getMediaManager().setCurrentSong(mCurrentNext);
+//                }
+                if (mMediaPlaybackService.getMediaManager().mListener != null) {
+                    Log.d("HoangLD", "nhay");
+                    mMediaPlaybackService.getMediaManager().mListener.updateUiSongPlay(mCurrentNext);
+                    mMediaPlaybackService.getMediaManager().setCurrentSong(mCurrentNext);
+                }
                 break;
 
             case R.id.btn_pre_media:
@@ -407,5 +421,12 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             mPlayMedia.setImageResource(R.drawable.ic_pause_media);
         }
     }
+    public interface SongManageListenerMedia {
+        void updateUiSongPlayMedia();
+    }
+    private MediaPlaybackFragment.SongManageListenerMedia mListenerMedia;
 
+    public void setListenerMedia(SongManageListenerMedia mListenerMedia) {
+        this.mListenerMedia = mListenerMedia;
+    }
 }

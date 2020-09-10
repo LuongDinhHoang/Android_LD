@@ -236,7 +236,7 @@ public class SongManager {
     public interface SongManageListener {
         void updateUiSongPlay(int pos);
     }
-    private SongManageListener mListener;
+    public SongManageListener mListener;
 
     public void setListener(SongManageListener mListener) {
         this.mListener = mListener;
