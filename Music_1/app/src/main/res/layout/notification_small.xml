@@ -43,11 +43,11 @@
         android:layout_marginRight="10dp"
         android:src="@drawable/ic_pause_media"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/icon_next_notification"
+        app:layout_constraintEnd_toStartOf="@id/notificationSmall_next"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/icon_next_notification"
+        android:id="@+id/notificationSmall_next"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:layout_marginEnd="10dp"

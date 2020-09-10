@@ -85,11 +85,11 @@
                 android:layout_height="36dp"
                 android:src="@drawable/ic_pause_media"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/icon_next"
+                app:layout_constraintEnd_toStartOf="@id/notification_next"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/icon_next"
+                android:id="@+id/notification_next"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="25dp"

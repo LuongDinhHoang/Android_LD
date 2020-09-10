@@ -2,6 +2,7 @@ package Services;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,22 +10,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.example.music_1.Fragment.AllSongsFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
+import com.example.music_1.MainActivity;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
-import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,30 +78,20 @@ public class MediaPlaybackService extends Service {
         mSongManager = new SongManager(this);
         mMedia = new MediaPlaybackFragment();
     }
-
-    /*
         @RequiresApi(api = Build.VERSION_CODES.O)
-        @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
-            mMediaManager.playSong();
-            Notification.Builder builder = new Notification.Builder(this);
-            builder.setContentTitle("Music");
-            builder.setContentText("I'm playing music");
-            builder.setSmallIcon(R.mipmap.ic_launcher);
+        if(intent.getAction()==MUSIC_SERVICE_ACTION_NEXT) {
+            Log.d("HoangLD", "onStartCommand: ");
 
-            NotificationChannel channel =
-                    new NotificationChannel("music", "music",
-                            NotificationManager.IMPORTANCE_HIGH);
-
-            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            manager.createNotificationChannel(channel);
-            builder.setChannelId(channel.getId());
-
-            Notification notification = builder.build();
-            startForeground(1, notification);
+            getMediaManager().nextSong();
+            int pos = getMediaManager().getCurrentSong();
+            Song song = getMediaManager().getListSong().get(pos);
+            createChannel();
+            createNotification(getApplicationContext(), song, pos);
+        }
             return START_STICKY;
         }
-     */
+
     public void createChannel() {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -116,6 +107,14 @@ public class MediaPlaybackService extends Service {
     {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+            //click notification
+            Intent intent = new Intent(context, MainActivity.class);
+            PendingIntent intentMove = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+
+            Intent nextIntent = new Intent(this, MediaPlaybackService.class).setAction(MUSIC_SERVICE_ACTION_NEXT);
+            PendingIntent nextPendingIntent = PendingIntent.getService(this,
+                    0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 
 
             RemoteViews notification_small = new RemoteViews(context.getPackageName(), R.layout.notification_small);
@@ -131,12 +130,16 @@ public class MediaPlaybackService extends Service {
             notification_big.setTextViewText(R.id.notification_Author,song.getSongArtist());
             notification_big.setImageViewBitmap(R.id.notification_image,bitmap);
             notification_small.setImageViewBitmap(R.id.notificationSmall_Image,bitmap);
+            //Click button notification
+            notification_big.setOnClickPendingIntent(R.id.notification_next, nextPendingIntent);
+            notification_small.setOnClickPendingIntent(R.id.notificationSmall_next,nextPendingIntent);
+
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ID_CHANNEL)
                     .setSmallIcon(R.drawable.ic_zing)
                     .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
                     .setCustomContentView(notification_small)
-                    //.setContentIntent(contentIntent)
+                    .setContentIntent(intentMove)
                     .setCustomBigContentView(notification_big);
             notificationManagerCompat.notify(10, builder.build());
         }
