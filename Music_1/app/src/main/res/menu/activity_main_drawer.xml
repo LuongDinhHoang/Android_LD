@@ -1,0 +1,29 @@
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_listView"
+            android:icon="@drawable/ic_baseline_view_list_24"
+            android:title="list of favorites " />
+        <item
+            android:id="@+id/nav_ListFavorites"
+            android:icon="@drawable/ic_baseline_favorite_24"
+            android:title="List All" />
+
+    </group>
+
+    <item android:title="communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+</menu>

@@ -339,6 +339,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 } else {
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
+                int mCurrentNext =mMediaPlaybackService.getMediaManager().getCurrentSong();
+                Song song = mListMedia.get(mCurrentNext);
+                mMediaPlaybackService.createChannel();
+                mMediaPlaybackService.createNotification(getActivity(),song,mCurrentNext+1);
                 break;
 
             case R.id.btn_pre_media:
@@ -350,6 +354,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 } else {
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
+                int mCurrentPre =mMediaPlaybackService.getMediaManager().getCurrentSong();
+                Song songPre = mListMedia.get(mCurrentPre);
+                mMediaPlaybackService.createChannel();
+                mMediaPlaybackService.createNotification(getActivity(),songPre,mCurrentPre-1);
                 break;
             case R.id.button_Shuffle:
                 if (mMediaPlaybackService.getMediaManager().getShuffle()) {
