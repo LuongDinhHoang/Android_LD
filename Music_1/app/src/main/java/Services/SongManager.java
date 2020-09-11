@@ -124,7 +124,6 @@ public class SongManager {
                             currentSong = 0;
                         }
                     }
-
                 } else {
                     if (currentSong >= mListSong.size() - 1) {
                         currentSong = 0;
@@ -144,7 +143,8 @@ public class SongManager {
                 }
                 playSong(getListSong().get(currentSong).getSongImage());
                 if (mListener != null) {
-                    Log.d("HoangLD", "nhay");
+                    Log.d("HoangLD", "nhay"+mListener);
+
                     mListener.updateUiSongPlay(currentSong);
                     setCurrentSong(currentSong);
                 }
@@ -199,7 +199,6 @@ public class SongManager {
     }
 
 
-    Random rd = new Random();
 
     public void nextSong() {
 //        if (isShuffle) {

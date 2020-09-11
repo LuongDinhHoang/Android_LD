@@ -140,7 +140,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     @Override
     public void onStart() {
         if (mServiceConnection == null) {
-
             setService();
         }
         super.onStart();
@@ -332,10 +331,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             }
             case R.id.btn_next_media:
 
-                if(mListenerMedia!=null)
-                mListenerMedia.updateUiSongPlayMedia();
-
-                Log.d("HoangLD", "onClick: next");
                 mMediaPlaybackService.getMediaManager().nextSong();
                 setData();
                 if (mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying()) {
@@ -347,16 +342,21 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 Song song = mListMedia.get(mCurrentNext);
                 mMediaPlaybackService.createChannel();
                 mMediaPlaybackService.createNotification(getActivity(),song,mCurrentNext+1);
-//                if (mListenerMedia != null) {
+                if(!isVertical)
+                {
+                    Log.d("HoangLD", "onClick: mlistner"+mListenerMedia);
+                    if (mListenerMedia != null) {
+                        Log.d("HoangLD", "onClick:next ");
+
+                        mListenerMedia.updateUiSongPlayMedia();
+                    }
+                }
+
+//                if (mMediaPlaybackService.getMediaManager().mListener != null) {
 //                    Log.d("HoangLD", "nhay");
-//
+//                    mMediaPlaybackService.getMediaManager().mListener.updateUiSongPlay(mCurrentNext);
 //                    mMediaPlaybackService.getMediaManager().setCurrentSong(mCurrentNext);
 //                }
-                if (mMediaPlaybackService.getMediaManager().mListener != null) {
-                    Log.d("HoangLD", "nhay");
-                    mMediaPlaybackService.getMediaManager().mListener.updateUiSongPlay(mCurrentNext);
-                    mMediaPlaybackService.getMediaManager().setCurrentSong(mCurrentNext);
-                }
                 break;
 
             case R.id.btn_pre_media:
@@ -372,6 +372,12 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 Song songPre = mListMedia.get(mCurrentPre);
                 mMediaPlaybackService.createChannel();
                 mMediaPlaybackService.createNotification(getActivity(),songPre,mCurrentPre-1);
+                if(!isVertical)
+                {
+                    if (mListenerMedia != null) {
+                        mListenerMedia.updateUiSongPlayMedia();
+                    }
+                }
                 break;
             case R.id.button_Shuffle:
                 if (mMediaPlaybackService.getMediaManager().getShuffle()) {
@@ -424,7 +430,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public interface SongManageListenerMedia {
         void updateUiSongPlayMedia();
     }
-    private MediaPlaybackFragment.SongManageListenerMedia mListenerMedia;
+    private SongManageListenerMedia mListenerMedia;
 
     public void setListenerMedia(SongManageListenerMedia mListenerMedia) {
         this.mListenerMedia = mListenerMedia;

@@ -23,6 +23,8 @@ import com.example.music_1.Fragment.AllSongsFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.google.android.material.navigation.NavigationView;
 
+import Services.MediaPlaybackService;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -94,9 +96,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else {
             allSongsFragment.setCheck(false);
             mediaPlaybackFragment.setVertical(false);
-            fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
+            fragmentTransaction.replace(R.id.ll_out1,allSongsFragment);
            // mllBottom.setVisibility(view.VISIBLE);
             fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
+            mediaPlaybackFragment.setListenerMedia(allSongsFragment);
             fragmentTransaction.commit();
         }
 
