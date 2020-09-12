@@ -24,6 +24,7 @@ import es.claucookie.miniequalizerlibrary.EqualizerView;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 private Context context;
 private List<Song> mList;
+
 private IIClick mClick;
 private MediaPlaybackService mMediaPlaybackService;
 private int mPossition = -1;
@@ -50,6 +51,7 @@ private int mPossition = -1;
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
+
 
             view = LayoutInflater.from(context).inflate(R.layout.item,parent,false);// khai báo vẽ view
 

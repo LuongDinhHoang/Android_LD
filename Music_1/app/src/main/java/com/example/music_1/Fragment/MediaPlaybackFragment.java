@@ -45,6 +45,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     ImageView mImage, mBackground;
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
+
+    public void setMediaPlaybackService(MediaPlaybackService mMediaPlaybackService) {
+        this.mMediaPlaybackService = mMediaPlaybackService;
+    }
+
     private MediaPlaybackService mMediaPlaybackService;
     private ImageView mPlayMedia, mButtonShuffle, mButtonRepeat, mButtonList;
 
@@ -81,6 +86,12 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_media_playback, container, false);
+        if(isVertical)
+        {
+            mListMedia = mMediaPlaybackService.getMediaManager().getmListSong();
+
+        }
+        mMediaPlaybackService.getMediaManager().setListener(MediaPlaybackFragment.this);//get vao
         initView();
         return view;
     }
@@ -107,6 +118,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mPlayMedia.setOnClickListener(this);
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
+        if(mListenerMedia!=null)
+        {
+            mMediaPlaybackService.getMediaManager().setListener(MediaPlaybackFragment.this);
+        }
         Log.d("HoangLD", "initView:medisa "+isVertical);
         if (isVertical) {
             mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -139,9 +154,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onStart() {
-        if (mServiceConnection == null) {
-            setService();
-        }
         super.onStart();
     }
 
@@ -150,40 +162,39 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mUpdateSeekBarThread.exit();
         super.onDestroy();
     }
-
-    private void setService() {
-        mServiceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
-                mMediaPlaybackService = binder.getMusicService();
-                mListMedia = mMediaPlaybackService.getMediaManager().getmListSong();
-                mMediaPlaybackService.getMediaManager().setListener(MediaPlaybackFragment.this);//get vao
-                if (mMediaPlaybackService.getMediaManager().getShuffle()) {
-                    mButtonShuffle.setImageResource(R.drawable.ic_play_shuffle_orange);
-                } else {
-                    mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
-                }
-                if (mMediaPlaybackService.getMediaManager().isRepeat) {
-                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
-                }
-                if (mMediaPlaybackService.getMediaManager().isRepeatAll) {
-                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_dark_selected);
-                }
-
-                setData();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mIsConnect = false;
-                mMediaPlaybackService = null;
-            }
-        };
-        Intent intent = new Intent(getActivity(), MediaPlaybackService.class);
-        getActivity().startService(intent);
-        getActivity().bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
-    }
+//
+//    private void setService() {
+//        mServiceConnection = new ServiceConnection() {
+//            @Override
+//            public void onServiceConnected(ComponentName name, IBinder service) {
+//                MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
+//                mMediaPlaybackService = binder.getMusicService();
+//
+//                if (mMediaPlaybackService.getMediaManager().getShuffle()) {
+//                    mButtonShuffle.setImageResource(R.drawable.ic_play_shuffle_orange);
+//                } else {
+//                    mButtonShuffle.setImageResource(R.drawable.ic_shuffle_white);
+//                }
+//                if (mMediaPlaybackService.getMediaManager().isRepeat) {
+//                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
+//                }
+//                if (mMediaPlaybackService.getMediaManager().isRepeatAll) {
+//                    mButtonRepeat.setImageResource(R.drawable.ic_repeat_dark_selected);
+//                }
+//
+//                setData();
+//            }
+//
+//            @Override
+//            public void onServiceDisconnected(ComponentName name) {
+//                mIsConnect = false;
+//                mMediaPlaybackService = null;
+//            }
+//        };
+//        Intent intent = new Intent(getActivity(), MediaPlaybackService.class);
+//        getActivity().startService(intent);
+//        getActivity().bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+//    }
 
     private boolean mIsConnect;
 

@@ -18,7 +18,7 @@ public class SongManager {
     public static final String MESSAGE_SONG_PLAY_COMPLETE = "message_song_play_complete";
     private List<Song> mListSong = new ArrayList<>();
     private MediaPlayer mPlayer;
-    private int currentSong;
+    private int currentSong =-1;
     private int currentStatus;
     private final int STATUS_IDEAL = 1;
     private final int STATUS_PLAYING = 2;
@@ -26,6 +26,16 @@ public class SongManager {
     private final int STATUS_STOP = 4;
     private boolean mRepeat = false;
     private boolean StatusPlaying;
+
+    public boolean isPlay() {
+        return isPlay;
+    }
+
+    public void setPlay(boolean play) {
+        isPlay = play;
+    }
+
+    private  boolean isPlay;
 
 
     public void setListSong(List<Song> mListSong) {
@@ -148,14 +158,14 @@ public class SongManager {
                     mListener.updateUiSongPlay(currentSong);
                     setCurrentSong(currentSong);
                 }
-
+                isPlay=false;
             }
         });
     }
 
     public void playSong(String path) {
         mPlayer.reset();
-
+        isPlay=true;
         try {
             mPlayer.setDataSource(path);
             mPlayer.prepare();
@@ -165,7 +175,6 @@ public class SongManager {
     }
 
     public void pauseSong() {
-        StatusPlaying = false;
         mPlayer.pause();
     }
 
@@ -206,6 +215,7 @@ public class SongManager {
 //            currentSong = currentSong + number;
 //        } else {
         Log.d("HoangLD", "nextSong: ");
+        isPlay=false;
         if (currentSong >= mListSong.size() - 1) {
             currentSong = 0;
         } else {
@@ -221,6 +231,7 @@ public class SongManager {
 //            int number = rd.nextInt(3);
 //            currentSong = currentSong - number;
 //        } else {
+        isPlay=false;
         if (currentSong <= 0) {
             currentSong = mListSong.size() - 1;
         } else {
