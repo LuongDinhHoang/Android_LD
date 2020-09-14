@@ -24,11 +24,14 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.Fragment.AllSongsFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.example.music_1.Model.Song;
@@ -54,7 +57,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private  int mOrientation;
+
+
+    public SongAdapter getAdapter() {
+        return mAdapter;
+    }
+
+    private SongAdapter mAdapter;
+
     private MediaPlaybackService mMediaPlaybackService;
+
+    public MediaPlaybackService getMediaPlaybackService() {
+        return mMediaPlaybackService;
+    }
+
+    public List<Song> getList() {
+        return mList;
+    }
+
     private List<Song> mList;
 
     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -78,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         mList = new ArrayList<>();
         getSong(mList);
+        mAdapter = new SongAdapter(this, mList);
         ////////////
 
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -116,17 +137,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         mOrientation = getResources().getConfiguration().orientation;
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            allSongsFragment.setMediaPlaybackService(mMediaPlaybackService);
-            allSongsFragment.setList(mList);
+//            allSongsFragment.setMediaPlaybackService(mMediaPlaybackService);
+//            allSongsFragment.setList(mList);
+                mMediaPlaybackService.getMediaManager().setListener(allSongsFragment);//get vao
             allSongsFragment.setCheck(true);
             fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
             fragmentTransaction.commit();
         }
         else {
+            if(mMediaPlaybackService.getMediaManager().getCurrentSong()==-1)
+            {
+                mMediaPlaybackService.getMediaManager().setCurrentSong(0);
+            }
+            mMediaPlaybackService.getMediaManager().setListener(allSongsFragment);//get vao
             allSongsFragment.setCheck(false);
             mediaPlaybackFragment.setVertical(false);
             fragmentTransaction.replace(R.id.ll_out1,allSongsFragment);
-
             // mllBottom.setVisibility(view.VISIBLE);
             fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
             mediaPlaybackFragment.setListenerMedia(allSongsFragment);
@@ -177,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             MediaPlaybackService.MusicBinder binder = (MediaPlaybackService.MusicBinder) service;
             mMediaPlaybackService = binder.getMusicService();
             mMediaPlaybackService.getMediaManager().setListSong(mList);                     //đưa list vào list service nếu service chạy
-            mMediaPlaybackService.getMedia().setListMedia(mList);
+            //mMediaPlaybackService.getMedia().setListMedia(mList);
             addFragmentList();
 
 //            if(mIsBound){

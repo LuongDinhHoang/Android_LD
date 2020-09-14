@@ -25,9 +25,16 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 private Context context;
 private List<Song> mList;
 
-private IIClick mClick;
+    public IIClick getClick() {
+        return mClick;
+    }
+
+    public void setClick(IIClick mClick) {
+        this.mClick = mClick;
+    }
+
+    private IIClick mClick;
 private MediaPlaybackService mMediaPlaybackService;
-private int mPossition = -1;
 
     public void SongAdapter(IIClick mClick) {
         this.mClick = mClick;

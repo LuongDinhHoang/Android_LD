@@ -23,6 +23,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.music_1.MainActivity;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
@@ -46,9 +47,9 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
 
-    public void setMediaPlaybackService(MediaPlaybackService mMediaPlaybackService) {
-        this.mMediaPlaybackService = mMediaPlaybackService;
-    }
+//    public void setMediaPlaybackService(MediaPlaybackService mMediaPlaybackService) {
+//        this.mMediaPlaybackService = mMediaPlaybackService;
+//    }
 
     private MediaPlaybackService mMediaPlaybackService;
     private ImageView mPlayMedia, mButtonShuffle, mButtonRepeat, mButtonList;
@@ -81,17 +82,39 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public MediaPlaybackFragment() {
         // Required empty public constructor
     }
+    private MediaPlaybackService getMusicService(){
+        return getActivityMusic().getMediaPlaybackService();
+    }
+    private List<Song> getListSong(){
+        return getActivityMusic().getList();
+    }
+    //get activity
+    private MainActivity getActivityMusic() {
+        if (getActivity() instanceof MainActivity) {
+            return (MainActivity) getActivity();
+        }
+        return null;
+    }
+    public void setDataMedia(){
+        mMediaPlaybackService= getMusicService();
+        mListMedia=getListSong();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_media_playback, container, false);
-        if(isVertical)
+//        if(isVertical)
+//        {
+//            mListMedia = mMediaPlaybackService.getMediaManager().getmListSong();
+//
+//        }
+        if (mMediaPlaybackService != null)
         {
-            mListMedia = mMediaPlaybackService.getMediaManager().getmListSong();
+            mMediaPlaybackService.getMediaManager().setListener(MediaPlaybackFragment.this);//get vao
 
         }
-        mMediaPlaybackService.getMediaManager().setListener(MediaPlaybackFragment.this);//get vao
         initView();
         return view;
     }
@@ -118,6 +141,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mPlayMedia.setOnClickListener(this);
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
+        setDataMedia();
         if(mListenerMedia!=null)
         {
             mMediaPlaybackService.getMediaManager().setListener(MediaPlaybackFragment.this);

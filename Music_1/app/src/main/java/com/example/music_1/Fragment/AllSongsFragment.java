@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.music_1.Adapter.SongAdapter;
+import com.example.music_1.MainActivity;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
@@ -66,12 +67,33 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
     private TextView mNameSongPlay, mSongArtistPlay, mSongID;
     private ImageView mBtnPlay;
     private View view;
+    private MediaPlaybackService mMediaPlaybackService;
 
-    public void setMediaPlaybackService(MediaPlaybackService mMediaPlaybackService) {
-        this.mMediaPlaybackService = mMediaPlaybackService;
+//    public void setMediaPlaybackService(MediaPlaybackService mMediaPlaybackService) {
+//        this.mMediaPlaybackService = mMediaPlaybackService;
+//    }
+    private MediaPlaybackService getMusicService(){
+        return getActivityMusic().getMediaPlaybackService();
+    }
+    private List<Song> getListSong(){
+        return getActivityMusic().getList();
+    }
+    //get activity
+    private MainActivity getActivityMusic() {
+        if (getActivity() instanceof MainActivity) {
+            return (MainActivity) getActivity();
+        }
+        return null;
+    }
+    private SongAdapter getSongAdapter(){
+        return getActivityMusic().getAdapter();
     }
 
-    private MediaPlaybackService mMediaPlaybackService;
+    public void setData(){
+        mMediaPlaybackService= getMusicService();
+        mList=getListSong();
+        mAdapter=getSongAdapter();
+    }
 
 
     public void setCheck(boolean mCheck) {
@@ -84,6 +106,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_all_songs, container, false);
+        setData();
         initView();
 //        onConnectService();
         Log.d("HoangLD", "onCreateView: ");
@@ -170,13 +193,9 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(RecyclerView.VERTICAL);
         mRecycle.setLayoutManager(manager);
-        mAdapter = new SongAdapter(getActivity(), mList);
+//        mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
-        if(mMediaPlaybackService != null)
-        {
-            mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
 
-        }
 
         onConnectService();
 
@@ -187,62 +206,69 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 //            }
                 UpdateUI();
         }
-        mAdapter.SongAdapter(new SongAdapter.IIClick() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void ItemClick(Song song, int pos) {
-                for (int i = 0; i < mList.size(); i++) {
-                    mList.get(i).setPlay(false);
-                }
-                mList.get(pos).setPlay(true);
-                //service
-                if (mMediaPlaybackService != null) {
-                    mMediaPlaybackService.getMediaManager().playSong(song.getSongImage());
-                    mMediaPlaybackService.getMediaManager().setCurrentSong(pos);//get position
-                    mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
-                    //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
-                }
-                if (isVertical) {
-                    mllBottom.setVisibility(View.VISIBLE);
-                    mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
-                    mSongArtistPlay.setText(song.getSongArtist());
-                    byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
-                    Glide.with(view.getContext()).asBitmap()
-                            .load(songArt)
-                            .error(R.drawable.cute)
-                            .into(mImagePlay);
-                    //////////////
-                    mPosition = pos;
-                } else {
-                    mllBottom.setVisibility(View.GONE);
-                    TextView mNameMedia = getActivity().findViewById(R.id.NameSong);
-                    TextView mArtistMedia = getActivity().findViewById(R.id.ArtistSong);
-                    ImageView mImageMedia = getActivity().findViewById(R.id.ImagePlaying);
-                    ImageView mImageBackground = getActivity().findViewById(R.id.background_Image);
-                    TextView mTimeEnd = getActivity().findViewById(R.id.end_time);
-                    mArtistMedia.setText(song.getSongArtist());
-                    mNameMedia.setText(song.getSongName());
-                    mTimeEnd.setText(song.getTimeDurationString(song.getSongTime()));
-                    byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
-                    Glide.with(view.getContext()).asBitmap()
-                            .load(songArt)
-                            .error(R.drawable.cute)
-                            .into(mImageBackground);
-                    Glide.with(view.getContext()).asBitmap()
-                            .load(songArt)
-                            .error(R.drawable.cute)
-                            .into(mImageMedia);
+        mAdapter.setClick(
+                new SongAdapter.IIClick() {
+                    @Override
+                    public void ItemClick(Song song, int pos) {
+                            for (int i = 0; i < mList.size(); i++) {
+                                mList.get(i).setPlay(false);
+                            }
+                            mList.get(pos).setPlay(true);
+                            //service
+                            if (mMediaPlaybackService != null) {
+                                mMediaPlaybackService.getMediaManager().playSong(song.getSongImage());
+                                mMediaPlaybackService.getMediaManager().setCurrentSong(pos);//get position
+                                mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
+                                //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
+                            }
+                            if (isVertical) {
+                                mllBottom.setVisibility(View.VISIBLE);
+                                mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
+                                mSongArtistPlay.setText(song.getSongArtist());
+                                byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
+                                Glide.with(view.getContext()).asBitmap()
+                                        .load(songArt)
+                                        .error(R.drawable.cute)
+                                        .into(mImagePlay);
+                                //////////////
+                                mPosition = pos;
+                            } else {
+                                mllBottom.setVisibility(View.GONE);
+                                TextView mNameMedia = getActivity().findViewById(R.id.NameSong);
+                                TextView mArtistMedia = getActivity().findViewById(R.id.ArtistSong);
+                                ImageView mImageMedia = getActivity().findViewById(R.id.ImagePlaying);
+                                ImageView mImageBackground = getActivity().findViewById(R.id.background_Image);
+                                TextView mTimeEnd = getActivity().findViewById(R.id.end_time);
+                                mArtistMedia.setText(song.getSongArtist());
+                                mNameMedia.setText(song.getSongName());
+                                mTimeEnd.setText(song.getTimeDurationString(song.getSongTime()));
+                                byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
+                                Glide.with(view.getContext()).asBitmap()
+                                        .load(songArt)
+                                        .error(R.drawable.cute)
+                                        .into(mImageBackground);
+                                Glide.with(view.getContext()).asBitmap()
+                                        .load(songArt)
+                                        .error(R.drawable.cute)
+                                        .into(mImageMedia);
 
-                }
+                            }
 
-                mAdapter.notifyDataSetChanged();
-                mMediaPlaybackService.createChannel();
-                mMediaPlaybackService.createNotification(getActivity(),song,pos);
+                            mAdapter.notifyDataSetChanged();
+                            mMediaPlaybackService.createChannel();
+                            mMediaPlaybackService.createNotification(getActivity(),song,pos);
 //                mAdapter.setPos(pos);
 
 
-            }
-        });
+                        }
+
+
+                }
+        );
+//        mAdapter.SongAdapter(new SongAdapter.IIClick() {
+//            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+//
+//        });
 
 
     }
@@ -345,8 +371,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(), song.getSongArtist(), song.getSongImage());
                 fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);
                 mediaPlaybackFragment.setVertical(true);
-                mediaPlaybackFragment.setListenerMedia(AllSongsFragment.this);
-                mediaPlaybackFragment.setMediaPlaybackService(mMediaPlaybackService);
+//                mediaPlaybackFragment.setMediaPlaybackService(mMediaPlaybackService);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
