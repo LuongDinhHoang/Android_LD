@@ -25,18 +25,18 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/icon_previous_notification"
+        android:id="@+id/notificationSmall_prev"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
         android:src="@drawable/ic_rew_dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/icon_play__notification"
+        app:layout_constraintEnd_toStartOf="@id/notificationSmall_playing"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/icon_play__notification"
+        android:id="@+id/notificationSmall_playing"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_marginEnd="10dp"

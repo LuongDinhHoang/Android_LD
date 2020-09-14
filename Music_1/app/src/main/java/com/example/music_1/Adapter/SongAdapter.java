@@ -115,7 +115,7 @@ private MediaPlaybackService mMediaPlaybackService;
                     mImage.setVisibility(View.VISIBLE);
                     mImage.animateBars();
                     mSongName.setTypeface(null, Typeface.BOLD);
-                    if(mMediaPlaybackService !=null && !mMediaPlaybackService.getMediaManager().getMediaPlayer().isPlaying())
+                    if(mMediaPlaybackService !=null && !mMediaPlaybackService.getMediaPlayer().isPlaying())
                     {
                         mImage.setVisibility(View.INVISIBLE);
                         mImagePause.setVisibility(View.VISIBLE);
