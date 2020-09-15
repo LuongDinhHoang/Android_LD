@@ -34,8 +34,10 @@ private List<Song> mList;
     }
 
     private IIClick mClick;
-private MediaPlaybackService mMediaPlaybackService;
-
+    private MediaPlaybackService mMediaPlaybackService;
+    public void setMediaPlaybackService(MediaPlaybackService mMediaPlaybackService) {
+        this.mMediaPlaybackService = mMediaPlaybackService;
+    }
     public void SongAdapter(IIClick mClick) {
         this.mClick = mClick;
     }
@@ -111,16 +113,22 @@ private MediaPlaybackService mMediaPlaybackService;
 
             if(song.isPlay())
             {
-                    mSongID.setVisibility(View.INVISIBLE);
-                    mImage.setVisibility(View.VISIBLE);
-                    mImage.animateBars();
-                    mSongName.setTypeface(null, Typeface.BOLD);
-                    if(mMediaPlaybackService !=null && !mMediaPlaybackService.getMediaPlayer().isPlaying())
-                    {
-                        mImage.setVisibility(View.INVISIBLE);
-                        mImagePause.setVisibility(View.VISIBLE);
+               if(mMediaPlaybackService.isPlay())
+               {
+                   mSongID.setVisibility(View.INVISIBLE);
+                   mImage.setVisibility(View.VISIBLE);
+                   mImage.animateBars();
+                   mSongName.setTypeface(null, Typeface.BOLD);
+               }
+               else {
+                   mSongID.setTypeface(null,Typeface.BOLD);
+                   mSongName.setTypeface(null, Typeface.BOLD);
 
-                    }
+               }
+
+
+
+
             }
             else mImage.stopBars();
             itemView.setOnClickListener(new View.OnClickListener() {

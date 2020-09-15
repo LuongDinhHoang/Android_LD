@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.MainActivity;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
@@ -32,7 +33,7 @@ import Services.MediaPlaybackService;
 import static com.example.music_1.Fragment.AllSongsFragment.getAlbumArt;
 
 
-public class MediaPlaybackFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackService.notificationData
+public class MediaPlaybackFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackService.notificationUpdateMedia
 {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -54,7 +55,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         isVertical = vertical;
     }
     private boolean isVertical;
-
+    private SongAdapter mAdapter;
 
     public void setListMedia(List<Song> mListMedia) {
         this.mListMedia = mListMedia;
@@ -78,6 +79,9 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public MediaPlaybackFragment() {
         // Required empty public constructor
     }
+    private SongAdapter getSongAdapter(){
+        return getActivityMusic().getAdapter();
+    }
     private MediaPlaybackService getMusicService(){
         return getActivityMusic().getMediaPlaybackService();
     }
@@ -94,6 +98,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public void setDataMedia(){
         mMediaPlaybackService= getMusicService();
         mListMedia=getListSong();
+        mAdapter=getSongAdapter();
     }
 
 
@@ -222,7 +227,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     ////////////////////////////////////
     public void setData() {
         if (mMediaPlaybackService != null) {
-            if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
+            if (mMediaPlaybackService.isPlay()) {
                 mPlayMedia.setImageResource(R.drawable.ic_pause_media);
             } else {
                 mPlayMedia.setImageResource(R.drawable.ic_play_media);
@@ -264,6 +269,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         fragment.setArguments(args);
         return fragment;
     }
+
+
 
     public class UpdateSeekBarThread extends Thread {
         private Handler handler;
@@ -342,6 +349,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     mMediaPlaybackService.resumeSong();
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
+                if(!isVertical)
+                {mAdapter.notifyDataSetChanged();}
                 int mCurrentNext =mMediaPlaybackService.getCurrentSong();
                 Song song = mListMedia.get(mCurrentNext);
                 mMediaPlaybackService.createChannel();
@@ -458,14 +467,9 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     ////InterfaceNotification updateui notifiction click
 
     @Override
-    public void updateData() {
+    public void updateDataMedia() {
         setData();
-        if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
-            mPlayMedia.setImageResource(R.drawable.ic_play_media);
-        } else {
-            mPlayMedia.setImageResource(R.drawable.ic_pause_media);
-        }
-
     }
+
 
 }

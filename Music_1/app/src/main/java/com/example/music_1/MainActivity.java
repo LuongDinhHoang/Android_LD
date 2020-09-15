@@ -128,12 +128,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void addFragmentList()
     {
+        mMediaPlaybackService.setListener(allSongsFragment);//get vao
+        mMediaPlaybackService.setNotificationData(allSongsFragment);
         mOrientation = getResources().getConfiguration().orientation;
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
 //            allSongsFragment.setMediaPlaybackService(mMediaPlaybackService);
 //            allSongsFragment.setList(mList);
-            mMediaPlaybackService.setNotificationData(allSongsFragment);
-                mMediaPlaybackService.setListener(allSongsFragment);//get vao
             allSongsFragment.setCheck(true);
             fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
             fragmentTransaction.commit();
@@ -143,15 +143,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             {
                 mMediaPlaybackService.setCurrentSong(0);
             }
-            mMediaPlaybackService.setListener(allSongsFragment);//get vao
-            mMediaPlaybackService.setNotificationData(allSongsFragment);
-            mMediaPlaybackService.setNotificationData(mediaPlaybackFragment);
             allSongsFragment.setCheck(false);
+            mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
             mediaPlaybackFragment.setVertical(false);
             fragmentTransaction.replace(R.id.ll_out1,allSongsFragment);
             // mllBottom.setVisibility(view.VISIBLE);
             fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
-            mediaPlaybackFragment.setListenerMedia(allSongsFragment);
+//            mMediaPlaybackService.setListener(allSongsFragment);//get vao
             fragmentTransaction.commit();
         }
 

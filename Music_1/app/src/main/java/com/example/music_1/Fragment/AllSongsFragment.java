@@ -33,7 +33,7 @@ import java.util.List;
 import Services.MediaPlaybackService;
 
 
-public class AllSongsFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackFragment.SongManageListenerMedia,MediaPlaybackService.notificationData{
+public class AllSongsFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackFragment.SongManageListenerMedia, MediaPlaybackService.notificationUpdateAllSong {
     private RecyclerView mRecycle;
 
 
@@ -107,6 +107,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
             Log.d("HoangLD", "onResume: ");
             mMediaPlaybackService.setListener(AllSongsFragment.this);//get vao
                // mllBottom.setVisibility(View.VISIBLE);
+            mAdapter.notifyDataSetChanged();
         }
         super.onResume();
     }
@@ -127,6 +128,8 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         mRecycle.setLayoutManager(manager);
 //        mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
+        mAdapter.setMediaPlaybackService(mMediaPlaybackService);//set data on adapter
+
 
 
         onConnectService();
@@ -193,6 +196,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                             }
 
                             mAdapter.notifyDataSetChanged();
+
                             mMediaPlaybackService.createChannel();
                             mMediaPlaybackService.createNotification(getActivity(),song,pos);
 //                mAdapter.setPos(pos);
@@ -228,6 +232,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 UpdateUI();
             }
                 mAdapter.notifyDataSetChanged();
+
             }
 
     }
@@ -245,7 +250,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
             for (int i = 0; i < mList.size(); i++) {
                 mList.get(i).setPlay(false);
             }
-            if (!mMediaPlaybackService.getMediaPlayer().isPlaying()) {
+            if (!mMediaPlaybackService.isPlay()) {
                 mBtnPlay.setImageResource(R.drawable.ic_play_black);
             } else {
                 mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
@@ -309,7 +314,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(), song.getSongArtist(), song.getSongImage());
                 fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);
                 mediaPlaybackFragment.setVertical(true);
-                mMediaPlaybackService.setNotificationData(mediaPlaybackFragment);
+                mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
                 mMediaPlaybackService.setListener(mediaPlaybackFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
@@ -323,12 +328,18 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                     mMediaPlaybackService.resumeSong();
                     mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
                 }
+                mAdapter.notifyDataSetChanged();
+                int pos = mMediaPlaybackService.getCurrentSong();
+                Song song = getListSong().get(pos);
+                mMediaPlaybackService.createChannel();
+                mMediaPlaybackService.createNotification(getActivity(),song,pos);
             }
         }
     }
     @Override
-    public void updateUiSongPlay(int pos) {
+    public void updateUiSongPlay(int pos) {//interface tu dong update het bai
         //mPosition = pos;
+        Log.d("HoangLD", "het bai ");
       UpdateUI();
         if (!mMediaPlaybackService.getMediaPlayer().isPlaying()) {
             mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
@@ -337,17 +348,19 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         }
     }
     @Override
-    public void updateUiSongPlayMedia() {
+    public void updateUiSongPlayMedia() {//interface nhan su kien mediafragment
+        Log.d("HoangLD", "mediab next ");
       UpdateUI();
     }
 
     @Override
-    public void updateData() {
+    public void updateData() {//interface notification
+        Log.d("HoangLD", "notifi next ");
         UpdateUI();
-        if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
-            mBtnPlay.setImageResource(R.drawable.ic_play_black);
-        } else {
-            mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
-        }
+//        if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
+//            mBtnPlay.setImageResource(R.drawable.ic_play_black);
+//        } else {
+//            mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
+//        }
     }
 }

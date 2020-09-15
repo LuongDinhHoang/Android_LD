@@ -15,7 +15,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
@@ -63,7 +62,7 @@ public class MediaPlaybackService extends Service {
         isPlay = play;
     }
 
-    private  boolean isPlay;
+    private  boolean isPlay=false;
 
 
     public void setListSong(List<Song> mListSong) {
@@ -109,6 +108,7 @@ public class MediaPlaybackService extends Service {
     public void setCurrentSong(int currentSong) {
         this.currentSong = currentSong;
     }
+
 
     public int getCurrentSong() {
         return currentSong;
@@ -165,6 +165,7 @@ public class MediaPlaybackService extends Service {
             int pos = getCurrentSong();
             Song song = getListSong().get(pos);
             interfaceUpdate();
+            interfaceUpdateMedia();
             createChannel();
             createNotification(getApplicationContext(), song, pos);
         }
@@ -172,7 +173,8 @@ public class MediaPlaybackService extends Service {
                 previousSong();
                 int pos = getCurrentSong();
                 interfaceUpdate();
-                Song song = getListSong().get(pos);
+            interfaceUpdateMedia();
+            Song song = getListSong().get(pos);
                 createChannel();
                 createNotification(getApplicationContext(), song, pos);
          }
@@ -180,6 +182,7 @@ public class MediaPlaybackService extends Service {
             pauseSong();
             int pos = getCurrentSong();
             interfaceUpdate();
+            interfaceUpdateMedia();
             Song song = getListSong().get(pos);
             createChannel();
             createNotification(getApplicationContext(), song, pos);
@@ -188,6 +191,7 @@ public class MediaPlaybackService extends Service {
             resumeSong();
             int pos = getCurrentSong();
             interfaceUpdate();
+            interfaceUpdateMedia();
             Song song = getListSong().get(pos);
             createChannel();
             createNotification(getApplicationContext(), song, pos);
@@ -197,11 +201,19 @@ public class MediaPlaybackService extends Service {
         }
         public  void interfaceUpdate()
         {
-            if(mNotificationData!= null)
+            if(mNotificationUpdateAllSong != null)
             {
-                mNotificationData.updateData();
+                mNotificationUpdateAllSong.updateData();
             }
         }
+    public  void interfaceUpdateMedia()
+    {
+        if(mNotificationUpdateMedia != null)
+        {
+            mNotificationUpdateMedia.updateDataMedia();
+        }
+    }
+
     public void createChannel() {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -252,18 +264,19 @@ public class MediaPlaybackService extends Service {
             notification_small.setOnClickPendingIntent(R.id.notificationSmall_next,nextPendingIntent);
             notification_big.setOnClickPendingIntent(R.id.notification_prev, prevPendingIntent);
             notification_small.setOnClickPendingIntent(R.id.notificationSmall_prev,prevPendingIntent);
-            if(mPlayer.isPlaying())
+            notification_big.setImageViewResource(R.id.notification_playing,R.drawable.ic_pause_media);
+            notification_small.setImageViewResource(R.id.notification_playing,R.drawable.ic_pause_media);
+            if(isPlay)
             {
                 notification_big.setImageViewResource(R.id.notification_playing,R.drawable.ic_pause_media);
-                notification_small.setImageViewResource(R.id.notification_playing,R.drawable.ic_pause_media);
-                notification_small.setOnClickPendingIntent(R.id.notification_playing,stopPendingIntent);
+                notification_small.setImageViewResource(R.id.notificationSmall_playing,R.drawable.ic_pause_media);
+                notification_small.setOnClickPendingIntent(R.id.notificationSmall_playing,stopPendingIntent);
                 notification_big.setOnClickPendingIntent(R.id.notification_playing,stopPendingIntent);
             }
             else {
                 notification_big.setImageViewResource(R.id.notification_playing,R.drawable.ic_play_media);
-                notification_small.setImageViewResource(R.id.notification_playing,R.drawable.ic_play_media);
-
-                notification_small.setOnClickPendingIntent(R.id.notification_playing,playPendingIntent);
+                notification_small.setImageViewResource(R.id.notificationSmall_playing,R.drawable.ic_play_media);
+                notification_small.setOnClickPendingIntent(R.id.notificationSmall_playing,playPendingIntent);
                 notification_big.setOnClickPendingIntent(R.id.notification_playing,playPendingIntent);
             }
 
@@ -277,13 +290,22 @@ public class MediaPlaybackService extends Service {
         }
 
     }
-    public  interface notificationData{
-        public  void updateData();
+    public  interface notificationUpdateAllSong {
+        void updateData();
     }
-    private notificationData mNotificationData;
+    private notificationUpdateAllSong mNotificationUpdateAllSong;
 
-    public void setNotificationData(MediaPlaybackService.notificationData mNotificationData) {
-        this.mNotificationData = mNotificationData;
+    public void setNotificationData(notificationUpdateAllSong mNotificationUpdateAllSong) {
+        this.mNotificationUpdateAllSong = mNotificationUpdateAllSong;
+    }
+    /////////
+    public  interface notificationUpdateMedia {
+        void updateDataMedia();
+    }
+    private notificationUpdateMedia mNotificationUpdateMedia;
+
+    public void setNotificationDataMedia(notificationUpdateMedia mNotificationUpdateMedia) {
+        this.mNotificationUpdateAllSong = mNotificationUpdateAllSong;
     }
 
     private void initMediaPlayer() {
@@ -336,24 +358,30 @@ public class MediaPlaybackService extends Service {
                     mListener.updateUiSongPlay(currentSong);
                     setCurrentSong(currentSong);
                 }
-                isPlay=false;
+                int pos = getCurrentSong();
+                Song song = getListSong().get(pos);
+                createChannel();
+                createNotification(getApplicationContext(), song, pos);
             }
         });
     }
 
     public void playSong(String path) {
         mPlayer.reset();
-        isPlay=true;
         try {
             mPlayer.setDataSource(path);
             mPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        isPlay=true;
+
     }
 
     public void pauseSong() {
         mPlayer.pause();
+        isPlay = false;
+
     }
 
     public void stop() {
@@ -363,8 +391,9 @@ public class MediaPlaybackService extends Service {
     }
 
     public void resumeSong() {
-        StatusPlaying = true;
         mPlayer.start();
+        isPlay = true;
+
     }
     public long getDuration(){
         if(mPlayer!=null)
