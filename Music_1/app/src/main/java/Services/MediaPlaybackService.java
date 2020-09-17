@@ -162,42 +162,45 @@ public class MediaPlaybackService extends Service {
         public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent.getAction()==MUSIC_SERVICE_ACTION_NEXT) {
             nextSong();
-            int pos = getCurrentSong();
-            Song song = getListSong().get(pos);
-            interfaceUpdate();
-            interfaceUpdateMedia();
-            createChannel();
-            createNotification(getApplicationContext(), song, pos);
+            updateUIClickNotification();
+
         }
         else if(intent.getAction()==MUSIC_SERVICE_ACTION_PREV) {
                 previousSong();
-                int pos = getCurrentSong();
-                interfaceUpdate();
-            interfaceUpdateMedia();
-            Song song = getListSong().get(pos);
-                createChannel();
-                createNotification(getApplicationContext(), song, pos);
+            updateUIClickNotification();
+
          }
         else if(intent.getAction()==MUSIC_SERVICE_ACTION_STOP){
             pauseSong();
-            int pos = getCurrentSong();
-            interfaceUpdate();
-            interfaceUpdateMedia();
-            Song song = getListSong().get(pos);
-            createChannel();
-            createNotification(getApplicationContext(), song, pos);
+            updateUIClickNotification();
+
         }
         else if(intent.getAction()==MUSIC_SERVICE_ACTION_PLAY){
             resumeSong();
+            updateUIClickNotification();
+
+        }
+//        if(currentSong>=0)
+//        {
+//            int pos = getCurrentSong();
+//            interfaceUpdate();
+//            interfaceUpdateMedia();
+//            Song song = getListSong().get(pos);
+//            createChannel();
+//            createNotification(getApplicationContext(), song, pos);
+//        }
+
+
+            return START_STICKY;
+        }
+        private void  updateUIClickNotification()
+        {
             int pos = getCurrentSong();
             interfaceUpdate();
             interfaceUpdateMedia();
             Song song = getListSong().get(pos);
             createChannel();
             createNotification(getApplicationContext(), song, pos);
-        }
-
-            return START_STICKY;
         }
         public  void interfaceUpdate()
         {
@@ -305,7 +308,7 @@ public class MediaPlaybackService extends Service {
     private notificationUpdateMedia mNotificationUpdateMedia;
 
     public void setNotificationDataMedia(notificationUpdateMedia mNotificationUpdateMedia) {
-        this.mNotificationUpdateAllSong = mNotificationUpdateAllSong;
+        this.mNotificationUpdateMedia = mNotificationUpdateMedia;
     }
 
     private void initMediaPlayer() {
@@ -352,10 +355,13 @@ public class MediaPlaybackService extends Service {
                     currentSong --;
                 }
                 playSong(getListSong().get(currentSong).getSongImage());
-                if (mListener != null) {
-                    Log.d("HoangLD", "nhay"+mListener);
-
-                    mListener.updateUiSongPlay(currentSong);
+                if (mListenerAll != null) {
+                    mListenerAll.updateUiSongPlay(currentSong);
+                    setCurrentSong(currentSong);
+                }
+                if(mListenerMe != null)
+                {
+                    mListenerMe.updateUiMediaSong(currentSong);
                     setCurrentSong(currentSong);
                 }
                 int pos = getCurrentSong();
@@ -444,14 +450,23 @@ public class MediaPlaybackService extends Service {
         Log.d("HoangLD1", "previousSong2: " + currentSong);
         playSong(mListSong.get(currentSong).getSongImage());
     }
-
+///set interface tu chuyen bài all
     public interface SongManageListener {
         void updateUiSongPlay(int pos);
     }
-    public SongManageListener mListener;
+    public SongManageListener mListenerAll;
 
     public void setListener(SongManageListener mListener) {
-        this.mListener = mListener;
+        this.mListenerAll = mListener;
+    }
+    ///set interface tu chuyen bài me
+    public interface SongManageListenerMedia {
+        void updateUiMediaSong(int pos);
+    }
+    public SongManageListenerMedia mListenerMe;
+
+    public void mListenerMe(SongManageListenerMedia mListenerMe) {
+        this.mListenerMe = mListenerMe;
     }
 
 

@@ -315,8 +315,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);
                 mediaPlaybackFragment.setVertical(true);
                 mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
-                mMediaPlaybackService.setListener(mediaPlaybackFragment);
-                fragmentTransaction.addToBackStack(null);
+                mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
             break;

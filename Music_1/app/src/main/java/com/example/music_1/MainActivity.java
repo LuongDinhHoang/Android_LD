@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         mMediaPlaybackService.setListener(allSongsFragment);//get vao
         mMediaPlaybackService.setNotificationData(allSongsFragment);
+        //mMediaPlaybackService.setListener(mediaPlaybackFragment);
         mOrientation = getResources().getConfiguration().orientation;
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
 //            allSongsFragment.setMediaPlaybackService(mMediaPlaybackService);
@@ -144,11 +145,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mMediaPlaybackService.setCurrentSong(0);
             }
             allSongsFragment.setCheck(false);
+
             mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
             mediaPlaybackFragment.setVertical(false);
             fragmentTransaction.replace(R.id.ll_out1,allSongsFragment);
             // mllBottom.setVisibility(view.VISIBLE);
             fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
+            mediaPlaybackFragment.setListenerMedia(allSongsFragment);
+            mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);
+         //   mMediaPlaybackService.setListener(mediaPlaybackFragment);
 //            mMediaPlaybackService.setListener(allSongsFragment);//get vao
             fragmentTransaction.commit();
         }

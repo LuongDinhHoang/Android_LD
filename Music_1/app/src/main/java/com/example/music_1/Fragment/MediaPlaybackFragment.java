@@ -33,7 +33,7 @@ import Services.MediaPlaybackService;
 import static com.example.music_1.Fragment.AllSongsFragment.getAlbumArt;
 
 
-public class MediaPlaybackFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackService.notificationUpdateMedia
+public class MediaPlaybackFragment extends Fragment implements View.OnClickListener,MediaPlaybackService.SongManageListenerMedia,MediaPlaybackService.notificationUpdateMedia
 {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -111,11 +111,11 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 //            mListMedia = mMediaPlaybackService.getMediaManager().getmListSong();
 //
 //        }
-        if (mMediaPlaybackService != null)
-        {
-            mMediaPlaybackService.setListener(MediaPlaybackFragment.this);//get vao
-
-        }
+//        if (mMediaPlaybackService != null)
+//        {
+//            mMediaPlaybackService.setListener(MediaPlaybackFragment.this);//get vao
+//
+//        }
         initView();
         if (mMediaPlaybackService != null && mMediaPlaybackService.getCurrentSong()>=0) {
 
@@ -158,10 +158,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
         setDataMedia();
-        if(mListenerMedia!=null)
-        {
-            mMediaPlaybackService.setListener(MediaPlaybackFragment.this);
-        }
+         //mMediaPlaybackService.setListener(MediaPlaybackFragment.this);//set interface tu chuyen bai
+
         Log.d("HoangLD", "initView:medisa "+isVertical);
         if (isVertical) {
             mBackground.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -270,6 +268,15 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         return fragment;
     }
 
+    @Override
+    public void updateUiMediaSong(int pos) {
+        setData();
+        if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
+            mPlayMedia.setImageResource(R.drawable.ic_play_media);
+        } else {
+            mPlayMedia.setImageResource(R.drawable.ic_pause_media);
+        }
+    }
 
 
     public class UpdateSeekBarThread extends Thread {
@@ -446,16 +453,12 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     }
     ///interface updateUi tu chuyen bai
 
-    @Override
-    public void updateUiSongPlay(int pos) {
-        Log.d("HoangLD", "updateUiSongPlay:media");
-        setData();
-        if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
-            mPlayMedia.setImageResource(R.drawable.ic_play_media);
-        } else {
-            mPlayMedia.setImageResource(R.drawable.ic_pause_media);
-        }
-    }
+//    @Override
+//    public void updateUiSongPlay(int pos) {
+//        Log.d("HoangLD", "updateUiSongPlay:media");
+//        setData();
+//
+//    }
     public interface SongManageListenerMedia {
         void updateUiSongPlayMedia();
     }
@@ -465,7 +468,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         this.mListenerMedia = mListenerMedia;
     }
     ////InterfaceNotification updateui notifiction click
-
     @Override
     public void updateDataMedia() {
         setData();
