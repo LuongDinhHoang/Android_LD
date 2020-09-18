@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,14 +18,17 @@ import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import Services.MediaPlaybackService;
 import es.claucookie.miniequalizerlibrary.EqualizerView;
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> implements Filterable {
 private Context context;
 private List<Song> mList;
+private List<Song> mListFull;
 
     public IIClick getClick() {
         return mClick;
@@ -45,6 +50,8 @@ private List<Song> mList;
     public SongAdapter(Context context, List<Song> mList) {
         this.context = context;
         this.mList = mList;
+        mListFull = new LinkedList<Song>();
+        mListFull.addAll(mList);
     }
 //
 //    public int getPos() {
@@ -60,13 +67,7 @@ private List<Song> mList;
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
-
-
             view = LayoutInflater.from(context).inflate(R.layout.item,parent,false);// khai báo vẽ view
-
-
-
-
         return new ViewHolder(view);
     }
 
@@ -81,6 +82,43 @@ private List<Song> mList;
     public int getItemCount() {
         return mList.size();
     }
+
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            LinkedList<Song> filteredList = new LinkedList<>();
+
+            if (constraint.toString().isEmpty()) {
+                filteredList.addAll(mListFull);
+            } else {
+                for (Song songName : mListFull) {
+                    if (songName.getSongName().toLowerCase().contains(constraint.toString().toLowerCase().trim())) {
+                        filteredList.addLast(songName);
+                    }
+                }
+            }
+            notifyDataSetChanged();
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mList.clear();
+            mList.addAll((Collection<? extends Song>) results.values);
+            notifyDataSetChanged();
+
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView mSongName,mSongTime,mSongID;
@@ -103,9 +141,9 @@ private List<Song> mList;
         }
 
         public void binData(final Song song , final int pos) {
-            int a;
+            final Song mCurrent = mList.get(pos);
             mSongName.setText(song.getSongName()+"");
-            mSongID.setText(String.valueOf(pos +1));        //set dữ liệu cho từng item
+            mSongID.setText(String.valueOf(song.getPos()+1));        //set dữ liệu cho từng item
             mSongTime.setText(song.getTimeDurationString(song.getSongTime()));
             mSongID.setVisibility(View.VISIBLE);
             mImage.setVisibility(View.INVISIBLE);
@@ -123,12 +161,7 @@ private List<Song> mList;
                else {
                    mSongID.setTypeface(null,Typeface.BOLD);
                    mSongName.setTypeface(null, Typeface.BOLD);
-
                }
-
-
-
-
             }
             else mImage.stopBars();
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +174,7 @@ private List<Song> mList;
         }
 
     }
+
 
     public  interface  IIClick
     {

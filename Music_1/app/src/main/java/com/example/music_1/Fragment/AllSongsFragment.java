@@ -16,10 +16,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import androidx.appcompat.widget.SearchView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -33,15 +37,12 @@ import java.util.List;
 import Services.MediaPlaybackService;
 
 
-public class AllSongsFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackFragment.SongManageListenerMedia, MediaPlaybackService.notificationUpdateAllSong {
+public class AllSongsFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackFragment.SongManageListenerMedia,
+        SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener,MediaPlaybackService.notificationUpdateAllSong {
+
+
     private RecyclerView mRecycle;
-
-
-
     private List<Song> mList;
-    public void setList(List<Song> mList) {
-        this.mList = mList;
-    }
     private SongAdapter mAdapter;
     private LinearLayout mllBottom;
     private int mPosition;
@@ -93,6 +94,12 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 //        onConnectService();
         Log.d("HoangLD", "onCreateView: ");
         return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -315,7 +322,8 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);
                 mediaPlaybackFragment.setVertical(true);
                 mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
-                mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);                fragmentTransaction.addToBackStack(null);
+                mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
             break;
@@ -362,4 +370,35 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 //            mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
 //        }
     }
+////////////menu search
+@Override
+public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
+    inflater.inflate(R.menu.menu,menu);
+    MenuItem searchItem = menu.findItem(R.id.search);
+    SearchView searchView = (SearchView) searchItem.getActionView();
+    searchView.setOnQueryTextListener(this);
+}
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        mAdapter.getFilter().filter(s);
+        mAdapter.notifyDataSetChanged();
+        return false;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        return false;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        return false;
+    }
+
 }

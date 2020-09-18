@@ -104,11 +104,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        toggle.syncState();
 
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu,menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
     @Override
     public void onBackPressed() {
         getSupportActionBar().show();                 //setActionBar
@@ -120,10 +120,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setService();
         super.onStart();
     }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        return true;
+    }
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.search) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void addFragmentList()
@@ -222,12 +240,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
     public void getSong(List<Song> mList) {
+
         ContentResolver musicResolver = getContentResolver();
         Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor songCursor = musicResolver.query(songUri, null, null, null, null);
 
-        if (songCursor != null && songCursor.moveToFirst()) {
+
             if (songCursor != null && songCursor.moveToFirst()) {
+                int pos=0;
                 do {
                     int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
                     int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
@@ -238,17 +258,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     String currentName = songCursor.getString(songName);
                     String currentAuthor = songCursor.getString(songAuthor);
                     String currentArt = songCursor.getString(songArt);
-                    mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false));
+                    mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false,pos));
+                    pos++;
                 } while (songCursor.moveToNext());
-                for (int i = 0; i < mList.size(); i++) {
-                    for (int j = i + 1; j < mList.size(); j++) {
-                        if (mList.get(i).getSongName().compareTo(mList.get(j).getSongName()) > 0) {
-                            Collections.swap(mList, i, j);
-                        }
+//                if (songCursor != null && songCursor.moveToFirst()) {
+//                    for (int i = 0; i < mList.size(); i++) {
+//                        for (int j = i + 1; j < mList.size(); j++) {
+//                            if (mList.get(i).getSongName().compareTo(mList.get(j).getSongName()) > 0) {
+//                                Collections.swap(mList, i, j);
+//                            }
+//
+//                        }
+//                    }
 
-                    }
-                }
-            }
+           // }
+
         }
     }
 

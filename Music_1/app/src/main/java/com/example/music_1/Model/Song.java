@@ -10,6 +10,16 @@ public class Song {
     private String mSongImage;
     private boolean isPlay;
 
+    public int getPos() {
+        return mPos;
+    }
+
+    public void setPos(int mPos) {
+        this.mPos = mPos;
+    }
+
+    private  int mPos;
+
     public long getSongID() {
         return mSongID;
     }
@@ -58,13 +68,14 @@ public class Song {
         isPlay = play;
     }
 
-    public Song(long mSongID, String mSongName, long mSongTime, String mSongArtist, String mSongImage, boolean isPlay) {
+    public Song(long mSongID, String mSongName, long mSongTime, String mSongArtist, String mSongImage, boolean isPlay,int mPos) {
         this.mSongID = mSongID;
         this.mSongName = mSongName;
         this.mSongTime = mSongTime;
         this.mSongArtist = mSongArtist;
         this.mSongImage = mSongImage;
         this.isPlay = isPlay;
+        this.mPos=mPos;
     }
 
     public  String getTimeDurationString(long s )
