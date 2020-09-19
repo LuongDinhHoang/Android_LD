@@ -300,7 +300,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
+                        if (mMediaPlaybackService.getCurrentSong()>=0) {
                             while (mMediaPlaybackService.getPlayer() != null) {
                                 try {
                                     long current = -1;

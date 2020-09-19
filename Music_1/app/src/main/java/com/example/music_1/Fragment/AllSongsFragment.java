@@ -91,6 +91,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         view = inflater.inflate(R.layout.fragment_all_songs, container, false);
         setData();
         initView();
+
 //        onConnectService();
         Log.d("HoangLD", "onCreateView: ");
         return view;
@@ -143,15 +144,14 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 
         //mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
         if (mMediaPlaybackService != null && mMediaPlaybackService.getMediaPlayer().isPlaying()) {
-//            if (isVertical) {
-//                mllBottom.setVisibility(View.VISIBLE);
-//            }
+
                 UpdateUI();
         }
         mAdapter.setClick(
                 new SongAdapter.IIClick() {
                     @Override
                     public void ItemClick(Song song, int pos) {
+                            //pos=song.getPos();
                             for (int i = 0; i < mList.size(); i++) {
                                 mList.get(i).setPlay(false);
                             }
@@ -164,7 +164,11 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                                 //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
                             }
                             if (isVertical) {
-                                mllBottom.setVisibility(View.VISIBLE);
+                                if(mMediaPlaybackService.getCurrentSong()>=0)
+                                {
+                                    mllBottom.setVisibility(View.VISIBLE);
+
+                                }
                                 mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
                                 mSongArtistPlay.setText(song.getSongArtist());
                                 byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
@@ -312,12 +316,12 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_bottom: {
-
                 Song song = mList.get(mPosition);
                 Log.d("HoangLD", "onClick: ");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 ((AppCompatActivity) getActivity()).getSupportActionBar().hide();// hide action bar
+
                 MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(), song.getSongArtist(), song.getSongImage());
                 fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);
                 mediaPlaybackFragment.setVertical(true);

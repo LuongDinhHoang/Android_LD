@@ -50,18 +50,9 @@ private List<Song> mListFull;
     public SongAdapter(Context context, List<Song> mList) {
         this.context = context;
         this.mList = mList;
-        mListFull = new LinkedList<Song>();
+        mListFull = new LinkedList<>();
         mListFull.addAll(mList);
     }
-//
-//    public int getPos() {
-//        return mPossition;
-//    }
-//
-//    public void setPos(int pos) {
-//        mPossition = pos;
-//        Log.d("SongAdapter", "setPos: "+pos);
-//    }
 
     @NonNull
     @Override
@@ -73,11 +64,10 @@ private List<Song> mListFull;
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         holder.binData(mList.get(position),position);
 
     }
-
-
     @Override
     public int getItemCount() {
         return mList.size();
@@ -104,8 +94,6 @@ private List<Song> mListFull;
                     }
                 }
             }
-            notifyDataSetChanged();
-
             FilterResults filterResults = new FilterResults();
             filterResults.values = filteredList;
             return filterResults;
@@ -132,8 +120,6 @@ private List<Song> mListFull;
             mSongID=itemView.findViewById(R.id.Song_Id);
             mImagePause=itemView.findViewById(R.id.Image_Pause);
             mImage=itemView.findViewById(R.id.Image_Id);
-
-
         }
 
         public TextView getSongTime() {
@@ -174,8 +160,6 @@ private List<Song> mListFull;
         }
 
     }
-
-
     public  interface  IIClick
     {
         void ItemClick(Song song,int pos);

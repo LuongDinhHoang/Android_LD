@@ -7,10 +7,14 @@
 
     <ImageView
         android:id="@+id/background_Image"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:clickable="false"
+        android:scaleType="fitXY"
+        android:src="@drawable/background"
         >
-
+        
     </ImageView>
 
     <LinearLayout
@@ -77,7 +81,8 @@
                 android:layout_height="35sp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/ic_queue_dark"></ImageView>
+                android:src="@drawable/ic_queue_dark">
+            </ImageView>
 
             <ImageView
                 android:layout_width="45sp"
@@ -102,7 +107,12 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_alignParentBottom="true"
-            android:layout_margin="32dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginBottom="34dp"
             android:background="@drawable/ic_repeat_white">
 
         </ImageView>
@@ -113,7 +123,12 @@
             android:layout_height="25dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_margin="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginRight="239dp"
+            android:layout_marginBottom="34dp"
             android:background="@drawable/ic_shuffle_white">
 
         </ImageView>

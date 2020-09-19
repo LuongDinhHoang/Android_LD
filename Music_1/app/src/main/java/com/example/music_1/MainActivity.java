@@ -27,6 +27,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.Fragment.AllSongsFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
+import com.example.music_1.Fragment.favoritesFragment;
 import com.example.music_1.Model.Song;
 import com.google.android.material.navigation.NavigationView;
 
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private  int mOrientation;
 
-
     public SongAdapter getAdapter() {
         return mAdapter;
     }
@@ -74,9 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
     AllSongsFragment allSongsFragment =new AllSongsFragment();
     MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,12 +189,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout Layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         switch (item.getItemId()){
             case R.id.nav_listView:
-                Layout.closeDrawer(GravityCompat.START);
-                displayToast("list");
+                getSupportActionBar().setTitle("Music");
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.ll_out,new AllSongsFragment()).commit();
+                Layout.closeDrawer(GravityCompat.START);;
                 return true;
             case R.id.nav_ListFavorites:
+                getSupportActionBar().setTitle("Favorite Songs");
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.ll_out,new favoritesFragment()).commit();
                 Layout.closeDrawer(GravityCompat.START);
-                displayToast("list_favorites");
+
                 return true;
 
             default:
