@@ -441,15 +441,24 @@ public class MediaPlaybackService extends Service {
     public void previousSong() {
 
         isPlay=false;
-        if (currentSong <= 0) {
-            currentSong = mListSong.size() - 1;
-        } else {
-            currentSong--;
+        if(mPlayer.getCurrentPosition()<=3000)
+        {
+            if (currentSong <= 0) {
+                currentSong = mListSong.size() - 1;
+            } else {
+                currentSong--;
+            }
         }
-
+        
         Log.d("HoangLD1", "previousSong2: " + currentSong);
         playSong(mListSong.get(currentSong).getSongImage());
     }
+//    public int getCurrentStreamPosition() {
+//        if (mPlayer != null) {
+//            return mPlayer.getCurrentPosition();
+//        }
+//        return 0;
+//    }
 ///set interface tu chuyen bài all
     public interface SongManageListener {
         void updateUiSongPlay(int pos);
