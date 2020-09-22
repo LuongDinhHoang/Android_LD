@@ -173,11 +173,19 @@ public class MediaPlaybackService extends Service {
         else if(intent.getAction()==MUSIC_SERVICE_ACTION_STOP){
             pauseSong();
             updateUIClickNotification();
+            int pos = getCurrentSong();
+            Song song = getListSong().get(pos);
+            createChannel();
+            createNotification(getApplicationContext(), song, pos);
 
         }
         else if(intent.getAction()==MUSIC_SERVICE_ACTION_PLAY){
             resumeSong();
             updateUIClickNotification();
+            int pos = getCurrentSong();
+            Song song = getListSong().get(pos);
+            createChannel();
+            createNotification(getApplicationContext(), song, pos);
 
         }
 //        if(currentSong>=0)
@@ -195,12 +203,10 @@ public class MediaPlaybackService extends Service {
         }
         private void  updateUIClickNotification()
         {
-            int pos = getCurrentSong();
+
             interfaceUpdate();
             interfaceUpdateMedia();
-            Song song = getListSong().get(pos);
-            createChannel();
-            createNotification(getApplicationContext(), song, pos);
+
         }
         public  void interfaceUpdate()
         {
@@ -381,6 +387,10 @@ public class MediaPlaybackService extends Service {
             e.printStackTrace();
         }
         isPlay=true;
+        int pos = getCurrentSong();
+        Song song = getListSong().get(pos);
+        createChannel();
+        createNotification(getApplicationContext(), song, pos);
 
     }
 
@@ -449,7 +459,7 @@ public class MediaPlaybackService extends Service {
                 currentSong--;
             }
         }
-        
+
         Log.d("HoangLD1", "previousSong2: " + currentSong);
         playSong(mListSong.get(currentSong).getSongImage());
     }

@@ -206,9 +206,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
         }
     }
-    public void displayToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
+
 
     private void setService() {
         Intent intent = new Intent(this, MediaPlaybackService.class);

@@ -378,10 +378,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 } else {
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
-                int mCurrentNext =mMediaPlaybackService.getCurrentSong();
-                Song song = mListMedia.get(mCurrentNext);
-                mMediaPlaybackService.createChannel();
-                mMediaPlaybackService.createNotification(getActivity(),song,mCurrentNext+1);
+//                int mCurrentNext =mMediaPlaybackService.getCurrentSong();
+//                Song song = mListMedia.get(mCurrentNext);
+//                mMediaPlaybackService.createChannel();
+//                mMediaPlaybackService.createNotification(getActivity(),song,mCurrentNext+1);
                 if(!isVertical)
                 {
                     Log.d("HoangLD", "onClick: mlistner"+mListenerMedia);
@@ -408,10 +408,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 } else {
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
-                int mCurrentPre =mMediaPlaybackService.getCurrentSong();
-                Song songPre = mListMedia.get(mCurrentPre);
-                mMediaPlaybackService.createChannel();
-                mMediaPlaybackService.createNotification(getActivity(),songPre,mCurrentPre-1);
+//                int mCurrentPre =mMediaPlaybackService.getCurrentSong();
+//                Song songPre = mListMedia.get(mCurrentPre);
+//                mMediaPlaybackService.createChannel();
+//                mMediaPlaybackService.createNotification(getActivity(),songPre,mCurrentPre-1);
                 if(!isVertical)
                 {
                     if (mListenerMedia != null) {

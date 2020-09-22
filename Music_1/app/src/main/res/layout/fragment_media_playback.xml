@@ -122,16 +122,17 @@
     </RelativeLayout>
 
     <SeekBar
+        android:id="@+id/media_seek_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ll_bottom"
-        android:id="@+id/media_seek_bar"
-        android:layout_weight="1.5"
-        android:layout_marginLeft="-15dp"
-        android:layout_marginRight="-15dp"
-        android:progress="30"
-        android:background="#A9FFFFFF"
+        android:layout_marginLeft="-18dp"
+        android:layout_marginRight="-18dp"
+        android:layout_marginBottom="-8dp"
+        android:elevation="10dp"
+        android:progress="0"
         android:progressTint="#F44336"
+        android:theme="@style/AppTheme"
         android:thumbTint="#F44336">
 
     </SeekBar>

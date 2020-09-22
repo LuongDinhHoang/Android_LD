@@ -157,12 +157,12 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                             }
                             mList.get(pos).setPlay(true);
                             //service
-                            if (mMediaPlaybackService != null) {
-                                mMediaPlaybackService.playSong(song.getSongImage());
-                                mMediaPlaybackService.setCurrentSong(pos);//get position
-                                mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
-                                //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
-                            }
+                        if (mMediaPlaybackService != null) {
+                            mMediaPlaybackService.setCurrentSong(pos);//get position
+                            mMediaPlaybackService.playSong(song.getSongImage());
+                            mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
+                            //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
+                        }
                             if (isVertical) {
                                 if(mMediaPlaybackService.getCurrentSong()>=0)
                                 {
@@ -206,10 +206,11 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 
                             }
 
-                            mAdapter.notifyDataSetChanged();
 
-                            mMediaPlaybackService.createChannel();
-                            mMediaPlaybackService.createNotification(getActivity(),song,pos);
+                            mAdapter.notifyDataSetChanged();
+//
+//                            mMediaPlaybackService.createChannel();
+//                            mMediaPlaybackService.createNotification(getActivity(),song,pos);
 //                mAdapter.setPos(pos);
 
 
