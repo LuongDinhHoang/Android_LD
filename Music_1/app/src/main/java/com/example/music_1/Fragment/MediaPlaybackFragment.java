@@ -365,8 +365,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 {mAdapter.notifyDataSetChanged();}
                 int mCurrentNext =mMediaPlaybackService.getCurrentSong();
                 Song song = mListMedia.get(mCurrentNext);
-                mMediaPlaybackService.createChannel();
-                mMediaPlaybackService.createNotification(getActivity(),song,mCurrentNext);
+                mMediaPlaybackService.startForegroundService(song,mCurrentNext);
                 break;
             }
             case R.id.btn_next_media:

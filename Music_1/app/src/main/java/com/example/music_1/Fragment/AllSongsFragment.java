@@ -343,8 +343,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                 mAdapter.notifyDataSetChanged();
                 int pos = mMediaPlaybackService.getCurrentSong();
                 Song song = getListSong().get(pos);
-                mMediaPlaybackService.createChannel();
-                mMediaPlaybackService.createNotification(getActivity(),song,pos);
+                mMediaPlaybackService.startForegroundService(song,pos);
             }
         }
     }
