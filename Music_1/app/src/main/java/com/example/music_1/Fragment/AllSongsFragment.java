@@ -100,6 +100,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("HoangLDssss", "onCreate: ");
         setHasOptionsMenu(true);
     }
 
@@ -375,14 +376,17 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 //        }
     }
 ////////////menu search
-@Override
-public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-    super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.menu,menu);
-    MenuItem searchItem = menu.findItem(R.id.search);
-    SearchView searchView = (SearchView) searchItem.getActionView();
-    searchView.setOnQueryTextListener(this);
-}
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        super.onCreateOptionsMenu(menu, inflater);
+        Log.d("HoangLDssss", "onCreateOptionsMenu: ");
+        inflater.inflate(R.menu.menu,menu);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+    }
     @Override
     public boolean onQueryTextSubmit(String s) {
         return false;

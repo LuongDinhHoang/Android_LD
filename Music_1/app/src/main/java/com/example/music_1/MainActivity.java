@@ -2,15 +2,19 @@ package com.example.music_1;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private SongAdapter mAdapter;
-
+    private static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 5;
     private MediaPlaybackService mMediaPlaybackService;
 
     public MediaPlaybackService getMediaPlaybackService() {
@@ -71,9 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<Song> mList;
 
     FragmentManager fragmentManager = getSupportFragmentManager();
-    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    AllSongsFragment allSongsFragment =new AllSongsFragment();
-    MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,26 +88,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
+
+        } else {
+            getData();
+        }
+    }
+    public void getData()
+    {
         mList = new ArrayList<>();
         getSong(mList);
         mAdapter = new SongAdapter(this, mList);
-        ////////////
-
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_close,
-//                R.string.navigation_drawer_close);
-//        if (drawer != null) {
-//            drawer.addDrawerListener(toggle);
-//        }
-//        toggle.syncState();
-
     }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu,menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_READ_MEDIA) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                addFragmentList();                        //  Override  onRequestPermissionsResult() để nhận lại cuộc gọi (check permission)\
+                getData();
+                Toast.makeText(this, "Permission Granted !", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Permission Denied !", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
     @Override
     public void onBackPressed() {
         getSupportActionBar().show();                 //setActionBar
@@ -143,18 +152,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void addFragmentList()
     {
+        AllSongsFragment allSongsFragment = new AllSongsFragment();
         mMediaPlaybackService.setListener(allSongsFragment);//get vao
         mMediaPlaybackService.setNotificationData(allSongsFragment);
         //mMediaPlaybackService.setListener(mediaPlaybackFragment);
         mOrientation = getResources().getConfiguration().orientation;
+        Log.d("HoangLDssss", "addFragmentList: " +mOrientation);
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
 //            allSongsFragment.setMediaPlaybackService(mMediaPlaybackService);
 //            allSongsFragment.setList(mList);
             allSongsFragment.setCheck(true);
-            fragmentTransaction.replace(R.id.ll_out,allSongsFragment);
-            fragmentTransaction.commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,allSongsFragment).commit();
         }
         else {
+            MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
+
             if(mMediaPlaybackService.getCurrentSong()==-1)
             {
                 mMediaPlaybackService.setCurrentSong(0);
@@ -163,14 +175,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
             mediaPlaybackFragment.setVertical(false);
-            fragmentTransaction.replace(R.id.ll_out1,allSongsFragment);
-            // mllBottom.setVisibility(view.VISIBLE);
-            fragmentTransaction.replace(R.id.ll_out_land,mediaPlaybackFragment);
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1,allSongsFragment)
+            .replace(R.id.ll_out_land,mediaPlaybackFragment).commit();
             mediaPlaybackFragment.setListenerMedia(allSongsFragment);
             mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);
          //   mMediaPlaybackService.setListener(mediaPlaybackFragment);
 //            mMediaPlaybackService.setListener(allSongsFragment);//get vao
-            fragmentTransaction.commit();
         }
 
     }
@@ -190,14 +201,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()){
             case R.id.nav_listView:
                 getSupportActionBar().setTitle("Music");
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.ll_out,new AllSongsFragment()).commit();
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.ll_out,allSongsFragment).commit();
                 Layout.closeDrawer(GravityCompat.START);;
                 return true;
             case R.id.nav_ListFavorites:
                 getSupportActionBar().setTitle("Favorite Songs");
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.ll_out,new favoritesFragment()).commit();
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.ll_out,new favoritesFragment()).commit();
                 Layout.closeDrawer(GravityCompat.START);
 
                 return true;
@@ -222,13 +233,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mMediaPlaybackService.setListSong(mList);                     //đưa list vào list service nếu service chạy
             //mMediaPlaybackService.getMedia().setListMedia(mList);
             addFragmentList();
-
-//            if(mIsBound){
-
-//            if(!isVertical)
-//            {
-//                mediaPlaybackFragment.setListenerMedia(AllSongsFragment.this);
-//            }`
 
             Log.d("HoangLD", "onServiceConnectedall: ");
         }
