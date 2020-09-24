@@ -1,6 +1,7 @@
 package com.example.music_1.Fragment;
 
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -48,11 +49,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     ImageView mImage, mBackground;
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
-
-//    public void setMediaPlaybackService(MediaPlaybackService mMediaPlaybackService) {
-//        this.mMediaPlaybackService = mMediaPlaybackService;
-//    }
-
     private MediaPlaybackService mMediaPlaybackService;
     private ImageView mPlayMedia, mButtonShuffle, mButtonRepeat, mButtonList;
 
@@ -69,11 +65,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private List<Song> mListMedia = new ArrayList<>();
     private ImageButton mNextMedia, mBackMedia;
     private TextView mEndTime,mStartTime;
-
-
     private SeekBar mMediaSeekBar;
     private UpdateSeekBarThread mUpdateSeekBarThread;
-
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     // TODO: Rename and change types of parameters
     private String Name;
@@ -111,16 +106,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_media_playback, container, false);
-//        if(isVertical)
-//        {
-//            mListMedia = mMediaPlaybackService.getMediaManager().getmListSong();
-//
-//        }
-//        if (mMediaPlaybackService != null)
-//        {
-//            mMediaPlaybackService.setListener(MediaPlaybackFragment.this);//get vao
-//
-//        }
+
         initView();
         if (mMediaPlaybackService != null && mMediaPlaybackService.getCurrentSong()>=0) {
 
@@ -135,7 +121,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 if (mMediaPlaybackService.isRepeatAll) {
                     mButtonRepeat.setImageResource(R.drawable.ic_repeat_dark_selected);
                 }
-
         }
         return view;
     }
@@ -338,6 +323,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences("DATA_PLAY_MEDIA", getActivity().MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+
         if (getArguments() != null) {
             Name = getArguments().getString(ARG_PARAM1);
             Artist = getArguments().getString(ARG_PARAM2);
@@ -433,6 +422,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     mMediaPlaybackService.setRepeat(false);
                     mButtonRepeat.setImageResource(R.drawable.ic_repeat_white);
                     mMediaPlaybackService.setRepeatAll(false);
+
                 } else if (mMediaPlaybackService.isRepeatAll) {
                     mButtonRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
                     mMediaPlaybackService.setRepeat(true);
@@ -450,6 +440,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 
         }
     }
+
 //////////// menu Search
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

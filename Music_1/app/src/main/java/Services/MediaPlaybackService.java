@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -41,9 +42,7 @@ public class MediaPlaybackService extends Service {
     private static final String MUSIC_SERVICE_ACTION_NEXT = "music_service_action_next";
     private static final String MUSIC_SERVICE_ACTION_PREV = "music_service_action_prev";
     private static final String MUSIC_SERVICE_ACTION_STOP = "music_service_action_stop";
-
-    public static final String SONG_PLAY_COMPLETE = "song_play_complete";
-    public static final String MESSAGE_SONG_PLAY_COMPLETE = "message_song_play_complete";
+    public static final String SHARED_PREF_FILE = "com.example.music";
     public static final int NOTIFICATION_ID = 125;
     private List<Song> mListSong = new ArrayList<>();
     private MediaPlayer mPlayer;
@@ -55,66 +54,47 @@ public class MediaPlaybackService extends Service {
     private final int STATUS_STOP = 4;
     private boolean mRepeat = false;
     private boolean StatusPlaying;
-
     public boolean isPlay() {
         return isPlay;
     }
-
     public void setPlay(boolean play) {
         isPlay = play;
     }
-
     private boolean isPlay = false;
-
-
     public void setListSong(List<Song> mListSong) {
         this.mListSong = mListSong;
     }
-
     public boolean getShuffle() {
         return isShuffle;
     }
-
     public void setShuffle(boolean shuffle) {
         isShuffle = shuffle;
     }
-
     public boolean isRepeat() {
         return isRepeat;
     }
-
     public void setRepeat(boolean repeat) {
         isRepeat = repeat;
     }
-
     public boolean isRepeatAll() {
         return isRepeatAll;
     }
-
     public void setRepeatAll(boolean repeatAll) {
         isRepeatAll = repeatAll;
     }
-
     public boolean isShuffle, isRepeat = false, isRepeatAll = false;
-
-
     public boolean isStatusPlaying() {
         return StatusPlaying;
     }
-
     public List<Song> getListSong() {
         return mListSong;
     }
-
     public void setCurrentSong(int currentSong) {
         this.currentSong = currentSong;
     }
-
-
     public int getCurrentSong() {
         return currentSong;
     }
-
     public int getCurrentStreamPosition() {
         if (mPlayer != null)
             return mPlayer.getCurrentPosition();  //trả về vtri đang phát
@@ -122,19 +102,11 @@ public class MediaPlaybackService extends Service {
         return 0;
     }
 
-    //private AllSongsFragment allSongsFragment = new AllSongsFragment();
-
-    private Context mContext;
-
     public MediaPlayer getMediaPlayer() {
         return mPlayer;
     }
-
-
     private MediaPlaybackFragment mMedia;
     private MusicBinder binder = new MusicBinder();
-
-
     private List<Song> mList = new ArrayList<>();
 
 
@@ -151,13 +123,13 @@ public class MediaPlaybackService extends Service {
     }
 
     @Override
-
     public void onCreate() {
         super.onCreate();
         initMediaPlayer();
         Log.d("HoangLD", "onCreate: service");
         mMedia = new MediaPlaybackFragment();
         createChannel();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -197,6 +169,7 @@ public class MediaPlaybackService extends Service {
 
         return START_STICKY;
     }
+
 
     private void updateUIClickNotification() {
         interfaceUpdate();
@@ -394,7 +367,6 @@ public class MediaPlaybackService extends Service {
     public void pauseSong() {
         mPlayer.pause();
         isPlay = false;
-
     }
 
     public void stop() {
@@ -470,7 +442,6 @@ public class MediaPlaybackService extends Service {
     public interface SongManageListener {
         void updateUiSongPlay(int pos);
     }
-
     public SongManageListener mListenerAll;
 
     public void setListener(SongManageListener mListener) {
@@ -492,6 +463,8 @@ public class MediaPlaybackService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mPlayer.stop();
+        mPlayer.release();
     }
 
     public static Bitmap getAlbumArt(String path) {

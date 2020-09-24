@@ -1,5 +1,6 @@
 package com.example.music_1.Fragment;
 
+import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 
@@ -51,10 +52,8 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
     private ImageView mBtnPlay;
     private View view;
     private MediaPlaybackService mMediaPlaybackService;
-
-//    public void setMediaPlaybackService(MediaPlaybackService mMediaPlaybackService) {
-//        this.mMediaPlaybackService = mMediaPlaybackService;
-//    }
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     private MediaPlaybackService getMusicService(){
         return getActivityMusic().getMediaPlaybackService();
     }
@@ -77,8 +76,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         mList=getListSong();
         mAdapter=getSongAdapter();
     }
-
-
     public void setCheck(boolean mCheck) {
         this.isVertical = mCheck;
     }
@@ -91,23 +88,58 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         view = inflater.inflate(R.layout.fragment_all_songs, container, false);
         setData();
         initView();
+        if(mMediaPlaybackService != null)
+        {
+            if(mMediaPlaybackService.getCurrentSong()<0)
+            {
+                int current = sharedPreferences.getInt("DATA_CURRENT", -1);
+                if (current > -1) {
+                    if(isVertical){
+                        mllBottom.setVisibility(View.VISIBLE);
+                        mMediaPlaybackService.setCurrentSong(current);
+                    }
+                    mNameSongPlay.setText(mList.get(current).getSongName());                         //Click item RecycleView
+                    mSongArtistPlay.setText(mList.get(current).getSongArtist());
+                    byte[] songArt = getAlbumArt(mList.get(current).getSongImage());
+                    Glide.with(getContext()).asBitmap()
+                            .error(R.drawable.cute)
+                            .load(songArt)
+                            .into(mImagePlay);
+                    mBtnPlay.setImageResource(R.drawable.ic_play_black);
+                    setItemWhenPause(current);
+                }
+            }
+        }
+
 
 //        onConnectService();
         Log.d("HoangLD", "onCreateView: ");
         return view;
     }
-
+    public  void setItemWhenPause(int pos){
+        for (int i = 0; i < mList.size(); i++) {
+            mList.get(i).setPlay(false);
+        }
+        mList.get(pos).setPlay(true);
+        mAdapter.notifyDataSetChanged();
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("HoangLDssss", "onCreate: ");
         setHasOptionsMenu(true);
+        sharedPreferences = getActivity().getSharedPreferences("DATA_CURRENT_PLAY", getActivity().MODE_PRIVATE);//tao file luu tru
+        editor = sharedPreferences.edit();
     }
 
+    public void saveData() {
+        editor.remove("DATA_CURRENT");
+        editor.putInt("DATA_CURRENT", mMediaPlaybackService.getCurrentSong());
+        editor.commit();
+    }
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -120,7 +152,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         }
         super.onResume();
     }
-
     private void initView() {
 
         mSongID = view.findViewById(R.id.Song_Id);
@@ -138,12 +169,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 //        mAdapter = new SongAdapter(getActivity(), mList);
         mRecycle.setAdapter(mAdapter);
         mAdapter.setMediaPlaybackService(mMediaPlaybackService);//set data on adapter
-
-
-
         onConnectService();
-
-        //mMediaPlaybackService.getMediaManager().setListener(AllSongsFragment.this);//get vao
         if (mMediaPlaybackService != null && mMediaPlaybackService.getMediaPlayer().isPlaying()) {
 
                 UpdateUI();
@@ -209,23 +235,11 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
 
 
                             mAdapter.notifyDataSetChanged();
-//
-//                            mMediaPlaybackService.createChannel();
-//                            mMediaPlaybackService.createNotification(getActivity(),song,pos);
-//                mAdapter.setPos(pos);
-
-
                         }
 
 
                 }
         );
-//        mAdapter.SongAdapter(new SongAdapter.IIClick() {
-//            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-//
-//        });
-
-
     }
     public  void  onConnectService()
     {
@@ -253,13 +267,15 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
     public void UpdateUI() {
         if (mMediaPlaybackService != null)
         {
+
             mNameSongPlay.setText(mList.get(mMediaPlaybackService.getCurrentSong()).getSongName());
             mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getCurrentSong()).getSongArtist());
-            final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getCurrentSong()).getSongImage());
-            Glide.with(view.getContext()).asBitmap()
-                    .load(songArt)
-                    .error(R.drawable.cute)
-                    .into(mImagePlay);
+                final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getCurrentSong()).getSongImage());
+                Glide.with(view.getContext()).asBitmap()
+                        .load(songArt)
+                        .error(R.drawable.cute)
+                        .into(mImagePlay);
+
             for (int i = 0; i < mList.size(); i++) {
                 mList.get(i).setPlay(false);
             }
@@ -273,13 +289,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         mAdapter.notifyDataSetChanged();
 
     }
-    public void  UpdateUICreate()
-    {
-        if(mMediaPlaybackService!= null && mMediaPlaybackService.getCurrentSong() >=0)
-        {
-
-        }
-    }
 
     public static byte[] getAlbumArt(String uri) {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
@@ -288,32 +297,6 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
         mediaMetadataRetriever.release();
         return albumArt;
     }
-
-//    public void getSong() {
-//        ContentResolver musicResolver = getActivity().getContentResolver();
-//        Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//        Cursor songCursor = musicResolver.query(songUri, null, null, null, null);
-//
-//        if (songCursor != null && songCursor.moveToFirst()) {
-//            if (songCursor != null && songCursor.moveToFirst()) {
-//                do {
-//                    int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-//                    int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-//                    long songTime = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-//                    int songAuthor = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-//                    int songArt = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-//                    long currentId = songCursor.getLong(songID);
-//                    String currentName = songCursor.getString(songName);
-//                    String currentAuthor = songCursor.getString(songAuthor);
-//                    String currentArt = songCursor.getString(songArt);
-//
-//
-//                    mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false));
-//                } while (songCursor.moveToNext());
-//            }
-//        }
-//    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -368,7 +351,10 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void updateData() {//interface notification
         Log.d("HoangLD", "notifi next ");
-        UpdateUI();
+
+            UpdateUI();
+
+
 //        if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
 //            mBtnPlay.setImageResource(R.drawable.ic_play_black);
 //        } else {

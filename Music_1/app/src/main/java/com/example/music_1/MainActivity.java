@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     public boolean mCheck;
-
+    private  AllSongsFragment allSongsFragment;
+    private  MediaPlaybackFragment mediaPlaybackFragment;
     public boolean getCheck() {
         return mCheck;
     }
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.d("HoangLD", "onCreate: ");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -124,8 +125,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         setService();
+        Log.d("HoangLD", "onStart: ");
         super.onStart();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("HoangLD", "onStop: ");
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("HoangLD", "onDestroy: ");
+        if(mMediaPlaybackService != null)
+        {
+            allSongsFragment.saveData();
+            unbindService(serviceConnection);
+            mMediaPlaybackService.setNotificationData(null);
+            mMediaPlaybackService.setListener(null);
+            //get vao
+            if(getCheck()==true)
+            {
+                mediaPlaybackFragment.setListenerMedia(null);
+                mMediaPlaybackService.mListenerMe(null);
+                mMediaPlaybackService.setNotificationDataMedia(null);
+            }
+
+        }
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -137,9 +169,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -152,36 +181,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void addFragmentList()
     {
-        AllSongsFragment allSongsFragment = new AllSongsFragment();
-        mMediaPlaybackService.setListener(allSongsFragment);//get vao
-        mMediaPlaybackService.setNotificationData(allSongsFragment);
+
         //mMediaPlaybackService.setListener(mediaPlaybackFragment);
         mOrientation = getResources().getConfiguration().orientation;
         Log.d("HoangLDssss", "addFragmentList: " +mOrientation);
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            allSongsFragment = new AllSongsFragment();
+            mMediaPlaybackService.setListener(allSongsFragment);//get vao
+            mMediaPlaybackService.setNotificationData(allSongsFragment);
+
 //            allSongsFragment.setMediaPlaybackService(mMediaPlaybackService);
 //            allSongsFragment.setList(mList);
             allSongsFragment.setCheck(true);
             getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,allSongsFragment).commit();
         }
         else {
-            MediaPlaybackFragment mediaPlaybackFragment =new MediaPlaybackFragment();
-
-            if(mMediaPlaybackService.getCurrentSong()==-1)
-            {
-                mMediaPlaybackService.setCurrentSong(0);
-            }
+            allSongsFragment = new AllSongsFragment();
+             mediaPlaybackFragment =new MediaPlaybackFragment();
             allSongsFragment.setCheck(false);
-
-            mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
             mediaPlaybackFragment.setVertical(false);
-
             getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1,allSongsFragment)
             .replace(R.id.ll_out_land,mediaPlaybackFragment).commit();
             mediaPlaybackFragment.setListenerMedia(allSongsFragment);
             mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);
-         //   mMediaPlaybackService.setListener(mediaPlaybackFragment);
-//            mMediaPlaybackService.setListener(allSongsFragment);//get vao
+            mMediaPlaybackService.setListener(allSongsFragment);//get vao
+            mMediaPlaybackService.setNotificationData(allSongsFragment);
+            mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
+
         }
 
     }
@@ -217,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
         }
     }
-
 
     private void setService() {
         Intent intent = new Intent(this, MediaPlaybackService.class);
@@ -265,18 +290,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false,pos));
                     pos++;
                 } while (songCursor.moveToNext());
-//                if (songCursor != null && songCursor.moveToFirst()) {
-//                    for (int i = 0; i < mList.size(); i++) {
-//                        for (int j = i + 1; j < mList.size(); j++) {
-//                            if (mList.get(i).getSongName().compareTo(mList.get(j).getSongName()) > 0) {
-//                                Collections.swap(mList, i, j);
-//                            }
-//
-//                        }
-//                    }
-
-           // }
-
         }
     }
 
