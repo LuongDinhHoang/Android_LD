@@ -428,10 +428,6 @@ public class MediaPlaybackService extends Service {
 
 
     public void nextSong() {
-//        if (isShuffle) {
-//            int number = rd.nextInt(3);
-//            currentSong = currentSong + number;
-//        } else {
         Log.d("HoangLD", "nextSong: ");
         isPlay = false;
         if (currentSong >= mListSong.size() - 1) {
@@ -439,7 +435,6 @@ public class MediaPlaybackService extends Service {
         } else {
             currentSong++;
         }
-        // }
         playSong(mListSong.get(currentSong).getSongImage());
     }
 
@@ -458,14 +453,6 @@ public class MediaPlaybackService extends Service {
         playSong(mListSong.get(currentSong).getSongImage());
     }
 
-
-    //    public int getCurrentStreamPosition() {
-//        if (mPlayer != null) {
-//            return mPlayer.getCurrentPosition();
-//        }
-//        return 0;
-//    }
-///set interface tu chuyen bài all
     public interface SongManageListener {
         void updateUiSongPlay(int pos);
     }
@@ -491,6 +478,7 @@ public class MediaPlaybackService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mPlayer.stop();
+        Log.d("hoang", "onDestroy: ");
         mPlayer.release();
     }
 

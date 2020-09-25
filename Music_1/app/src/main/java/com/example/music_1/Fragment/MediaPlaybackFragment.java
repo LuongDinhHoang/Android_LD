@@ -264,13 +264,9 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 mMediaSeekBar.setMax((int) mListMedia.get(mMediaPlaybackService.getCurrentSong()).getSongTime());
                 mMediaSeekBar.setProgress(position);
                 mStartTime.setText(getTimeDurationString(position));
-
-
                 if(!mMediaPlaybackService.isFirst()) UpdateUIRunSeeBar();
             }
-
         }
-
     }
     public  void UpdateUIRunSeeBar()
     {
@@ -415,7 +411,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     Log.d("HoangLD", "onClick: mlistner"+mListenerMedia);
                     if (mListenerMedia != null) {
                         Log.d("HoangLD", "onClick:next ");
-
                         mListenerMedia.updateUiSongPlayMedia();
                     }
                 }
@@ -423,7 +418,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 break;
 
             case R.id.btn_pre_media:
-
                 mMediaPlaybackService.previousSong();
                 setData();
                 if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {

@@ -190,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void addFragmentList()
     {
-
         //mMediaPlaybackService.setListener(mediaPlaybackFragment);
         mOrientation = getResources().getConfiguration().orientation;
         Log.d("HoangLDssss", "addFragmentList: " +mOrientation);
@@ -205,6 +204,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,allSongsFragment).commit();
         }
         else {
+            int current = sharedPreferences.getInt("DATA_CURRENT", -1);
+            if(current==-1)
+            {
+                mMediaPlaybackService.setCurrentSong(0);
+            }
             allSongsFragment = new AllSongsFragment();
              mediaPlaybackFragment =new MediaPlaybackFragment();
             allSongsFragment.setCheck(false);
