@@ -42,8 +42,10 @@ public class MediaPlaybackService extends Service {
     private static final String MUSIC_SERVICE_ACTION_NEXT = "music_service_action_next";
     private static final String MUSIC_SERVICE_ACTION_PREV = "music_service_action_prev";
     private static final String MUSIC_SERVICE_ACTION_STOP = "music_service_action_stop";
-    public static final String SHARED_PREF_FILE = "com.example.music";
-    public static final int NOTIFICATION_ID = 125;
+    public static final int REPEAT = 10;
+    public static final int REPEAT_ALL = 11;
+    public static final int NORMAL = 12;
+    public static final int SHUFFLE = 13;    public static final int NOTIFICATION_ID = 125;
     private List<Song> mListSong = new ArrayList<>();
     private MediaPlayer mPlayer;
     private int currentSong = -1;
@@ -61,28 +63,27 @@ public class MediaPlaybackService extends Service {
         isPlay = play;
     }
     private boolean isPlay = false;
+
+    public boolean isFirst() {
+        return isFirst;
+    }
+
+    private boolean isFirst=true;
+    SharedPreferences sharedPreferencesCurrent;
+    SharedPreferences.Editor editor;
+
+    public boolean isResumeRe() {
+        return ResumeRe;
+    }
+
+    public void setResumeRe(boolean resumeRe) {
+        ResumeRe = resumeRe;
+    }
+
+    private boolean ResumeRe;
     public void setListSong(List<Song> mListSong) {
         this.mListSong = mListSong;
     }
-    public boolean getShuffle() {
-        return isShuffle;
-    }
-    public void setShuffle(boolean shuffle) {
-        isShuffle = shuffle;
-    }
-    public boolean isRepeat() {
-        return isRepeat;
-    }
-    public void setRepeat(boolean repeat) {
-        isRepeat = repeat;
-    }
-    public boolean isRepeatAll() {
-        return isRepeatAll;
-    }
-    public void setRepeatAll(boolean repeatAll) {
-        isRepeatAll = repeatAll;
-    }
-    public boolean isShuffle, isRepeat = false, isRepeatAll = false;
     public boolean isStatusPlaying() {
         return StatusPlaying;
     }
@@ -96,9 +97,11 @@ public class MediaPlaybackService extends Service {
         return currentSong;
     }
     public int getCurrentStreamPosition() {
+        sharedPreferencesCurrent = getSharedPreferences("DATA_CURRENT_PLAY", MODE_PRIVATE);
+        int position = sharedPreferencesCurrent.getInt("DATA_CURRENT_STREAM_POSITION", 0);
+        if (isFirst) return position;
         if (mPlayer != null)
             return mPlayer.getCurrentPosition();  //trả về vtri đang phát
-
         return 0;
     }
 
@@ -108,8 +111,25 @@ public class MediaPlaybackService extends Service {
     private MediaPlaybackFragment mMedia;
     private MusicBinder binder = new MusicBinder();
     private List<Song> mList = new ArrayList<>();
+    private int isRepeat;
+    private int isShuffle;
+
+    public int isShuffle() {
+        return isShuffle;
+    }
+
+    public void setShuffle(int shuffle) {
+        isShuffle = shuffle;
+    }
 
 
+    public int isRepeat() {
+        return isRepeat;
+    }
+
+    public void setRepeat(int repeat) {
+        isRepeat = repeat;
+    }
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -303,53 +323,58 @@ public class MediaPlaybackService extends Service {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
+                if(!isFirst){
 
-                Random rd = new Random();
-                int random = rd.nextInt(8);
-                Log.d("TAG", "onCompletion: " + isShuffle);
-                if (isShuffle) {
-                    if (isRepeat) {
-                        currentSong = currentSong;
+                    Random rd = new Random();
+                    int random = rd.nextInt(8);
+                    Log.d("TAG", "onCompletion: " + isShuffle);
+                    if (isShuffle==SHUFFLE) {
+                        if (isRepeat==REPEAT) {
+                            currentSong = currentSong;
+                        } else
+                        {
+                            currentSong = currentSong + random;
+                            if (currentSong >= mListSong.size() - 1) {
+                                currentSong = 0;
+                            }
+                        }
                     } else {
-                        currentSong = currentSong + random;
+                        if (currentSong >= mListSong.size() - 1) {
+                            currentSong = 0;
+                        } else {
+                            currentSong++;
+                        }
+                    }
+                    if (isRepeat==REPEAT_ALL) {
                         if (currentSong >= mListSong.size() - 1) {
                             currentSong = 0;
                         }
-                    }
-                } else {
-                    if (currentSong >= mListSong.size() - 1) {
-                        currentSong = 0;
-                    } else {
-                        currentSong++;
-                    }
-                }
-                if (isRepeatAll) {
-                    if (currentSong >= mListSong.size() - 1) {
-                        currentSong = 0;
-                    }
-                    Log.d("HoangLD", "RepeatAll" + currentSong);
+                        Log.d("HoangLD", "RepeatAll" + currentSong);
 
-                } else if (isRepeat) {
-                    Log.d("HoangLD", "Repeat: ");
-                    currentSong--;
+                    } else if (isRepeat==REPEAT) {
+                        Log.d("HoangLD", "Repeat: ");
+                        currentSong--;
+                    }
+                    playSong(getListSong().get(currentSong).getSongImage());
+                    if (mListenerAll != null) {
+                        mListenerAll.updateUiSongPlay(currentSong);
+                        setCurrentSong(currentSong);
+                    }
+                    if (mListenerMe != null) {
+                        mListenerMe.updateUiMediaSong(currentSong);
+                        setCurrentSong(currentSong);
+                    }
+                    int pos = getCurrentSong();
+                    Song song = getListSong().get(pos);
+                    startForegroundService(song, pos);
                 }
-                playSong(getListSong().get(currentSong).getSongImage());
-                if (mListenerAll != null) {
-                    mListenerAll.updateUiSongPlay(currentSong);
-                    setCurrentSong(currentSong);
-                }
-                if (mListenerMe != null) {
-                    mListenerMe.updateUiMediaSong(currentSong);
-                    setCurrentSong(currentSong);
-                }
-                int pos = getCurrentSong();
-                Song song = getListSong().get(pos);
-                startForegroundService(song, pos);
+
             }
         });
     }
 
     public void playSong(String path) {
+        isFirst=false;
         mPlayer.reset();
         try {
             mPlayer.setDataSource(path);
@@ -378,12 +403,13 @@ public class MediaPlaybackService extends Service {
     public void resumeSong() {
         mPlayer.start();
         isPlay = true;
+        ResumeRe=true;
 
     }
 
     public long getDuration() {
         if (mPlayer != null)
-            return mPlayer.getDuration();      //trả về vtri cuối
+            return mPlayer.getDuration();      //trả về vtri cuối//ggdhdhdhh
 
         return 0;
     }
@@ -431,6 +457,7 @@ public class MediaPlaybackService extends Service {
         Log.d("HoangLD1", "previousSong2: " + currentSong);
         playSong(mListSong.get(currentSong).getSongImage());
     }
+
 
     //    public int getCurrentStreamPosition() {
 //        if (mPlayer != null) {

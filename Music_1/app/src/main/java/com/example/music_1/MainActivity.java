@@ -14,6 +14,7 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private  int mOrientation;
+    private int Repeat = 11, Shuffle = 12;
+    public static final int NORMAL = 12;
 
     public SongAdapter getAdapter() {
         return mAdapter;
@@ -74,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private List<Song> mList;
+    SharedPreferences sharedPreferences;
+
 
     FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -89,6 +94,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
+        sharedPreferences = getSharedPreferences("DATA_PLAY_MEDIA", MODE_PRIVATE);
+
+        Repeat = sharedPreferences.getInt("DATA_REPEAT", NORMAL);
+        Shuffle = sharedPreferences.getInt("DATA_SHUFFLE", NORMAL);
+
+
+        if (savedInstanceState != null) {
+            Repeat = savedInstanceState.getInt("REPEAT");
+            Shuffle = savedInstanceState.getInt("SHUFFLE");
+        }
+        /////////check
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_MEDIA);
@@ -145,14 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             allSongsFragment.saveData();
             unbindService(serviceConnection);
             mMediaPlaybackService.setNotificationData(null);
-            mMediaPlaybackService.setListener(null);
-            //get vao
-            if(getCheck()==true)
-            {
-                mediaPlaybackFragment.setListenerMedia(null);
-                mMediaPlaybackService.mListenerMe(null);
-                mMediaPlaybackService.setNotificationDataMedia(null);
-            }
+            mMediaPlaybackService.setNotificationDataMedia(null);
 
         }
 

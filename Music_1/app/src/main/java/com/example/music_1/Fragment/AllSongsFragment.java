@@ -135,6 +135,8 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
     public void saveData() {
         editor.remove("DATA_CURRENT");
         editor.putInt("DATA_CURRENT", mMediaPlaybackService.getCurrentSong());
+        editor.remove("DATA_CURRENT_STREAM_POSITION");
+        editor.putInt("DATA_CURRENT_STREAM_POSITION", mMediaPlaybackService.getCurrentStreamPosition());
         editor.commit();
     }
     @Override
@@ -321,8 +323,18 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                     mMediaPlaybackService.pauseSong();
                     mBtnPlay.setImageResource(R.drawable.ic_play_black);
                 } else {
-                    mMediaPlaybackService.resumeSong();
+                    if(mMediaPlaybackService.isResumeRe())
+                    {
+                        mMediaPlaybackService.resumeSong();
+                    }
+                    else {
+                        int position = sharedPreferences.getInt("DATA_CURRENT_STREAM_POSITION", 0);
+                        mMediaPlaybackService.playSong(mList.get(mMediaPlaybackService.getCurrentSong()).getSongImage());
+                        mMediaPlaybackService.seekTo(position);
+
+                    }
                     mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
+
                 }
                 mAdapter.notifyDataSetChanged();
                 int pos = mMediaPlaybackService.getCurrentSong();
