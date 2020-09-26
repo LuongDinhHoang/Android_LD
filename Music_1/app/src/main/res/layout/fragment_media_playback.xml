@@ -131,6 +131,7 @@
         android:layout_marginBottom="-8dp"
         android:elevation="10dp"
         android:progress="0"
+
         android:progressTint="#F44336"
         android:theme="@style/AppTheme"
         android:thumbTint="#F44336">

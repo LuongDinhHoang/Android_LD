@@ -1,6 +1,7 @@
 package com.example.music_1.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> im
 private Context context;
 private List<Song> mList;
 private List<Song> mListFull;
+private Context mContext;
 
     public IIClick getClick() {
         return mClick;

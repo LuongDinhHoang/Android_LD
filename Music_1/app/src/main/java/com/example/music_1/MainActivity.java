@@ -1,6 +1,7 @@
 package com.example.music_1;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -90,6 +91,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d("HoangLD", "onCreate: ");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        //////////////navigation
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        if (drawer != null) {
+            drawer.addDrawerListener(toggle);
+        }
+        toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
@@ -98,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Repeat = sharedPreferences.getInt("DATA_REPEAT", NORMAL);
         Shuffle = sharedPreferences.getInt("DATA_SHUFFLE", NORMAL);
-
 
         if (savedInstanceState != null) {
             Repeat = savedInstanceState.getInt("REPEAT");

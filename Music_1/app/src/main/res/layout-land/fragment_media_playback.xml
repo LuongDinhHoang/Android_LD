@@ -112,7 +112,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
             android:layout_marginRight="32dp"
-            android:layout_marginBottom="34dp"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/ic_repeat_white">
 
         </ImageView>
@@ -128,7 +128,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="100dp"
             android:layout_marginRight="239dp"
-            android:layout_marginBottom="34dp"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/ic_shuffle_white">
 
         </ImageView>

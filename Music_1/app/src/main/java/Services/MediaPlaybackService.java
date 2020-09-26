@@ -64,6 +64,17 @@ public class MediaPlaybackService extends Service {
     }
     private boolean isPlay = false;
 
+    public int getCurrentSongId() {
+        return currentSongId;
+    }
+
+    public void setCurrentSongId(int currentSongId) {
+        this.currentSongId = currentSongId;
+    }
+
+    private int currentSongId = -1;
+
+
     public boolean isFirst() {
         return isFirst;
     }
@@ -176,17 +187,6 @@ public class MediaPlaybackService extends Service {
             updateUIClickNotification();
             startForegroundService(song, pos);
         }
-//        if(currentSong>=0)
-//        {
-//            int pos = getCurrentSong();
-//            interfaceUpdate();
-//            interfaceUpdateMedia();
-//            Song song = getListSong().get(pos);
-//            createChannel();
-//            createNotification(getApplicationContext(), song, pos);
-//        }
-
-
         return START_STICKY;
     }
 
@@ -324,7 +324,6 @@ public class MediaPlaybackService extends Service {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 if(!isFirst){
-
                     Random rd = new Random();
                     int random = rd.nextInt(8);
                     Log.d("TAG", "onCompletion: " + isShuffle);
@@ -373,16 +372,20 @@ public class MediaPlaybackService extends Service {
         });
     }
 
+
     public void playSong(String path) {
-        isFirst=false;
         mPlayer.reset();
         try {
             mPlayer.setDataSource(path);
             mPlayer.prepare();
+            isFirst=false;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         isPlay = true;
+//        Song playSong = mList.get(currentSong);
+//        currentSongId = (int) playSong.getSongID();
         int pos = getCurrentSong();
         Song song = getListSong().get(pos);
         startForegroundService(song, pos);
@@ -435,6 +438,8 @@ public class MediaPlaybackService extends Service {
         } else {
             currentSong++;
         }
+//        Song playSong = mList.get(currentSong);
+//        currentSongId = (int) playSong.getSongID();
         playSong(mListSong.get(currentSong).getSongImage());
     }
 
@@ -448,7 +453,8 @@ public class MediaPlaybackService extends Service {
                 currentSong--;
             }
         }
-
+//        Song playSong = mList.get(currentSong);
+//        currentSongId = (int) playSong.getSongID();
         Log.d("HoangLD1", "previousSong2: " + currentSong);
         playSong(mListSong.get(currentSong).getSongImage());
     }
