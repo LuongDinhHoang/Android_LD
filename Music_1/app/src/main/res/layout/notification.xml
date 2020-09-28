@@ -52,6 +52,13 @@
                 android:gravity="center_vertical"
                 android:text="Nời Này Có Anh"
                 android:textSize="12dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Music"
+                android:textSize="12dp" />
 
             <TextView
                 android:layout_width="match_parent"
