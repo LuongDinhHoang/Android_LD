@@ -1,9 +1,7 @@
 package com.example.music_1.Adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
@@ -23,7 +20,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import Services.MediaPlaybackService;
+import com.example.music_1.Services.MediaPlaybackService;
 import es.claucookie.miniequalizerlibrary.EqualizerView;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> implements Filterable {

@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.ComponentName;
@@ -33,15 +32,13 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.Fragment.AllSongsFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
-import com.example.music_1.Fragment.favoritesFragment;
 import com.example.music_1.Model.Song;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import Services.MediaPlaybackService;
+import com.example.music_1.Services.MediaPlaybackService;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

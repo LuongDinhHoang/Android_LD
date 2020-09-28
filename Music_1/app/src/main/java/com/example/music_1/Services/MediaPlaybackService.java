@@ -1,4 +1,4 @@
-package Services;
+package com.example.music_1.Services;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -22,7 +22,6 @@ import android.widget.RemoteViews;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.example.music_1.MainActivity;

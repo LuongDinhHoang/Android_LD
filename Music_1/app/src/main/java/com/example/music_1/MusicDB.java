@@ -1,3 +1,5 @@
+package com.example.music_1;
+
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -11,7 +13,7 @@ public class MusicDB {
     public static final String IS_FAVORITE = "is_favorite";
     public static final String COUNT_OF_PLAY = "count_of_play";
 
-    private static final String LOG_TAG = "MusicDB";
+    private static final String LOG_TAG = "com.example.music_1.MusicDB";
     public static final String SQLITE_TABLE = "MusicDB";
     private static final String DATABASE_CREATE =
             "CREATE TABLE if not exists " + SQLITE_TABLE + " (" +

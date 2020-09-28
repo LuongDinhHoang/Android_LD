@@ -1,3 +1,4 @@
+package com.example.music_1;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -18,7 +19,7 @@ public class MusicProvider extends ContentProvider {
     // authority is the symbolic name of your provider
     // To avoid conflicts with other providers, you should use
     // Internet domain ownership (in reverse) as the basis of your provider authority.
-    private static final String AUTHORITY = "com.example.music.MusicProvider";
+    private static final String AUTHORITY = "com.example.music.com.example.music_1.MusicProvider";
 
     // create content URIs from the authority by appending path to database table
     public static final Uri CONTENT_URI =
@@ -52,9 +53,9 @@ public class MusicProvider extends ContentProvider {
 
         switch (uriMatcher.match(uri)) {
             case URI_ALL_ITEMS_CODE:
-                return "vnd.android.cursor.dir/vnd.com.example.music_1.MusicProvider.music";
+                return "vnd.android.cursor.dir/vnd.com.example.music_1.com.example.music_1.MusicProvider.music";
             case URI_ONE_ITEM_CODE:
-                return "vnd.android.cursor.item/vnd.com.example.music_1.MusicProvider.music";
+                return "vnd.android.cursor.item/vnd.com.example.music_1.com.example.music_1.MusicProvider.music";
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }

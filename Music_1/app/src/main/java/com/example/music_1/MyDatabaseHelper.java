@@ -1,10 +1,12 @@
+package com.example.music_1;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "MusicDB";
+    private static final String DATABASE_NAME = "com.example.music_1.MusicDB";
     private static final int DATABASE_VERSION = 1;
 
     MyDatabaseHelper(Context context) {

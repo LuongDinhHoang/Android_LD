@@ -35,7 +35,7 @@ import com.example.music_1.R;
 
 import java.util.List;
 
-import Services.MediaPlaybackService;
+import com.example.music_1.Services.MediaPlaybackService;
 
 
 public class AllSongsFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackFragment.SongManageListenerMedia,

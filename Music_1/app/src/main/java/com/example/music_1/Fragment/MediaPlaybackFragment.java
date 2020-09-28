@@ -5,9 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
 
@@ -15,9 +13,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -34,7 +29,7 @@ import com.example.music_1.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import Services.MediaPlaybackService;
+import com.example.music_1.Services.MediaPlaybackService;
 
 import static com.example.music_1.Fragment.AllSongsFragment.getAlbumArt;
 
