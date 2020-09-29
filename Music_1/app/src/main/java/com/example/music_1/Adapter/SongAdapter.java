@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -111,6 +112,8 @@ private Context mContext;
         TextView mSongName,mSongTime,mSongID;
         EqualizerView mImage;
         ImageView mImagePause;
+        ImageView mPopup;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -119,6 +122,7 @@ private Context mContext;
             mSongID=itemView.findViewById(R.id.Song_Id);
             mImagePause=itemView.findViewById(R.id.Image_Pause);
             mImage=itemView.findViewById(R.id.Image_Id);
+            mPopup=itemView.findViewById(R.id.popup_button);
         }
 
         public TextView getSongTime() {
@@ -155,6 +159,17 @@ private Context mContext;
                     mClick.ItemClick(song,pos);
                 }
             });
+            mPopup.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    if(mClick != null)
+                    {
+                        mClick.onSongBtnClickListener(mPopup, view, song, pos);
+
+                    }
+                }
+            });
 
         }
 
@@ -162,6 +177,7 @@ private Context mContext;
     public  interface  IIClick
     {
         void ItemClick(Song song,int pos);
+        void onSongBtnClickListener(ImageView btn, View v, Song song, int pos);
 
     }
 }

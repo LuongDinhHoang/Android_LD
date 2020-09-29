@@ -31,6 +31,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.Fragment.AllSongsFragment;
+import com.example.music_1.Fragment.BaseSongListFragment;
 import com.example.music_1.Fragment.FavoritesFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.example.music_1.Model.Song;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<Song> mList;
     SharedPreferences sharedPreferences;
 
-
+    protected BaseSongListFragment mBaseSongsFragment;
     FragmentManager fragmentManager = getSupportFragmentManager();
 
 
@@ -87,23 +88,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("HoangLD", "onCreate: ");
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar;
+        //////////////navigation
+
+        mOrientation = getResources().getConfiguration().orientation;
+        if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
+             toolbar = findViewById(R.id.toolbar);
+
+        }else
+        {
+             toolbar = findViewById(R.id.toolbarNew);
+        }
         setSupportActionBar(toolbar);
 
-
-        //////////////navigation
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open,
-//                R.string.navigation_drawer_close);
-//        if (drawer != null) {
-//            drawer.addDrawerListener(toggle);
-//        }
-//        toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        if (drawer != null) {
+            drawer.addDrawerListener(toggle);
+        }
+        toggle.syncState();
+        NavigationView navigationView = findViewById(R.id.nav_view);
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
+
+
+
+
         sharedPreferences = getSharedPreferences("DATA_PLAY_MEDIA", MODE_PRIVATE);
 
         Repeat = sharedPreferences.getInt("DATA_REPEAT", NORMAL);
@@ -125,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void getData()
     {
         mList = new ArrayList<>();
-        getSong(mList);
+        getSongAll(mList);
         mAdapter = new SongAdapter(this, mList);
     }
     @Override
@@ -167,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d("HoangLD", "onDestroy: ");
         if(mMediaPlaybackService != null)
         {
-            allSongsFragment.saveData();
+            mBaseSongsFragment.saveData();
             unbindService(serviceConnection);
             mMediaPlaybackService.setNotificationData(null);
             mMediaPlaybackService.setNotificationDataMedia(null);
@@ -203,31 +216,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mOrientation = getResources().getConfiguration().orientation;
         Log.d("HoangLDssss", "addFragmentList: " +mOrientation);
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            allSongsFragment = new AllSongsFragment();
-            mMediaPlaybackService.setListener(allSongsFragment);//get vao
-            mMediaPlaybackService.setNotificationData(allSongsFragment);
 
-//            allSongsFragment.setMediaPlaybackService(mMediaPlaybackService);
-//            allSongsFragment.setList(mList);
-            allSongsFragment.setCheck(true);
-            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,allSongsFragment).commit();
+            mBaseSongsFragment = AllSongsFragment.newInstance(true);
+            mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
+            mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
+            mBaseSongsFragment.setCheck(true);
+            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,mBaseSongsFragment).commit();
         }
         else {
-            int current = sharedPreferences.getInt("DATA_CURRENT", -1);
-            if(current==-1)
+            if(mMediaPlaybackService.getCurrentSong()==-1)
             {
                 mMediaPlaybackService.setCurrentSong(0);
             }
-            allSongsFragment = new AllSongsFragment();
-             mediaPlaybackFragment =new MediaPlaybackFragment();
-            allSongsFragment.setCheck(false);
+            mBaseSongsFragment = AllSongsFragment.newInstance(true);
+            mediaPlaybackFragment =new MediaPlaybackFragment();
+            mBaseSongsFragment.setCheck(false);
             mediaPlaybackFragment.setVertical(false);
-            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1,allSongsFragment)
+            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1,mBaseSongsFragment)
             .replace(R.id.ll_out_land,mediaPlaybackFragment).commit();
-            mediaPlaybackFragment.setListenerMedia(allSongsFragment);
+            mediaPlaybackFragment.setListenerMedia(mBaseSongsFragment);
             mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);
-            mMediaPlaybackService.setListener(allSongsFragment);//get vao
-            mMediaPlaybackService.setNotificationData(allSongsFragment);
+            mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
+            mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
             mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
 
         }
@@ -249,20 +259,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()){
             case R.id.nav_listView:
                 getSupportActionBar().setTitle("Music");
-                allSongsFragment = new AllSongsFragment();
-                mMediaPlaybackService.setListener(allSongsFragment);//get vao
-                mMediaPlaybackService.setNotificationData(allSongsFragment);
-                allSongsFragment.setCheck(true);
-                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,allSongsFragment).commit();
+                mBaseSongsFragment = AllSongsFragment.newInstance(true);
+                mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
+                mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
+                mBaseSongsFragment.setCheck(true);
+                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,mBaseSongsFragment).commit();
+                Toast toast=Toast.makeText(this,"AllSong",Toast.LENGTH_SHORT);
+                toast.show();
                 Layout.closeDrawer(GravityCompat.START);;
                 return true;
             case R.id.nav_ListFavorites:
-                FavoritesFragment favoritesFragment=new FavoritesFragment();
-                getSupportActionBar().setTitle("Favorite Songs");
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.ll_out,favoritesFragment).commit();
-                Layout.closeDrawer(GravityCompat.START);
-
+                getSupportActionBar().setTitle("Favorite");
+                mBaseSongsFragment = FavoritesFragment.newInstance(true);
+                mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
+                mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
+                mBaseSongsFragment.setCheck(true);
+                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,mBaseSongsFragment).commit();
+                Toast toast1=Toast.makeText(this,"Favorite",Toast.LENGTH_SHORT);
+                toast1.show();
+                Layout.closeDrawer(GravityCompat.START);;
                 return true;
 
             default:
@@ -294,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.d("HoangLD", ": ");
         }
     };
-    public void getSong(List<Song> mList) {
+    public void getSongAll(List<Song> mList) {
 
         ContentResolver musicResolver = getContentResolver();
         Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
