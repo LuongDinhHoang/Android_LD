@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.example.music_1.R;
 
 
-public class favoritesFragment extends Fragment {
+public class FavoritesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

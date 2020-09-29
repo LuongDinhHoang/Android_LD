@@ -377,11 +377,11 @@ public class MediaPlaybackService extends Service {
         try {
             mPlayer.setDataSource(path);
             mPlayer.prepare();
-            isFirst=false;
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        isFirst=false;
         isPlay = true;
 //        Song playSong = mList.get(currentSong);
 //        currentSongId = (int) playSong.getSongID();

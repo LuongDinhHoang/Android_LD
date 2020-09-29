@@ -372,7 +372,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     mMediaPlaybackService.pauseSong();
                     mPlayMedia.setImageResource(R.drawable.ic_play_media);
                 } else {
-                    if(mMediaPlaybackService.isResumeRe())
+                    if(!mMediaPlaybackService.isResumeRe())
                     {
                         mMediaPlaybackService.resumeSong();
                     }

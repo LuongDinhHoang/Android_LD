@@ -31,6 +31,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.Fragment.AllSongsFragment;
+import com.example.music_1.Fragment.FavoritesFragment;
 import com.example.music_1.Fragment.MediaPlaybackFragment;
 import com.example.music_1.Model.Song;
 import com.google.android.material.navigation.NavigationView;
@@ -248,14 +249,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()){
             case R.id.nav_listView:
                 getSupportActionBar().setTitle("Music");
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.ll_out,allSongsFragment).commit();
+                allSongsFragment = new AllSongsFragment();
+                mMediaPlaybackService.setListener(allSongsFragment);//get vao
+                mMediaPlaybackService.setNotificationData(allSongsFragment);
+                allSongsFragment.setCheck(true);
+                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,allSongsFragment).commit();
                 Layout.closeDrawer(GravityCompat.START);;
                 return true;
             case R.id.nav_ListFavorites:
+                FavoritesFragment favoritesFragment=new FavoritesFragment();
                 getSupportActionBar().setTitle("Favorite Songs");
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.ll_out,new favoritesFragment()).commit();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.ll_out,favoritesFragment).commit();
                 Layout.closeDrawer(GravityCompat.START);
 
                 return true;

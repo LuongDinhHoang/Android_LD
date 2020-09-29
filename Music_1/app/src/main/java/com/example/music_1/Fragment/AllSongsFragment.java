@@ -323,7 +323,7 @@ public class AllSongsFragment extends Fragment implements View.OnClickListener, 
                     mMediaPlaybackService.pauseSong();
                     mBtnPlay.setImageResource(R.drawable.ic_play_black);
                 } else {
-                    if(mMediaPlaybackService.isResumeRe())
+                    if(!mMediaPlaybackService.isResumeRe())
                     {
                         mMediaPlaybackService.resumeSong();
                     }
