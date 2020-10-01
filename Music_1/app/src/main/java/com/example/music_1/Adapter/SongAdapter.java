@@ -108,6 +108,10 @@ private Context mContext;
         }
     };
 
+    public void setList(List<Song> mList) {
+        this.mList = mList;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView mSongName,mSongTime,mSongID;
         EqualizerView mImage;

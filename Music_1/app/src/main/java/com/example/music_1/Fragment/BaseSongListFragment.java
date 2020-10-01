@@ -1,6 +1,5 @@
 package com.example.music_1.Fragment;
 
-import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
 import android.content.SharedPreferences;
@@ -29,6 +28,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.appcompat.widget.SearchView;
+
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,13 +49,14 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
 
     private RecyclerView mRecycle;
     private List<Song> mList;
-    private SongAdapter mAdapter;
+    protected SongAdapter mAdapter;
     private LinearLayout mllBottom;
     private int mPosition;
     private ImageView mImagePlay;
     private TextView mNameSongPlay, mSongArtistPlay, mSongID;
     private ImageView mBtnPlay;
     private View view;
+    protected PopupMenu mPopup;
     private MediaPlaybackService mMediaPlaybackService;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -62,7 +64,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         return getActivityMusic().getMediaPlaybackService();
     }
     private List<Song> getListSong(){
-        return getActivityMusic().getList();
+        return mMediaPlaybackService.getListSong();
     }
     //get activity
     private MainActivity getActivityMusic() {
@@ -373,15 +375,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     @Override
     public void updateData() {//interface notification
         Log.d("HoangLD", "notifi next ");
-
         UpdateUI();
-
-
-//        if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
-//            mBtnPlay.setImageResource(R.drawable.ic_play_black);
-//        } else {
-//            mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
-//        }
     }
     ////////////menu search
 

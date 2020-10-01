@@ -383,12 +383,11 @@ public class MediaPlaybackService extends Service {
         }
         isFirst=false;
         isPlay = true;
-//        Song playSong = mList.get(currentSong);
-//        currentSongId = (int) playSong.getSongID();
+
         int pos = getCurrentSong();
         Song song = getListSong().get(pos);
+        currentSongId = (int) song.getSongID();
         startForegroundService(song, pos);
-
     }
 
     public void pauseSong() {
@@ -439,6 +438,9 @@ public class MediaPlaybackService extends Service {
         }
 //        Song playSong = mList.get(currentSong);
 //        currentSongId = (int) playSong.getSongID();
+        int pos = getCurrentSong();
+        Song song = getListSong().get(pos);
+        currentSongId = (int) song.getSongID();
         playSong(mListSong.get(currentSong).getSongImage());
     }
 
@@ -455,6 +457,9 @@ public class MediaPlaybackService extends Service {
 //        Song playSong = mList.get(currentSong);
 //        currentSongId = (int) playSong.getSongID();
         Log.d("HoangLD1", "previousSong2: " + currentSong);
+        int pos = getCurrentSong();
+        Song song = getListSong().get(pos);
+        currentSongId = (int) song.getSongID();
         playSong(mListSong.get(currentSong).getSongImage());
     }
 

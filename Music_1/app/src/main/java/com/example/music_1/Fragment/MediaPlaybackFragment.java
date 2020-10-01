@@ -1,8 +1,11 @@
 package com.example.music_1.Fragment;
 
+import android.content.ContentValues;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,11 +22,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.MainActivity;
 import com.example.music_1.Model.Song;
+import com.example.music_1.MusicDB;
+import com.example.music_1.MusicProvider;
 import com.example.music_1.R;
 
 import java.util.ArrayList;
@@ -57,10 +63,12 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         this.mListMedia = mListMedia;
     }
 
+
     private List<Song> mListMedia = new ArrayList<>();
-    private ImageButton mNextMedia, mBackMedia;
+    private ImageButton mNextMedia, mBackMedia,mButtonLike, mButtonDisLike;
     private TextView mEndTime,mStartTime;
     private SeekBar mMediaSeekBar;
+    private int mSongCurrentId = -1;
     private UpdateSeekBarThread mUpdateSeekBarThread;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -83,7 +91,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         return getActivityMusic().getMediaPlaybackService();
     }
     private List<Song> getListSong(){
-        return getActivityMusic().getList();
+        return mMediaPlaybackService.getListSong();
     }
     //get activity
     private MainActivity getActivityMusic() {
@@ -138,9 +146,13 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mButtonList = view.findViewById(R.id.btn_backList);
         mEndTime = view.findViewById(R.id.end_time);
         mStartTime=view.findViewById(R.id.start_time);
+        mButtonLike=view.findViewById(R.id.media_like);
+        mButtonDisLike =view.findViewById(R.id.media_dislike);
 //        mMediaSeekBar.setMax((int) (mSongCurrentDuration));
 //        mMediaSeekBar.setProgress((int) (mSongCurrentStreamPossition));
         mMediaSeekBar = view.findViewById(R.id.media_seek_bar);
+        mButtonLike.setOnClickListener(this);
+        mButtonDisLike.setOnClickListener(this);
         mButtonList.setOnClickListener(this);
         mButtonRepeat.setOnClickListener(this);
         mButtonShuffle.setOnClickListener(this);
@@ -474,7 +486,40 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.btn_backList:
                 getActivity().getSupportFragmentManager().popBackStack();
-                ((AppCompatActivity) getActivity()).getSupportActionBar().show();// hide action bar
+                ((AppCompatActivity) getActivity()).getSupportActionBar().show();// hide action bar\
+
+            case R.id.media_like:
+                mSongCurrentId = mMediaPlaybackService.getCurrentSongId();
+                Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + mSongCurrentId);
+                Cursor cursor = getContext().getContentResolver().query(uri, null, null, null,
+                        null);
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    if (cursor.getInt(cursor.getColumnIndex(MusicDB.IS_FAVORITE)) == 0 || cursor.getInt(cursor.getColumnIndex(MusicDB.IS_FAVORITE)) == 1) {
+                        ContentValues values = new ContentValues();
+                        values.put(MusicDB.IS_FAVORITE, 2);
+                        getContext().getContentResolver().update(uri, values, null, null);
+                        Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
+                        mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_default);
+                        mButtonLike.setImageResource(R.drawable.ic_thumbs_up_selected);
+                    }
+                }
+            case R.id.media_dislike:
+                mSongCurrentId = mMediaPlaybackService.getCurrentSongId();
+                Uri uri1 = Uri.parse(MusicProvider.CONTENT_URI + "/" + mSongCurrentId);
+                Cursor cursor1 = getContext().getContentResolver().query(uri1, null, null, null,
+                        null);
+                if (cursor1 != null) {
+                    cursor1.moveToFirst();
+                    if (cursor1.getInt(cursor1.getColumnIndex(MusicDB.IS_FAVORITE)) == 2 || cursor1.getInt(cursor1.getColumnIndex(MusicDB.IS_FAVORITE)) == 0) {
+                        ContentValues values = new ContentValues();
+                        values.put(MusicDB.IS_FAVORITE, 1);
+                        getContext().getContentResolver().update(uri1, values, null, null);
+                        Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
+                        mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_selected);
+                        mButtonLike.setImageResource(R.drawable.ic_thumbs_up_default);
+                    }
+                }
 
         }
     }

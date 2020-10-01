@@ -46,8 +46,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     public boolean mCheck;
-    private  AllSongsFragment allSongsFragment;
-    private  MediaPlaybackFragment mediaPlaybackFragment;
+    private AllSongsFragment allSongsFragment;
+    private MediaPlaybackFragment mediaPlaybackFragment;
+
     public boolean getCheck() {
         return mCheck;
     }
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.mCheck = mCheck;
     }
 
-    private  int mOrientation;
+    private int mOrientation;
     private int Repeat = 11, Shuffle = 12;
     public static final int NORMAL = 12;
 
@@ -93,11 +94,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mOrientation = getResources().getConfiguration().orientation;
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
-             toolbar = findViewById(R.id.toolbar);
+            toolbar = findViewById(R.id.toolbar);
 
-        }else
-        {
-             toolbar = findViewById(R.id.toolbarNew);
+        } else {
+            toolbar = findViewById(R.id.toolbarNew);
         }
         setSupportActionBar(toolbar);
 
@@ -113,8 +113,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
-
-
 
 
         sharedPreferences = getSharedPreferences("DATA_PLAY_MEDIA", MODE_PRIVATE);
@@ -135,12 +133,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getData();
         }
     }
-    public void getData()
-    {
+
+    public void getData() {
         mList = new ArrayList<>();
         getSongAll(mList);
         mAdapter = new SongAdapter(this, mList);
     }
+
+    public void getFavorData() {
+        mList = new ArrayList<>();
+        getSongFavorite(mList);
+        mAdapter = new SongAdapter(this, mList);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (requestCode == MY_PERMISSIONS_REQUEST_READ_MEDIA) {
@@ -154,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
+
     @Override
     public void onBackPressed() {
         getSupportActionBar().show();                 //setActionBar
@@ -178,8 +184,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         super.onDestroy();
         Log.d("HoangLD", "onDestroy: ");
-        if(mMediaPlaybackService != null)
-        {
+        if (mMediaPlaybackService != null) {
             mBaseSongsFragment.saveData();
             unbindService(serviceConnection);
             mMediaPlaybackService.setNotificationData(null);
@@ -194,10 +199,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Inflate the menu; this adds items to the action bar if it is present.
         return true;
     }
+
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -210,30 +217,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-    public void addFragmentList()
-    {
+    public void addFragmentList() {
         //mMediaPlaybackService.setListener(mediaPlaybackFragment);
         mOrientation = getResources().getConfiguration().orientation;
-        Log.d("HoangLDssss", "addFragmentList: " +mOrientation);
+        Log.d("HoangLDssss", "addFragmentList: " + mOrientation);
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
 
             mBaseSongsFragment = AllSongsFragment.newInstance(true);
             mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
             mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
             mBaseSongsFragment.setCheck(true);
-            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,mBaseSongsFragment).commit();
-        }
-        else {
-            if(mMediaPlaybackService.getCurrentSong()==-1)
-            {
+            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out, mBaseSongsFragment).commit();
+        } else {
+            if (mMediaPlaybackService.getCurrentSong() == -1) {
                 mMediaPlaybackService.setCurrentSong(0);
             }
             mBaseSongsFragment = AllSongsFragment.newInstance(true);
-            mediaPlaybackFragment =new MediaPlaybackFragment();
+            mediaPlaybackFragment = new MediaPlaybackFragment();
             mBaseSongsFragment.setCheck(false);
             mediaPlaybackFragment.setVertical(false);
-            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1,mBaseSongsFragment)
-            .replace(R.id.ll_out_land,mediaPlaybackFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1, mBaseSongsFragment)
+                    .replace(R.id.ll_out_land, mediaPlaybackFragment).commit();
             mediaPlaybackFragment.setListenerMedia(mBaseSongsFragment);
             mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);
             mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
@@ -249,35 +253,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onRestoreInstanceState(savedInstanceState);
         // setpossion =
         /*AllSongsFragment.savePos*/
-       // allSongsFragment.set
+        // allSongsFragment.set
     }
 
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         DrawerLayout Layout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.nav_listView:
+                getData();
                 getSupportActionBar().setTitle("Music");
                 mBaseSongsFragment = AllSongsFragment.newInstance(true);
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
                 mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
                 mBaseSongsFragment.setCheck(true);
-                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,mBaseSongsFragment).commit();
-                Toast toast=Toast.makeText(this,"AllSong",Toast.LENGTH_SHORT);
+                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out, mBaseSongsFragment).commit();
+                Toast toast = Toast.makeText(this, "AllSong", Toast.LENGTH_SHORT);
+                mAdapter.notifyDataSetChanged();
                 toast.show();
-                Layout.closeDrawer(GravityCompat.START);;
+                Layout.closeDrawer(GravityCompat.START);
+
                 return true;
             case R.id.nav_ListFavorites:
+                getFavorData();
                 getSupportActionBar().setTitle("Favorite");
                 mBaseSongsFragment = FavoritesFragment.newInstance(true);
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
                 mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
                 mBaseSongsFragment.setCheck(true);
-                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out,mBaseSongsFragment).commit();
-                Toast toast1=Toast.makeText(this,"Favorite",Toast.LENGTH_SHORT);
+                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out, mBaseSongsFragment).commit();
+                Toast toast1 = Toast.makeText(this, "Favorite", Toast.LENGTH_SHORT);
+                mAdapter.notifyDataSetChanged();
                 toast1.show();
-                Layout.closeDrawer(GravityCompat.START);;
+                Layout.closeDrawer(GravityCompat.START);
                 return true;
 
             default:
@@ -309,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.d("HoangLD", ": ");
         }
     };
+
     public void getSongAll(List<Song> mList) {
 
         ContentResolver musicResolver = getContentResolver();
@@ -316,22 +326,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Cursor songCursor = musicResolver.query(songUri, null, null, null, null);
 
 
-            if (songCursor != null && songCursor.moveToFirst()) {
-                int pos=0;
-                do {
-                    int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-                    int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-                    long songTime = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                    int songAuthor = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-                    int songArt = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-                    long currentId = songCursor.getLong(songID);
-                    String currentName = songCursor.getString(songName);
-                    String currentAuthor = songCursor.getString(songAuthor);
-                    String currentArt = songCursor.getString(songArt);
-                    mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false,pos));
-                    pos++;
-                } while (songCursor.moveToNext());
+        if (songCursor != null && songCursor.moveToFirst()) {
+            int pos = 0;
+            do {
+                int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+                int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+                long songTime = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                int songAuthor = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+                int songArt = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+                long currentId = songCursor.getLong(songID);
+                String currentName = songCursor.getString(songName);
+                String currentAuthor = songCursor.getString(songAuthor);
+                String currentArt = songCursor.getString(songArt);
+                mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false, pos));
+                pos++;
+            } while (songCursor.moveToNext());
         }
     }
 
+    public void getSongFavorite(List<Song> mList) {
+
+        ContentResolver musicResolver = getContentResolver();
+        Uri songUri = MusicProvider.CONTENT_URI;
+        Cursor songCursor = musicResolver.query(songUri, null, null, null, null);
+
+
+        if (songCursor != null && songCursor.moveToFirst()) {
+            int pos = 0;
+            do {
+                int songID = songCursor.getColumnIndex(MusicDB.ID_PROVIDER);
+                int songName = songCursor.getColumnIndex(MusicDB.TITLE);
+                long songTime = songCursor.getLong(songCursor.getColumnIndex(MusicDB.DURATION));
+                int songAuthor = songCursor.getColumnIndex(MusicDB.ARTIST);
+                int songArt = songCursor.getColumnIndex(MusicDB.DATA);
+                int favorite = songCursor.getColumnIndex(MusicDB.IS_FAVORITE);
+                int count = songCursor.getColumnIndex(MusicDB.COUNT_OF_PLAY);
+                long currentId = songCursor.getLong(songID);
+                String currentName = songCursor.getString(songName);
+                String currentAuthor = songCursor.getString(songAuthor);
+                String currentArt = songCursor.getString(songArt);
+                mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false, pos));
+                pos++;
+            } while (songCursor.moveToNext());
+        }
+    }
 }

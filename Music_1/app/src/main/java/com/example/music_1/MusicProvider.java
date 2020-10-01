@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class MusicProvider extends ContentProvider {
 
@@ -19,7 +20,7 @@ public class MusicProvider extends ContentProvider {
     // authority is the symbolic name of your provider
     // To avoid conflicts with other providers, you should use
     // Internet domain ownership (in reverse) as the basis of your provider authority.
-    private static final String AUTHORITY = "com.example.music.com.example.music_1.MusicProvider";
+    private static final String AUTHORITY = "com.example.music_1.MusicProvider";
 
     // create content URIs from the authority by appending path to database table
     public static final Uri CONTENT_URI =
@@ -43,6 +44,7 @@ public class MusicProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         // get access to the database helper
+        Log.d("vvv", "onCreate: ");
         dbHelper = new MyDatabaseHelper(getContext());
         return false;
     }

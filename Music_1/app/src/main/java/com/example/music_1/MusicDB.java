@@ -26,13 +26,11 @@ public class MusicDB {
                     IS_FAVORITE + "," +
                     COUNT_OF_PLAY + ");" ;
     public static void onCreate(SQLiteDatabase db) {
-        Log.w(LOG_TAG, DATABASE_CREATE);
         db.execSQL(DATABASE_CREATE);
     }
 
     public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(LOG_TAG, "Upgrading database from version " + oldVersion + " to "
-                + newVersion + ", which will destroy all old data");
+
         db.execSQL("DROP TABLE IF EXISTS " + SQLITE_TABLE);
         onCreate(db);
     }

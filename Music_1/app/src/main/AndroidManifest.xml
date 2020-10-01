@@ -22,6 +22,11 @@
             </intent-filter>
         </activity>
         <service android:name="com.example.music_1.Services.MediaPlaybackService"/>
+        <provider
+            android:name=".MusicProvider"
+            android:authorities="com.example.music_1.MusicProvider"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
