@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -136,15 +137,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void getData() {
         mList = new ArrayList<>();
-        getSongAll(mList);
+        Song.getSongAll(mList,this);
         mAdapter = new SongAdapter(this, mList);
-    }
 
-    public void getFavorData() {
-        mList = new ArrayList<>();
-        getSongFavorite(mList);
-        mAdapter = new SongAdapter(this, mList);
     }
+//
+//    public void getFavorData() {
+//        mList = new ArrayList<>();
+//        mList = getSongFavorite(this);
+//        mAdapter = new SongAdapter(this, mList);
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -262,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout Layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         switch (item.getItemId()) {
             case R.id.nav_listView:
-                getData();
                 getSupportActionBar().setTitle("Music");
                 mBaseSongsFragment = AllSongsFragment.newInstance(true);
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
@@ -276,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 return true;
             case R.id.nav_ListFavorites:
-                getFavorData();
                 getSupportActionBar().setTitle("Favorite");
                 mBaseSongsFragment = FavoritesFragment.newInstance(true);
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
@@ -319,55 +319,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
-    public void getSongAll(List<Song> mList) {
 
-        ContentResolver musicResolver = getContentResolver();
-        Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor songCursor = musicResolver.query(songUri, null, null, null, null);
-
-
-        if (songCursor != null && songCursor.moveToFirst()) {
-            int pos = 0;
-            do {
-                int songID = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-                int songName = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-                long songTime = songCursor.getLong(songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                int songAuthor = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-                int songArt = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-                long currentId = songCursor.getLong(songID);
-                String currentName = songCursor.getString(songName);
-                String currentAuthor = songCursor.getString(songAuthor);
-                String currentArt = songCursor.getString(songArt);
-                mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false, pos));
-                pos++;
-            } while (songCursor.moveToNext());
-        }
-    }
-
-    public void getSongFavorite(List<Song> mList) {
-
-        ContentResolver musicResolver = getContentResolver();
-        Uri songUri = MusicProvider.CONTENT_URI;
-        Cursor songCursor = musicResolver.query(songUri, null, null, null, null);
-
-
-        if (songCursor != null && songCursor.moveToFirst()) {
-            int pos = 0;
-            do {
-                int songID = songCursor.getColumnIndex(MusicDB.ID_PROVIDER);
-                int songName = songCursor.getColumnIndex(MusicDB.TITLE);
-                long songTime = songCursor.getLong(songCursor.getColumnIndex(MusicDB.DURATION));
-                int songAuthor = songCursor.getColumnIndex(MusicDB.ARTIST);
-                int songArt = songCursor.getColumnIndex(MusicDB.DATA);
-                int favorite = songCursor.getColumnIndex(MusicDB.IS_FAVORITE);
-                int count = songCursor.getColumnIndex(MusicDB.COUNT_OF_PLAY);
-                long currentId = songCursor.getLong(songID);
-                String currentName = songCursor.getString(songName);
-                String currentAuthor = songCursor.getString(songAuthor);
-                String currentArt = songCursor.getString(songArt);
-                mList.add(new Song(currentId, currentName, songTime, currentAuthor, currentArt, false, pos));
-                pos++;
-            } while (songCursor.moveToNext());
-        }
-    }
 }

@@ -6,14 +6,19 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
+
+import java.util.ArrayList;
 
 
 public class FavoritesFragment extends BaseSongListFragment {
@@ -71,6 +76,17 @@ public class FavoritesFragment extends BaseSongListFragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void updateAdapter() {
+
+
+        mList=Song.getSongFavorite(getContext());
+        Log.d("UPDATE",""+mList.size());
+        mAdapter = new SongAdapter(getContext(), mList);
+        mRecycle.setAdapter(mAdapter);
+
     }
 
     @Override

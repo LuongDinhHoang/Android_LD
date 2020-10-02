@@ -23,7 +23,7 @@ public class MusicDB {
                     ARTIST + "," +
                     DURATION + "," +
                     DATA + "," +
-                    IS_FAVORITE + "," +
+                    IS_FAVORITE + "INTEGER DEFAULT 0," +
                     COUNT_OF_PLAY + ");" ;
     public static void onCreate(SQLiteDatabase db) {
         db.execSQL(DATABASE_CREATE);

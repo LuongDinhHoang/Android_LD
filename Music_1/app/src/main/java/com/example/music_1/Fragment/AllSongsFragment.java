@@ -10,10 +10,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 
 import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.Model.Song;
@@ -21,7 +21,11 @@ import com.example.music_1.MusicDB;
 import com.example.music_1.MusicProvider;
 import com.example.music_1.R;
 
-public class AllSongsFragment extends BaseSongListFragment implements PopupMenu.OnMenuItemClickListener /* View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackFragment.SongManageListenerMedia,*/
+import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
+
+public class AllSongsFragment extends BaseSongListFragment /* View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackFragment.SongManageListenerMedia,*/
         /*SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener*//*,MediaPlaybackService.notificationUpdateAllSong*/ {
 public AllSongsFragment() {
 }
@@ -53,38 +57,40 @@ public AllSongsFragment() {
     }
 
     @Override
-    public void updatePopup(View v, Song song, int pos) {
-        mPopup = new android.widget.PopupMenu(getContext(), v.findViewById(R.id.popup_button));
-        mPopup.getMenuInflater().inflate(R.menu.popup_menu, mPopup.getMenu());
+    public void updatePopup(View v, final Song song, int pos) {
+        PopupMenu popup = new PopupMenu(v.getContext(), v);
+        int id = (int) song.getSongID();
+        final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
+        final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null,
+                null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+             popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(new androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    ContentValues values = new ContentValues();
+                    if (item.getItemId() == R.id.action_add_songs) {
+                        values.put(MusicDB.ID_PROVIDER,song.getSongIDProvider());
+                        values.put(MusicDB.ARTIST,song.getSongArtist());
+                        values.put(MusicDB.TITLE,song.getSongName());
+                        values.put(MusicDB.DATA,song.getSongImage());
+                        values.put(MusicDB.DURATION,song.getSongTime());
+                        values.put(MusicDB.IS_FAVORITE,2);
+                        getContext().getContentResolver().insert(MusicProvider.CONTENT_URI,values);
 
-        // Set a listener so we are notified if a menu item is clicked
-        mPopup.setOnMenuItemClickListener(this);
+                        Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
+                    } else if (item.getItemId() == R.id.action_delete_songs) {
+                        Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
+            });
+        }
+        cursor.close();
+        popup.show();
+    }
 
-        mPopup.show();
-    }
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-//        MusicDB favoriteSongsDB = new MusicDB(getContext());
-//        Song song = (Song) mAdapter().get(mPosition);
-//        int id = song.getmId();
-//        switch (item.getItemId()) {
-//            case R.id.popup_remove:
-//                favoriteSongsDB.setFavorite(id, 1);
-//                favoriteSongsDB.updateCount(id, 0);
-//                mIsFavorite = false;
-//                Toast.makeText(getContext(), R.string.remove_favorite, Toast.LENGTH_SHORT).show();
-//                break;
-//            case R.id.popup_add:
-//                favoriteSongsDB.setFavorite(id, 2);
-//                mIsFavorite = true;
-//                Toast.makeText(getContext(), R.string.add_to_favorite, Toast.LENGTH_SHORT).show();
-//                break;
-//        }
-//        song.setmIsFavorite(mIsFavorite);
-//        mFavoriteControl.updateUI(mIsFavorite);
-//        updateAdapter();
-        return true;
-    }
     @Override
     public void onStart() {
         super.onStart();
@@ -93,6 +99,15 @@ public AllSongsFragment() {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void updateAdapter() {
+        Song.getSongAll(mList,getContext());
+       // mList=Song.getSongFavorite(getContext());
+        mAdapter = new SongAdapter(getContext(), mList);
+        mRecycle.setAdapter(mAdapter);
+
     }
 
     @Override

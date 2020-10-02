@@ -47,8 +47,8 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener,MediaPlaybackService.notificationUpdateAllSong  {
 
 
-    private RecyclerView mRecycle;
-    private List<Song> mList;
+    protected RecyclerView mRecycle;
+    protected List<Song> mList;
     protected SongAdapter mAdapter;
     private LinearLayout mllBottom;
     private int mPosition;
@@ -63,8 +63,8 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     private MediaPlaybackService getMusicService(){
         return getActivityMusic().getMediaPlaybackService();
     }
-    private List<Song> getListSong(){
-        return mMediaPlaybackService.getListSong();
+    private  List<Song> getListSong(){
+        return getActivityMusic().getList();
     }
     //get activity
     private MainActivity getActivityMusic() {
@@ -171,12 +171,13 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         mllBottom = view.findViewById(R.id.ll_bottom);
         mllBottom.setOnClickListener(this);
         mBtnPlay.setOnClickListener(this);
+        updateAdapter();
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(RecyclerView.VERTICAL);
         mRecycle.setLayoutManager(manager);
-        mRecycle.setAdapter(mAdapter);
         mAdapter.setMediaPlaybackService(mMediaPlaybackService);//set data on adapter
         onConnectService();
+
         if (mMediaPlaybackService != null && mMediaPlaybackService.getMediaPlayer().isPlaying()) {
 
             UpdateUI();
@@ -205,7 +206,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                             }
                             mNameSongPlay.setText(song.getSongName());                                  //Click item RecycleView
                             mSongArtistPlay.setText(song.getSongArtist());
-                            byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
+                            byte[] songArt = getAlbumArt(song.getSongImage());
                             Glide.with(view.getContext()).asBitmap()
                                     .load(songArt)
                                     .error(R.drawable.cute)
@@ -253,6 +254,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                 }
         );
     }
+    public abstract  void updateAdapter();
     public abstract void  updatePopup(View v, Song song, int pos);
 
     public  void  onConnectService()
