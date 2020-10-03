@@ -237,10 +237,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 int current = sharedPreferencesCurrent.getInt("DATA_CURRENT", -1);
                 int position=sharedPreferencesCurrent.getInt("DATA_CURRENT_STREAM_POSITION",0);
                 Log.d("HoangLD", "setData: " + mName);
-                mName.setText(mListMedia.get(current).getSongName());
-                mArtist.setText(mListMedia.get(current).getSongArtist());
-                mEndTime.setText(getTimeDurationString(mListMedia.get(current).getSongTime()));
-                final byte[] songArt = getAlbumArt(mListMedia.get(current).getSongImage());
+                mName.setText(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongName());
+                mArtist.setText(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongArtist());
+                mEndTime.setText(getTimeDurationString(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongTime()));
+                final byte[] songArt = getAlbumArt(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongImage());
                 Glide.with(view.getContext()).asBitmap()
                         .load(songArt)
                         .error(R.drawable.cute)

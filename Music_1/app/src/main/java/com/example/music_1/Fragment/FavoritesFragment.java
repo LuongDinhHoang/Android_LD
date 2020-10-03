@@ -33,11 +33,11 @@ public class FavoritesFragment extends BaseSongListFragment {
      * @return A new instance of fragment AllSongsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AllSongsFragment newInstance(Boolean isPortrait) {
-        AllSongsFragment fragment = new AllSongsFragment();
+    public static FavoritesFragment newInstance(Boolean isPortrait) {
+        FavoritesFragment fragment1 = new FavoritesFragment();
         Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        fragment1.setArguments(args);
+        return fragment1;
     }
 
     @Override

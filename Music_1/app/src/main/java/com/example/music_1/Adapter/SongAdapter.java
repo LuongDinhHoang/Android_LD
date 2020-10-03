@@ -96,6 +96,7 @@ private Context mContext;
             }
             FilterResults filterResults = new FilterResults();
             filterResults.values = filteredList;
+
             return filterResults;
         }
 

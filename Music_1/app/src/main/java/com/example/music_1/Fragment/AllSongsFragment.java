@@ -58,36 +58,36 @@ public AllSongsFragment() {
 
     @Override
     public void updatePopup(View v, final Song song, int pos) {
-        PopupMenu popup = new PopupMenu(v.getContext(), v);
-        int id = (int) song.getSongID();
-        final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
-        final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null,
-                null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-             popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-            popup.setOnMenuItemClickListener(new androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    ContentValues values = new ContentValues();
-                    if (item.getItemId() == R.id.action_add_songs) {
-                        values.put(MusicDB.ID_PROVIDER,song.getSongIDProvider());
-                        values.put(MusicDB.ARTIST,song.getSongArtist());
-                        values.put(MusicDB.TITLE,song.getSongName());
-                        values.put(MusicDB.DATA,song.getSongImage());
-                        values.put(MusicDB.DURATION,song.getSongTime());
-                        values.put(MusicDB.IS_FAVORITE,2);
-                        getContext().getContentResolver().insert(MusicProvider.CONTENT_URI,values);
+        PopupMenu popup = new PopupMenu(v.getContext(), v);             //gán menu_popup  khi click vào các option
+//          int id = (int) song.getmSongID();
+//          final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
+//          final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                             @Override
+                                             public boolean onMenuItemClick(MenuItem item) {                      //setClick cho option menu
+                                                 ContentValues values = new ContentValues();
+                                                 if (item.getItemId() == R.id.action_add_songs) {
+                                                     values.put(MusicDB.ID, song.getSongID());
+                                                     values.put(MusicDB.ID_PROVIDER, song.getSongIDProvider());
+                                                     values.put(MusicDB.TITLE, song.getSongName());
+                                                     values.put(MusicDB.ARTIST, song.getSongArtist());
+                                                     values.put(MusicDB.DATA, song. getSongImage());
+                                                     values.put(MusicDB.DURATION, song.getSongTime());
+                                                     values.put(MusicDB.IS_FAVORITE, 2);
+                                                     getContext().getContentResolver().insert(MusicProvider.CONTENT_URI, values);
+                                                     Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
+                                                 } else if (item.getItemId() == R.id.action_delete_songs) {
+                                                     values.put(MusicDB.IS_FAVORITE, 0);
 
-                        Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
-                    } else if (item.getItemId() == R.id.action_delete_songs) {
-                        Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
-                    }
-                    return false;
-                }
-            });
-        }
-        cursor.close();
+                                                     Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
+                                                 }
+
+                                                 return false;
+
+                                             }
+                                         }
+        );
         popup.show();
     }
 

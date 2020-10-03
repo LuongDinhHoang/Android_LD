@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class MusicDB {
-    public  static  final  String ID ="id";
+    public static final String ID = "_id";
     public static final String ID_PROVIDER = "is_provider";
     public static final String TITLE = "song_title";
     public static final String ARTIST = "song_artist";
@@ -13,7 +13,6 @@ public class MusicDB {
     public static final String IS_FAVORITE = "is_favorite";
     public static final String COUNT_OF_PLAY = "count_of_play";
 
-    private static final String LOG_TAG = "com.example.music_1.MusicDB";
     public static final String SQLITE_TABLE = "MusicDB";
     private static final String DATABASE_CREATE =
             "CREATE TABLE if not exists " + SQLITE_TABLE + " (" +
@@ -23,9 +22,10 @@ public class MusicDB {
                     ARTIST + "," +
                     DURATION + "," +
                     DATA + "," +
-                    IS_FAVORITE + "INTEGER DEFAULT 0," +
+                    IS_FAVORITE + "," +
                     COUNT_OF_PLAY + ");" ;
     public static void onCreate(SQLiteDatabase db) {
+
         db.execSQL(DATABASE_CREATE);
     }
 

@@ -284,9 +284,9 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         if (mMediaPlaybackService != null)
         {
 
-            mNameSongPlay.setText(mList.get(mMediaPlaybackService.getCurrentSong()).getSongName());
-            mSongArtistPlay.setText(mList.get(mMediaPlaybackService.getCurrentSong()).getSongArtist());
-            final byte[] songArt = getAlbumArt(mList.get(mMediaPlaybackService.getCurrentSong()).getSongImage());
+            mNameSongPlay.setText(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongName());
+            mSongArtistPlay.setText(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongArtist());
+            final byte[] songArt = getAlbumArt(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongImage());
             Glide.with(view.getContext()).asBitmap()
                     .load(songArt)
                     .error(R.drawable.cute)
@@ -294,13 +294,17 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
 
             for (int i = 0; i < mList.size(); i++) {
                 mList.get(i).setPlay(false);
+                if(mList.get(i).getSongID()==mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongID())
+                {
+                    mList.get(i).setPlay(true);
+                }
             }
             if (!mMediaPlaybackService.isPlay()) {
                 mBtnPlay.setImageResource(R.drawable.ic_play_black);
             } else {
                 mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
             }
-            mList.get(mMediaPlaybackService.getCurrentSong()).setPlay(true);
+//            mList.get(mMediaPlaybackService.getCurrentSong()).setPlay(true);
         }
         mAdapter.notifyDataSetChanged();
 
@@ -317,7 +321,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_bottom: {
-                Song song = mList.get(mPosition);
+                Song song = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
                 Log.d("HoangLD", "onClick: ");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
