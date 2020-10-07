@@ -153,6 +153,7 @@ private Context mContext;
                    mSongName.setTypeface(null, Typeface.BOLD);
                }
                else {
+                   mImage.setVisibility(View.INVISIBLE);
                    mSongID.setTypeface(null,Typeface.BOLD);
                    mSongName.setTypeface(null, Typeface.BOLD);
                }

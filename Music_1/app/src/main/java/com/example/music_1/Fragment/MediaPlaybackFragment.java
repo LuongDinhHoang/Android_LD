@@ -52,11 +52,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private static final String ARG_PARAM3 = "param3";
     private MediaPlaybackService mMediaPlaybackService;
     private ImageView mPlayMedia, mButtonShuffle, mButtonRepeat, mButtonList;
-
+    private boolean isVertical;
     public void setVertical(boolean vertical) {
         isVertical = vertical;
     }
-    private boolean isVertical;
     private SongAdapter mAdapter;
 
     public void setListMedia(List<Song> mListMedia) {
@@ -91,7 +90,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         return getActivityMusic().getMediaPlaybackService();
     }
     private List<Song> getListSong(){
-        return mMediaPlaybackService.getListSong();
+        return getActivityMusic().getList();
     }
     //get activity
     private MainActivity getActivityMusic() {
@@ -397,14 +396,15 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
                 if(!isVertical)
-                {mAdapter.notifyDataSetChanged();}
+                {
+                    mPlayPauseMedia.updateBase();
+                }
                 int mCurrentNext =mMediaPlaybackService.getCurrentSong();
                 Song song = mListMedia.get(mCurrentNext);
                 mMediaPlaybackService.startForegroundService(song,mCurrentNext);
                 break;
             }
             case R.id.btn_next_media:
-
                 mMediaPlaybackService.nextSong();
                 setData();
                 if (mMediaPlaybackService.getMediaPlayer().isPlaying()) {
@@ -412,7 +412,6 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 } else {
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
-;
                 if(!isVertical)
                 {
                     Log.d("HoangLD", "onClick: mlistner"+mListenerMedia);
@@ -550,6 +549,15 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public void updateDataMedia() {
         setData();
     }
+//interface ngang
+    public interface PlayPauseMedia{
+        void updateBase();
+}
 
+    public void setPlayPauseMedia(PlayPauseMedia mPlayPauseMedia) {
+        this.mPlayPauseMedia = mPlayPauseMedia;
+    }
+
+    private PlayPauseMedia mPlayPauseMedia;
 
 }

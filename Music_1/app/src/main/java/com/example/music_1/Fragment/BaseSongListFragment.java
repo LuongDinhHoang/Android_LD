@@ -39,15 +39,25 @@ import com.example.music_1.MainActivity;
 import com.example.music_1.Model.Song;
 import com.example.music_1.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.music_1.Services.MediaPlaybackService;
 
 public abstract class BaseSongListFragment extends Fragment implements View.OnClickListener, MediaPlaybackService.SongManageListener,MediaPlaybackFragment.SongManageListenerMedia,
-        SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener,MediaPlaybackService.notificationUpdateAllSong  {
+        SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener,MediaPlaybackService.notificationUpdateAllSong,MediaPlaybackFragment.PlayPauseMedia  {
 
 
     protected RecyclerView mRecycle;
+
+    public List<Song> getList() {
+        return mList;
+    }
+
+    public void setList(List<Song> mList) {
+        this.mList = mList;
+    }
+
     protected List<Song> mList;
     protected SongAdapter mAdapter;
     private LinearLayout mllBottom;
@@ -171,6 +181,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         mllBottom = view.findViewById(R.id.ll_bottom);
         mllBottom.setOnClickListener(this);
         mBtnPlay.setOnClickListener(this);
+        mList = new ArrayList<>();
         updateAdapter();
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(RecyclerView.VERTICAL);
@@ -415,5 +426,10 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     @Override
     public boolean onMenuItemActionCollapse(MenuItem menuItem) {
         return false;
+    }
+
+    @Override
+    public void updateBase() {
+        mAdapter.notifyDataSetChanged();
     }
 }

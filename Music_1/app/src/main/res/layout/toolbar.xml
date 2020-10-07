@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:id="@+id/toolbarNew"
     app:buttonGravity="center_vertical"
-    android:layout_height="65dp"
+    android:layout_height="60dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FF5722"
     app:title="@string/app_name"

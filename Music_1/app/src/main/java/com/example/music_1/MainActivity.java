@@ -46,17 +46,16 @@ import com.example.music_1.Services.MediaPlaybackService;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    public boolean mCheck;
-    private AllSongsFragment allSongsFragment;
+    public boolean isVertical() {
+        return mIsVertical;
+    }
+
+    public void setVertical(boolean mIsVertical) {
+        this.mIsVertical = mIsVertical;
+    }
+
+    public boolean mIsVertical;
     private MediaPlaybackFragment mediaPlaybackFragment;
-
-    public boolean getCheck() {
-        return mCheck;
-    }
-
-    public void setCheck(boolean mCheck) {
-        this.mCheck = mCheck;
-    }
 
     private int mOrientation;
     private int Repeat = 11, Shuffle = 12;
@@ -92,16 +91,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d("HoangLD", "onCreate: ");
         Toolbar toolbar;
         //////////////navigation
-
-        mOrientation = getResources().getConfiguration().orientation;
-        if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            toolbar = findViewById(R.id.toolbar);
-
-        } else {
-            toolbar = findViewById(R.id.toolbarNew);
-        }
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open,
@@ -110,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.addDrawerListener(toggle);
         }
         toggle.syncState();
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu);
         NavigationView navigationView = findViewById(R.id.nav_view);
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
@@ -226,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
 
             mBaseSongsFragment = AllSongsFragment.newInstance(true);
+            setVertical(true);
             mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
             mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
             mBaseSongsFragment.setCheck(true);
@@ -237,10 +230,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mBaseSongsFragment = AllSongsFragment.newInstance(true);
             mediaPlaybackFragment = new MediaPlaybackFragment();
             mBaseSongsFragment.setCheck(false);
+            setVertical(false);
             mediaPlaybackFragment.setVertical(false);
             getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1, mBaseSongsFragment)
                     .replace(R.id.ll_out_land, mediaPlaybackFragment).commit();
             mediaPlaybackFragment.setListenerMedia(mBaseSongsFragment);
+            mediaPlaybackFragment.setPlayPauseMedia(mBaseSongsFragment);
             mMediaPlaybackService.mListenerMe(mediaPlaybackFragment);
             mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
             mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
@@ -269,7 +264,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
                 mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
                 mBaseSongsFragment.setCheck(true);
-                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out, mBaseSongsFragment).commit();
+                if(isVertical())
+                {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.ll_out, mBaseSongsFragment).commit();
+                }else {
+                    mediaPlaybackFragment.setPlayPauseMedia(mBaseSongsFragment);
+                    mediaPlaybackFragment.setVertical(false);
+                    mBaseSongsFragment.setCheck(false);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1, mBaseSongsFragment).commit();
+                }
+
                 Toast toast = Toast.makeText(this, "AllSong", Toast.LENGTH_SHORT);
                 mAdapter.notifyDataSetChanged();
                 toast.show();
@@ -282,7 +286,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
                 mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
                 mBaseSongsFragment.setCheck(true);
-                getSupportFragmentManager().beginTransaction().replace(R.id.ll_out, mBaseSongsFragment).commit();
+                if(isVertical())
+                {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.ll_out, mBaseSongsFragment).commit();
+                }
+                else {
+                    mediaPlaybackFragment.setPlayPauseMedia(mBaseSongsFragment);
+                    mediaPlaybackFragment.setVertical(false);
+                    mBaseSongsFragment.setCheck(false);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1, mBaseSongsFragment).commit();
+                }
                 Toast toast1 = Toast.makeText(this, "Favorite", Toast.LENGTH_SHORT);
                 mAdapter.notifyDataSetChanged();
                 toast1.show();
