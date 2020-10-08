@@ -57,12 +57,9 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         isVertical = vertical;
     }
     private SongAdapter mAdapter;
-
     public void setListMedia(List<Song> mListMedia) {
         this.mListMedia = mListMedia;
     }
-
-
     private List<Song> mListMedia = new ArrayList<>();
     private ImageButton mNextMedia, mBackMedia,mButtonLike, mButtonDisLike;
     private TextView mEndTime,mStartTime;

@@ -59,9 +59,9 @@ public AllSongsFragment() {
     @Override
     public void updatePopup(View v, final Song song, int pos) {
         PopupMenu popup = new PopupMenu(v.getContext(), v);             //gán menu_popup  khi click vào các option
-//          int id = (int) song.getmSongID();
-//          final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
-//          final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+        final int id = (int) song.getSongID();
+          final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
+          final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
         popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                              @Override
@@ -79,7 +79,10 @@ public AllSongsFragment() {
                                                      Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
                                                  } else if (item.getItemId() == R.id.action_delete_songs) {
                                                      values.put(MusicDB.IS_FAVORITE, 0);
+                                                     if (cursor != null) {
+                                                         getContext().getContentResolver().delete(MusicProvider.CONTENT_URI, MusicDB.ID+"="+id, null);
 
+                                                     }
                                                      Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
                                                  }
 
@@ -104,7 +107,6 @@ public AllSongsFragment() {
     @Override
     public void updateAdapter() {
         Song.getSongAll(mList,getContext());
-       // mList=Song.getSongFavorite(getContext());
         mAdapter = new SongAdapter(getContext(), mList);
         mRecycle.setAdapter(mAdapter);
 

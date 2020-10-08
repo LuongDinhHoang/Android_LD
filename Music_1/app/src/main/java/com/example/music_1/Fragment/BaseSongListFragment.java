@@ -198,15 +198,20 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                     @Override
                     public void ItemClick(Song song, int pos) {
                         //pos=song.getPos();
-                        for (int i = 0; i < mList.size(); i++) {
-                            mList.get(i).setPlay(false);
-                        }
-                        mList.get(pos).setPlay(true);
                         //service
+
                         if (mMediaPlaybackService != null) {
-                            mMediaPlaybackService.setCurrentSong(pos);//get position
+                           // mMediaPlaybackService.setCurrentSong(pos);//get position
+                            mMediaPlaybackService.setCurrentSongId((int) song.getSongID());
                             mMediaPlaybackService.playSong(song.getSongImage());
                             mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
+                            for (int i = 0; i < mList.size(); i++) {
+                                mList.get(i).setPlay(false);
+                                if(mList.get(i).getSongID()==song.getSongID())
+                                {
+                                    mList.get(i).setPlay(true);
+                                }
+                            }
                             //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
                         }
                         if (isVertical) {
@@ -294,10 +299,18 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     public void UpdateUI() {
         if (mMediaPlaybackService != null)
         {
+            long id = mMediaPlaybackService.getCurrentSongId();
 
-            mNameSongPlay.setText(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongName());
-            mSongArtistPlay.setText(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongArtist());
-            final byte[] songArt = getAlbumArt(mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongImage());
+            int temp = -1;
+            for (int i = 0; i < mList.size(); i++) {
+                if (mList.get(i).getSongID() == id) {
+                    temp = i;
+                }
+            }
+
+            mNameSongPlay.setText(mList.get(temp).getSongName());
+            mSongArtistPlay.setText(mList.get(temp).getSongArtist());
+            final byte[] songArt = getAlbumArt(mList.get(temp).getSongImage());
             Glide.with(view.getContext()).asBitmap()
                     .load(songArt)
                     .error(R.drawable.cute)
@@ -305,7 +318,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
 
             for (int i = 0; i < mList.size(); i++) {
                 mList.get(i).setPlay(false);
-                if(mList.get(i).getSongID()==mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong()).getSongID())
+                if(mList.get(i).getSongID()==mList.get(temp).getSongID())
                 {
                     mList.get(i).setPlay(true);
                 }

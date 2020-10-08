@@ -1,6 +1,9 @@
 package com.example.music_1.Fragment;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +19,8 @@ import android.widget.Toast;
 
 import com.example.music_1.Adapter.SongAdapter;
 import com.example.music_1.Model.Song;
+import com.example.music_1.MusicDB;
+import com.example.music_1.MusicProvider;
 import com.example.music_1.R;
 
 import java.util.ArrayList;
@@ -55,18 +60,37 @@ public class FavoritesFragment extends BaseSongListFragment {
     public void updatePopup(View v, Song song, int pos) {
         PopupMenu popup = new PopupMenu(v.getContext(), v);             //gán menu_popup  khi click vào các option
         // Inflate the Popup using XML file.
-        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+        final int id = (int) song.getSongID();
+        final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
+        final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+        popup.getMenuInflater().inflate(R.menu.popup_menu_delete, popup.getMenu());
         popup.show();
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                              @Override
                                              public boolean onMenuItemClick(MenuItem item) {                      //setClick cho option menu
-                                                 Toast.makeText(getActivity(),
-                                                         "item Click", Toast.LENGTH_SHORT).show();
+                                                 ContentValues values = new ContentValues();
+                                                 values.put(MusicDB.IS_FAVORITE, 0);
+                                                 if (item.getItemId() == R.id.action_delete_songs) {
+                                                     values.put(MusicDB.IS_FAVORITE, 0);
+                                                     if (cursor != null) {
+                                                         getContext().getContentResolver().delete(MusicProvider.CONTENT_URI, MusicDB.ID+"="+id, null);
+
+                                                     }
+                                                     Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
+                                                     UpdateFragment();
+                                                 }
+
                                                  return false;
 
                                              }
                                          }
         );
+    }
+    public  void UpdateFragment()
+    {
+        mList=Song.getSongFavorite(getContext());
+        mAdapter.setList(mList);
+        mAdapter.notifyDataSetChanged();
     }
     @Override
     public void onStart() {
@@ -81,9 +105,7 @@ public class FavoritesFragment extends BaseSongListFragment {
     @Override
     public void updateAdapter() {
 
-
         mList=Song.getSongFavorite(getContext());
-        Log.d("UPDATE",""+mList.size());
         mAdapter = new SongAdapter(getContext(), mList);
         mRecycle.setAdapter(mAdapter);
 

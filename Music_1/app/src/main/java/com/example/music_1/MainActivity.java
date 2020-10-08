@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.nav_listView:
                 getSupportActionBar().setTitle("Music");
+                mBaseSongsFragment.setList(mList);
                 mBaseSongsFragment = AllSongsFragment.newInstance(true);
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
                 mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
