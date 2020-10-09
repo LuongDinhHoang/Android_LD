@@ -105,12 +105,19 @@ public AllSongsFragment() {
     }
 
     @Override
-    public void updateAdapter() {
-        Song.getSongAll(mList,getContext());
-        mAdapter = new SongAdapter(getContext(), mList);
-        mRecycle.setAdapter(mAdapter);
-
+    protected void absSetFavorite() {
+        if(mMediaPlaybackService!=null)
+        mMediaPlaybackService.setFavorite(false);
     }
+
+//    @Override
+//    public void updateAdapter() {
+//        mMediaPlaybackService.setFavorite(false);
+//        Song.getSongAll(mList,getContext());
+//        mAdapter = new SongAdapter(getContext(), mList);
+//        mRecycle.setAdapter(mAdapter);
+//
+//    }
 
     @Override
     public void onPause() {

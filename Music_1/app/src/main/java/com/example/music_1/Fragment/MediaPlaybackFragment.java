@@ -52,7 +52,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private static final String ARG_PARAM3 = "param3";
     private MediaPlaybackService mMediaPlaybackService;
     private ImageView mPlayMedia, mButtonShuffle, mButtonRepeat, mButtonList;
-    private boolean isVertical;
+    private boolean isVertical,isFavorite;
     public void setVertical(boolean vertical) {
         isVertical = vertical;
     }
@@ -60,6 +60,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public void setListMedia(List<Song> mListMedia) {
         this.mListMedia = mListMedia;
     }
+    private List<Song> mSongListFavorite = new ArrayList<>();
     private List<Song> mListMedia = new ArrayList<>();
     private ImageButton mNextMedia, mBackMedia,mButtonLike, mButtonDisLike;
     private TextView mEndTime,mStartTime;
@@ -98,8 +99,10 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     }
     public void setDataMedia(){
         mMediaPlaybackService= getMusicService();
+//        mListMedia=getListSong();
+//        mAdapter=getSongAdapter();
         mListMedia=getListSong();
-        mAdapter=getSongAdapter();
+        mSongListFavorite = Song.getSongFavorite(getContext());
     }
 
 
@@ -147,7 +150,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 //        mMediaSeekBar.setMax((int) (mSongCurrentDuration));
 //        mMediaSeekBar.setProgress((int) (mSongCurrentStreamPossition));
         mMediaSeekBar = view.findViewById(R.id.media_seek_bar);
-//        mButtonLike.setOnClickListener(this);
+        //mButtonLike.setOnClickListener(this);
 //        mButtonDisLike.setOnClickListener(this);
         mButtonList.setOnClickListener(this);
         mButtonRepeat.setOnClickListener(this);
@@ -156,6 +159,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
         mBackMedia.setOnClickListener(this);
         mNextMedia.setOnClickListener(this);
         setDataMedia();
+
          //mMediaPlaybackService.setListener(MediaPlaybackFragment.this);//set interface tu chuyen bai
 
         Log.d("HoangLD", "initView:medisa "+isVertical);
@@ -250,11 +254,20 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 mMediaSeekBar.setProgress(position);
 
             }else {
+
+                long id = mMediaPlaybackService.getCurrentSongId();
+                int current = 0;
+                for (int i = 0; i < mListMedia.size(); i++) {
+                    if (mListMedia.get(i).getSongID() == id) {
+                        current = i;
+                    }
+
+                }
                 Log.d("HoangLD", "setData: " + mName);
-                mName.setText(mListMedia.get(mMediaPlaybackService.getCurrentSong()).getSongName());
-                mArtist.setText(mListMedia.get(mMediaPlaybackService.getCurrentSong()).getSongArtist());
-                mEndTime.setText(getTimeDurationString(mListMedia.get(mMediaPlaybackService.getCurrentSong()).getSongTime()));
-                final byte[] songArt = getAlbumArt(mListMedia.get(mMediaPlaybackService.getCurrentSong()).getSongImage());
+                mName.setText(mListMedia.get(current).getSongName());
+                mArtist.setText(mListMedia.get(current).getSongArtist());
+                mEndTime.setText(getTimeDurationString(mListMedia.get(current).getSongTime()));
+                final byte[] songArt = getAlbumArt(mListMedia.get(current).getSongImage());
                 Glide.with(view.getContext()).asBitmap()
                         .load(songArt)
                         .error(R.drawable.cute)
@@ -485,20 +498,21 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 ((AppCompatActivity) getActivity()).getSupportActionBar().show();// hide action bar\
 
             case R.id.media_like:
-//                mSongCurrentId = mMediaPlaybackService.getCurrentSongId();
-//                Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + mSongCurrentId);
-//                Cursor cursor = getContext().getContentResolver().query(uri, null, null, null,
-//                        null);
-//                if (cursor != null) {
-//                    cursor.moveToFirst();
-//                    if (cursor.getInt(cursor.getColumnIndex(MusicDB.IS_FAVORITE)) == 0 || cursor.getInt(cursor.getColumnIndex(MusicDB.IS_FAVORITE)) == 1) {
-//                        ContentValues values = new ContentValues();
-//                        values.put(MusicDB.IS_FAVORITE, 2);
-//                        getContext().getContentResolver().update(uri, values, null, null);
-//                        Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
-//                        mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_default);
-//                        mButtonLike.setImageResource(R.drawable.ic_thumbs_up_selected);
-//                    }
+                isFavorite=true;
+                Song song = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
+                ContentValues values = new ContentValues();
+                values.put(MusicDB.ID, song.getSongID());
+                values.put(MusicDB.ID_PROVIDER, song.getSongIDProvider());
+                values.put(MusicDB.TITLE, song.getSongName());
+                values.put(MusicDB.ARTIST, song.getSongArtist());
+                values.put(MusicDB.DATA, song. getSongImage());
+                values.put(MusicDB.DURATION, song.getSongTime());
+                values.put(MusicDB.IS_FAVORITE, 2);
+                getContext().getContentResolver().insert(MusicProvider.CONTENT_URI, values);
+                Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
+                        mButtonDisLike.setImageResource(R.drawable.ic_repeat_dark_selected);
+                        mButtonLike.setImageResource(R.drawable.ic_thumbs_up_selected);
+               //     }
 //                }
             case R.id.media_dislike:
 //                mSongCurrentId = mMediaPlaybackService.getCurrentSongId();

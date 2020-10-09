@@ -51,8 +51,17 @@ public class MediaPlaybackService extends Service {
     private int currentStatus;
     private final int STATUS_IDEAL = 1;
     private final int STATUS_PLAYING = 2;
-    private final int STATUS_PAUSED = 3;
-    private final int STATUS_STOP = 4;
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    private  boolean isFavorite =false;
+
     private boolean mRepeat = false;
     private boolean StatusPlaying;
     public boolean isPlay() {

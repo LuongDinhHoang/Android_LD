@@ -58,7 +58,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         this.mList = mList;
     }
 
-    protected List<Song> mList;
+    protected List<Song> mList,mListFull;
     protected SongAdapter mAdapter;
     private LinearLayout mllBottom;
     private int mPosition;
@@ -67,9 +67,16 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     private ImageView mBtnPlay;
     private View view;
     protected PopupMenu mPopup;
-    private MediaPlaybackService mMediaPlaybackService;
+    protected MediaPlaybackService mMediaPlaybackService;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    private  boolean isFavorite;
+
     private MediaPlaybackService getMusicService(){
         return getActivityMusic().getMediaPlaybackService();
     }
@@ -97,12 +104,38 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     }
 
     private boolean isVertical;
+    public void setListView()
+
+    {
+        if(mMediaPlaybackService!=null){
+            mListFull= mList=getList();
+            if(!isFavorite)
+            {
+                Log.d("Hoangokokokok","allsong"+mList.size());
+                mList=getList();
+                mAdapter = new SongAdapter(getContext(), mList);
+                mMediaPlaybackService.setListSong(mList);
+            }else {
+
+                mList=Song.getSongFavorite(getContext());
+                mAdapter = new SongAdapter(getContext(), mList);
+                mMediaPlaybackService.setListSong(mList);
+                Log.d("Hoangokokokok","favorite "+mList.size());
+
+            }
+        }
+
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_all_songs, container, false);
         setData();
+        absSetFavorite();
+        setListView();
+
         initView();
         if(mMediaPlaybackService != null)
         {
@@ -181,11 +214,11 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         mllBottom = view.findViewById(R.id.ll_bottom);
         mllBottom.setOnClickListener(this);
         mBtnPlay.setOnClickListener(this);
-        mList = new ArrayList<>();
-        updateAdapter();
+        //updateAdapter();
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(RecyclerView.VERTICAL);
         mRecycle.setLayoutManager(manager);
+        mRecycle.setAdapter(mAdapter);
         mAdapter.setMediaPlaybackService(mMediaPlaybackService);//set data on adapter
         onConnectService();
 
@@ -200,8 +233,8 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                         //pos=song.getPos();
                         //service
 
-                        if (mMediaPlaybackService != null) {
-                           // mMediaPlaybackService.setCurrentSong(pos);//get position
+
+                            mMediaPlaybackService.setCurrentSong(pos);//get position
                             mMediaPlaybackService.setCurrentSongId((int) song.getSongID());
                             mMediaPlaybackService.playSong(song.getSongImage());
                             mBtnPlay.setImageResource(R.drawable.ic_pause_black_large);
@@ -213,7 +246,6 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                                 }
                             }
                             //   mMediaPlaybackService.getMediaManager().setCurrentSong(pos);
-                        }
                         if (isVertical) {
                             if(mMediaPlaybackService.getCurrentSong()>=0)
                             {
@@ -270,7 +302,8 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                 }
         );
     }
-    public abstract  void updateAdapter();
+    protected abstract void absSetFavorite();
+//    public abstract  void updateAdapter();
     public abstract void  updatePopup(View v, Song song, int pos);
 
     public  void  onConnectService()
@@ -300,17 +333,16 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         if (mMediaPlaybackService != null)
         {
             long id = mMediaPlaybackService.getCurrentSongId();
-
             int temp = -1;
-            for (int i = 0; i < mList.size(); i++) {
-                if (mList.get(i).getSongID() == id) {
+            for (int i = 0; i < mListFull.size(); i++) {
+                if (mListFull.get(i).getSongID() == id) {
                     temp = i;
                 }
-            }
 
-            mNameSongPlay.setText(mList.get(temp).getSongName());
-            mSongArtistPlay.setText(mList.get(temp).getSongArtist());
-            final byte[] songArt = getAlbumArt(mList.get(temp).getSongImage());
+            }
+            mNameSongPlay.setText(mListFull.get(temp).getSongName());
+             mSongArtistPlay.setText(mListFull.get(temp).getSongArtist());
+            final byte[] songArt = getAlbumArt(mListFull.get(temp).getSongImage());
             Glide.with(view.getContext()).asBitmap()
                     .load(songArt)
                     .error(R.drawable.cute)
@@ -318,7 +350,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
 
             for (int i = 0; i < mList.size(); i++) {
                 mList.get(i).setPlay(false);
-                if(mList.get(i).getSongID()==mList.get(temp).getSongID())
+                if(mList.get(i).getSongID()==mListFull.get(temp).getSongID())
                 {
                     mList.get(i).setPlay(true);
                 }
@@ -345,12 +377,19 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_bottom: {
-                Song song = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
+                long id = mMediaPlaybackService.getCurrentSongId();
+                int temp = -1;
+                for (int i = 0; i < mListFull.size(); i++) {
+                    if (mListFull.get(i).getSongID() == id) {
+                        temp = i;
+                    }
+
+                }
+                Song song = mListFull.get(temp);
                 Log.d("HoangLD", "onClick: ");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 ((AppCompatActivity) getActivity()).getSupportActionBar().hide();// hide action bar
-
                 MediaPlaybackFragment mediaPlaybackFragment = MediaPlaybackFragment.newInstance(song.getSongName(), song.getSongArtist(), song.getSongImage());
                 fragmentTransaction.replace(R.id.ll_out, mediaPlaybackFragment);
                 mediaPlaybackFragment.setVertical(true);

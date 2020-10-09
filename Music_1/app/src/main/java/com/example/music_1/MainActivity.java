@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int mOrientation;
     private int Repeat = 11, Shuffle = 12;
     public static final int NORMAL = 12;
-
+    private boolean isFavorite = false;
     public SongAdapter getAdapter() {
         return mAdapter;
     }
@@ -224,9 +224,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mBaseSongsFragment.setCheck(true);
             getSupportFragmentManager().beginTransaction().replace(R.id.ll_out, mBaseSongsFragment).commit();
         } else {
-            if (mMediaPlaybackService.getCurrentSong() == -1) {
-                mMediaPlaybackService.setCurrentSong(0);
-            }
+
             mBaseSongsFragment = AllSongsFragment.newInstance(true);
             mediaPlaybackFragment = new MediaPlaybackFragment();
             mBaseSongsFragment.setCheck(false);
@@ -259,9 +257,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout Layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         switch (item.getItemId()) {
             case R.id.nav_listView:
+                isFavorite=false;
+
                 getSupportActionBar().setTitle("Music");
                 mBaseSongsFragment.setList(mList);
                 mBaseSongsFragment = AllSongsFragment.newInstance(true);
+                mBaseSongsFragment.setFavorite(isFavorite);
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
                 mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
                 mBaseSongsFragment.setCheck(true);
@@ -274,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     mBaseSongsFragment.setCheck(false);
                     getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1, mBaseSongsFragment).commit();
                 }
-
                 Toast toast = Toast.makeText(this, "AllSong", Toast.LENGTH_SHORT);
                 mAdapter.notifyDataSetChanged();
                 toast.show();
@@ -282,8 +282,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 return true;
             case R.id.nav_ListFavorites:
+                isFavorite=true;
+
                 getSupportActionBar().setTitle("Favorite");
                 mBaseSongsFragment = FavoritesFragment.newInstance(true);
+                mBaseSongsFragment.setFavorite(isFavorite);
                 mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
                 mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
                 mBaseSongsFragment.setCheck(true);
