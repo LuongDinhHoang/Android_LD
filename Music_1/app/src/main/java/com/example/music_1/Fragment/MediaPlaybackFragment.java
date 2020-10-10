@@ -51,8 +51,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
     private MediaPlaybackService mMediaPlaybackService;
-    private ImageView mPlayMedia, mButtonShuffle, mButtonRepeat, mButtonList;
-    private boolean isVertical,isFavorite;
+    private ImageView mPlayMedia, mButtonShuffle, mButtonRepeat, mButtonList,mButtonLike, mButtonDisLike;
+    private boolean isVertical,isFavorite=false;
     public void setVertical(boolean vertical) {
         isVertical = vertical;
     }
@@ -62,7 +62,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     }
     private List<Song> mSongListFavorite = new ArrayList<>();
     private List<Song> mListMedia = new ArrayList<>();
-    private ImageButton mNextMedia, mBackMedia,mButtonLike, mButtonDisLike;
+    private ImageButton mNextMedia, mBackMedia;
     private TextView mEndTime,mStartTime;
     private SeekBar mMediaSeekBar;
     private int mSongCurrentId = -1;
@@ -129,9 +129,32 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 mButtonRepeat.setImageResource(R.drawable.ic_repeat_white);
             }
         }
+        checkSongFavorite();
+
         return view;
     }
+    public void checkSongFavorite() {
+        if (mMediaPlaybackService != null) {
+            long idPlay = mMediaPlaybackService.getCurrentSongId();
+            for (int i = 0; i < mSongListFavorite.size(); i++) {
+                if (mSongListFavorite.get(i).getSongID() == idPlay) {
+                    isFavorite = true;
+                }
+//                else isFavorite=false;
+            }
+        }
+        if(isFavorite)
+        {
+            mButtonLike.setImageResource(R.drawable.ic_thumbs_up_selected);
+            mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_default);
+        }
+        else
+        {
+            mButtonLike.setImageResource(R.drawable.ic_thumbs_up_default);
+            mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_selected);
+        }
 
+    }
     public void initView() {
         mName = view.findViewById(R.id.NameSong);
         mArtist = view.findViewById(R.id.ArtistSong);
@@ -150,8 +173,8 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
 //        mMediaSeekBar.setMax((int) (mSongCurrentDuration));
 //        mMediaSeekBar.setProgress((int) (mSongCurrentStreamPossition));
         mMediaSeekBar = view.findViewById(R.id.media_seek_bar);
-        //mButtonLike.setOnClickListener(this);
-//        mButtonDisLike.setOnClickListener(this);
+        mButtonLike.setOnClickListener(this);
+        mButtonDisLike.setOnClickListener(this);
         mButtonList.setOnClickListener(this);
         mButtonRepeat.setOnClickListener(this);
         mButtonShuffle.setOnClickListener(this);
@@ -393,11 +416,9 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     mMediaPlaybackService.pauseSong();
                     mPlayMedia.setImageResource(R.drawable.ic_play_media);
                 } else {
-                    if(!mMediaPlaybackService.isResumeRe())
-                    {
+                    if (!mMediaPlaybackService.isResumeRe()) {
                         mMediaPlaybackService.resumeSong();
-                    }
-                    else {
+                    } else {
                         int position = sharedPreferencesCurrent.getInt("DATA_CURRENT_STREAM_POSITION", 0);
                         mMediaPlaybackService.playSong(mListMedia.get(mMediaPlaybackService.getCurrentSong()).getSongImage());
                         mMediaPlaybackService.seekTo(position);
@@ -405,13 +426,12 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     }
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
-                if(!isVertical)
-                {
+                if (!isVertical) {
                     mPlayPauseMedia.updateBase();
                 }
-                int mCurrentNext =mMediaPlaybackService.getCurrentSong();
+                int mCurrentNext = mMediaPlaybackService.getCurrentSong();
                 Song song = mListMedia.get(mCurrentNext);
-                mMediaPlaybackService.startForegroundService(song,mCurrentNext);
+                mMediaPlaybackService.startForegroundService(song, mCurrentNext);
                 break;
             }
             case R.id.btn_next_media:
@@ -422,14 +442,15 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 } else {
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
-                if(!isVertical)
-                {
-                    Log.d("HoangLD", "onClick: mlistner"+mListenerMedia);
+                if (!isVertical) {
+                    Log.d("HoangLD", "onClick: mlistner" + mListenerMedia);
                     if (mListenerMedia != null) {
                         Log.d("HoangLD", "onClick:next ");
                         mListenerMedia.updateUiSongPlayMedia();
                     }
                 }
+                isFavorite=false;
+                checkSongFavorite();
 
                 break;
 
@@ -442,12 +463,13 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                     mPlayMedia.setImageResource(R.drawable.ic_pause_media);
                 }
 
-                if(!isVertical)
-                {
+                if (!isVertical) {
                     if (mListenerMedia != null) {
                         mListenerMedia.updateUiSongPlayMedia();
                     }
                 }
+                isFavorite=false;
+                checkSongFavorite();
                 break;
             case R.id.button_Shuffle:
                 int shuffle = mMediaPlaybackService.isShuffle();
@@ -496,40 +518,41 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
             case R.id.btn_backList:
                 getActivity().getSupportFragmentManager().popBackStack();
                 ((AppCompatActivity) getActivity()).getSupportActionBar().show();// hide action bar\
+                break;
 
             case R.id.media_like:
-                isFavorite=true;
+                mButtonLike.setImageResource(R.drawable.ic_thumbs_up_selected);
+                mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_default);
+                isFavorite = true;
                 Song song = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
                 ContentValues values = new ContentValues();
                 values.put(MusicDB.ID, song.getSongID());
                 values.put(MusicDB.ID_PROVIDER, song.getSongIDProvider());
                 values.put(MusicDB.TITLE, song.getSongName());
                 values.put(MusicDB.ARTIST, song.getSongArtist());
-                values.put(MusicDB.DATA, song. getSongImage());
+                values.put(MusicDB.DATA, song.getSongImage());
                 values.put(MusicDB.DURATION, song.getSongTime());
                 values.put(MusicDB.IS_FAVORITE, 2);
                 getContext().getContentResolver().insert(MusicProvider.CONTENT_URI, values);
                 Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
-                        mButtonDisLike.setImageResource(R.drawable.ic_repeat_dark_selected);
-                        mButtonLike.setImageResource(R.drawable.ic_thumbs_up_selected);
-               //     }
-//                }
+                break;
+
             case R.id.media_dislike:
-//                mSongCurrentId = mMediaPlaybackService.getCurrentSongId();
-//                Uri uri1 = Uri.parse(MusicProvider.CONTENT_URI + "/" + mSongCurrentId);
-//                Cursor cursor1 = getContext().getContentResolver().query(uri1, null, null, null,
-//                        null);
-//                if (cursor1 != null) {
-//                    cursor1.moveToFirst();
-//                    if (cursor1.getInt(cursor1.getColumnIndex(MusicDB.IS_FAVORITE)) == 2 || cursor1.getInt(cursor1.getColumnIndex(MusicDB.IS_FAVORITE)) == 0) {
-//                        ContentValues values = new ContentValues();
-//                        values.put(MusicDB.IS_FAVORITE, 1);
-//                        getContext().getContentResolver().update(uri1, values, null, null);
-//                        Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
-//                        mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_selected);
-//                        mButtonLike.setImageResource(R.drawable.ic_thumbs_up_default);
-//                    }
-//                }
+                isFavorite = false;
+                mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_selected);
+                mButtonLike.setImageResource(R.drawable.ic_thumbs_up_default);
+                Song song1 = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
+                final int id = (int) song1.getSongID();
+                final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
+                final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+                ContentValues values1 = new ContentValues();
+                values1.put(MusicDB.IS_FAVORITE, 0);
+                if (cursor != null) {
+                    getContext().getContentResolver().delete(MusicProvider.CONTENT_URI, MusicDB.ID + "=" + id, null);
+
+                }
+                Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
+                break;
 
         }
     }
@@ -570,5 +593,12 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     }
 
     private PlayPauseMedia mPlayPauseMedia;
+
+    ////////////update ngang click
+    public void updateMediaWhenClickItem(int pos) {
+        isFavorite=false;
+        checkSongFavorite();
+    }
+
 
 }

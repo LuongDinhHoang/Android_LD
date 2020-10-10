@@ -374,6 +374,8 @@ public class MediaPlaybackService extends Service {
                     int pos = getCurrentSong();
                     Song song = getListSong().get(pos);
                     startForegroundService(song, pos);
+                    currentSongId = (int) song.getSongID();
+
                 }
 
             }

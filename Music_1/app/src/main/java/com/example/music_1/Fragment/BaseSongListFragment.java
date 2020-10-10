@@ -2,6 +2,7 @@ package com.example.music_1.Fragment;
 
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
@@ -141,7 +142,18 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         {
             if(mMediaPlaybackService.getCurrentSong()<0)
             {
-                int current = sharedPreferences.getInt("DATA_CURRENT", -1);
+                //int current = sharedPreferences.getInt("DATA_CURRENT", -1);
+                long id =sharedPreferences.getLong("DATA_CURRENT_ID",-1);
+                Log.d("songid", "onCreateView: "+mMediaPlaybackService.getCurrentSongId());
+                int current = -1;
+                Log.d("ClickPlay", "" + id);
+                for (int i = 0; i < mListFull.size(); i++) {
+                    if (mListFull.get(i).getSongID() == id) {
+                        mMediaPlaybackService.setCurrentSong(i);
+                        mMediaPlaybackService.setCurrentSongId((int) id);
+                        current = i;
+                    }
+                }
                 if (current > -1) {
                     if(isVertical){
                         mllBottom.setVisibility(View.VISIBLE);
@@ -158,8 +170,8 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                     setItemWhenPause(current);
                 }
             }
-        }
 
+        }
 
 //        onConnectService();
         Log.d("HoangLD", "onCreateView: ");
@@ -184,6 +196,8 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     public void saveData() {
         editor.remove("DATA_CURRENT");
         editor.putInt("DATA_CURRENT", mMediaPlaybackService.getCurrentSong());
+        editor.remove("DATA_CURRENT_ID");
+        editor.putLong("DATA_CURRENT_ID", mMediaPlaybackService.getCurrentSongId());
         editor.remove("DATA_CURRENT_STREAM_POSITION");
         editor.putInt("DATA_CURRENT_STREAM_POSITION", mMediaPlaybackService.getCurrentStreamPosition());
         editor.commit();
@@ -232,8 +246,6 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                     public void ItemClick(Song song, int pos) {
                         //pos=song.getPos();
                         //service
-
-
                             mMediaPlaybackService.setCurrentSong(pos);//get position
                             mMediaPlaybackService.setCurrentSongId((int) song.getSongID());
                             mMediaPlaybackService.playSong(song.getSongImage());
@@ -286,9 +298,10 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                                     .load(songArt)
                                     .error(R.drawable.cute)
                                     .into(mImageMedia);
+                            iUpdateMediaWhenAllSongClickItem.UpdateMediaWhenAllSongClickItem(pos);
+
 
                         }
-
 
                         mAdapter.notifyDataSetChanged();
                     }
@@ -302,6 +315,32 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                 }
         );
     }
+    ///////interface ngang click
+    //interface ngang
+    public interface IUpdateMediaWhenAllSongClickItem {
+        void UpdateMediaWhenAllSongClickItem(int pos);
+    }
+
+
+    private IUpdateMediaWhenAllSongClickItem iUpdateMediaWhenAllSongClickItem;
+    /* method này để đảm bảo activity sẽ giao tiếp với allSongFragment thông qua interface IUpdateMediaWhenAllSongClickItem*/
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof IUpdateMediaWhenAllSongClickItem) {
+            iUpdateMediaWhenAllSongClickItem = (IUpdateMediaWhenAllSongClickItem) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement IUpdateMediaWhenAllSongClickItem");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        iUpdateMediaWhenAllSongClickItem = null;
+    }
+    ///////////////////////
     protected abstract void absSetFavorite();
 //    public abstract  void updateAdapter();
     public abstract void  updatePopup(View v, Song song, int pos);
@@ -383,8 +422,8 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                     if (mListFull.get(i).getSongID() == id) {
                         temp = i;
                     }
-
                 }
+
                 Song song = mListFull.get(temp);
                 Log.d("HoangLD", "onClick: ");
                 FragmentManager fragmentManager = getFragmentManager();
@@ -424,6 +463,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
             }
         }
     }
+
     @Override
     public void updateUiSongPlay(int pos) {//interface tu dong update het bai
         //mPosition = pos;
@@ -439,6 +479,21 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     public void updateUiSongPlayMedia() {//interface nhan su kien mediafragment
         Log.d("HoangLD", "mediab next ");
         UpdateUI();
+        long id = mMediaPlaybackService.getCurrentSongId();
+        int temp = -1;
+        for (int i = 0; i < mListFull.size(); i++) {
+            if (mListFull.get(i).getSongID() == id) {
+                temp = i;
+            }
+
+        }
+        for (int i = 0; i < mList.size(); i++) {
+            mList.get(i).setPlay(false);
+            if(mList.get(i).getSongID()==mListFull.get(temp).getSongID())
+            {
+                mList.get(i).setPlay(true);
+            }
+        }
     }
 
     @Override
@@ -447,7 +502,6 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         UpdateUI();
     }
     ////////////menu search
-
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         menu.clear();

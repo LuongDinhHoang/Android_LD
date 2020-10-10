@@ -196,7 +196,7 @@
                 android:layout_weight="1"
                 android:gravity="top|center">
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/media_like"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
@@ -204,7 +204,7 @@
                     android:layout_marginTop="13dp"
                     android:background="@drawable/ic_thumbs_up_default">
 
-                </ImageButton>
+                </ImageView>
             </LinearLayout>
 
             <LinearLayout
@@ -261,7 +261,7 @@
                 android:layout_weight="1"
                 android:gravity="top|center">
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/media_dislike"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
@@ -269,7 +269,7 @@
                     android:layout_marginRight="5dp"
                     android:background="@drawable/ic_thumbs_down_default">
 
-                </ImageButton>
+                </ImageView>
             </LinearLayout>
 
         </LinearLayout>

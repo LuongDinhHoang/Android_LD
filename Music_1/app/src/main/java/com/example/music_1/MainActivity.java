@@ -43,7 +43,7 @@ import java.util.List;
 
 import com.example.music_1.Services.MediaPlaybackService;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BaseSongListFragment.IUpdateMediaWhenAllSongClickItem {
 
 
     public boolean isVertical() {
@@ -229,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mediaPlaybackFragment = new MediaPlaybackFragment();
             mBaseSongsFragment.setCheck(false);
             setVertical(false);
+
             mediaPlaybackFragment.setVertical(false);
             getSupportFragmentManager().beginTransaction().replace(R.id.ll_out1, mBaseSongsFragment)
                     .replace(R.id.ll_out_land, mediaPlaybackFragment).commit();
@@ -238,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mMediaPlaybackService.setListener(mBaseSongsFragment);//get vao
             mMediaPlaybackService.setNotificationData(mBaseSongsFragment);
             mMediaPlaybackService.setNotificationDataMedia(mediaPlaybackFragment);
-
         }
 
     }
@@ -337,4 +337,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     };
 
 
+    @Override
+    public void UpdateMediaWhenAllSongClickItem(int pos) {
+        if (!isVertical()) {
+            mediaPlaybackFragment.updateMediaWhenClickItem(pos);
+        }
+    }
 }
