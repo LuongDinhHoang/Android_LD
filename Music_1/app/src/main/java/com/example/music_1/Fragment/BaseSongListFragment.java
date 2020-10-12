@@ -290,14 +290,25 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
                             }
                             mTimeEnd.setText(song.getTimeDurationString(song.getSongTime()));
                             byte[] songArt = getAlbumArt(mList.get(pos).getSongImage());
-                            Glide.with(view.getContext()).asBitmap()
-                                    .load(songArt)
-                                    .error(R.drawable.cute)
-                                    .into(mImageBackground);
-                            Glide.with(view.getContext()).asBitmap()
-                                    .load(songArt)
-                                    .error(R.drawable.cute)
-                                    .into(mImageMedia);
+                            if(songArt != null)
+                            {
+                                Glide.with(view.getContext()).asBitmap()
+                                        .load(songArt)
+                                        .error(R.drawable.cute)
+                                        .into(mImageBackground);
+                                Glide.with(view.getContext()).asBitmap()
+                                        .load(songArt)
+                                        .error(R.drawable.cute)
+                                        .into(mImageMedia);
+                            }else {
+                                Glide.with(view.getContext()).asBitmap()
+                                        .load(R.drawable.cute)
+                                        .into(mImageBackground);
+                                Glide.with(view.getContext()).asBitmap()
+                                        .load(R.drawable.cute)
+                                        .into(mImageMedia);
+                            }
+
                             iUpdateMediaWhenAllSongClickItem.UpdateMediaWhenAllSongClickItem(pos);
 
 
@@ -406,10 +417,15 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     }
 
     public static byte[] getAlbumArt(String uri) {
-        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-        mediaMetadataRetriever.setDataSource(uri);
-        byte[] albumArt = mediaMetadataRetriever.getEmbeddedPicture();  // chuyển đổi đường dẫn file media thành đường dẫn file Ảnh
-        mediaMetadataRetriever.release();
+        byte[] albumArt = new byte[0];
+        try {
+            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+            mediaMetadataRetriever.setDataSource(uri);
+            albumArt = mediaMetadataRetriever.getEmbeddedPicture();
+            mediaMetadataRetriever.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return albumArt;
     }
     @Override
