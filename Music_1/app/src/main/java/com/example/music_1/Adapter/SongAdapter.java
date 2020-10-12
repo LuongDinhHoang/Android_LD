@@ -104,6 +104,13 @@ private Context mContext;
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mList.clear();
             mList.addAll((Collection<? extends Song>) results.values);
+            for (int i = 0; i < mList.size(); i++) {
+                mList.get(i).setPlay(false);
+                if(mList.get(i).getSongID()==mMediaPlaybackService.getCurrentSongId())
+                {
+                    mList.get(i).setPlay(true);
+                }
+            }
             notifyDataSetChanged();
 
         }

@@ -105,17 +105,8 @@ public class FavoritesFragment extends BaseSongListFragment {
     @Override
     protected void absSetFavorite() {
         mMediaPlaybackService.setFavorite(true);
-
     }
 
-//    @Override
-//    public void updateAdapter() {
-//
-//        mList=Song.getSongFavorite(getContext());
-//        mAdapter = new SongAdapter(getContext(), mList);
-//        mRecycle.setAdapter(mAdapter);
-//
-//    }
 
     @Override
     public void onPause() {

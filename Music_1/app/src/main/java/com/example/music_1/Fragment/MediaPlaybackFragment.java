@@ -562,14 +562,7 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-    ///interface updateUi tu chuyen bai
 
-//    @Override
-//    public void updateUiSongPlay(int pos) {
-//        Log.d("HoangLD", "updateUiSongPlay:media");
-//        setData();
-//
-//    }
     public interface SongManageListenerMedia {
         void updateUiSongPlayMedia();
     }

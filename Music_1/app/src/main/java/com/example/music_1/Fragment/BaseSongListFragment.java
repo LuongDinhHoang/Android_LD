@@ -134,7 +134,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_all_songs, container, false);
         setData();
-        absSetFavorite();
+        //absSetFavorite();
         setListView();
 
         initView();
