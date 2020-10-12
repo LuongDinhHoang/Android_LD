@@ -479,21 +479,23 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     public void updateUiSongPlayMedia() {//interface nhan su kien mediafragment
         Log.d("HoangLD", "mediab next ");
         UpdateUI();
-        long id = mMediaPlaybackService.getCurrentSongId();
-        int temp = -1;
-        for (int i = 0; i < mListFull.size(); i++) {
-            if (mListFull.get(i).getSongID() == id) {
-                temp = i;
+
+            long id = mMediaPlaybackService.getCurrentSongId();
+            int temp = -1;
+            for (int i = 0; i < mListFull.size(); i++) {
+                if (mList.get(i).getSongID() == id) {
+                    temp = i;
+                }
+            }
+            for (int i = 0; i < mList.size(); i++) {
+                mList.get(i).setPlay(false);
+                if(mList.get(i).getSongID()==mList.get(temp).getSongID())
+                {
+                    mList.get(i).setPlay(true);
+                }
             }
 
-        }
-        for (int i = 0; i < mList.size(); i++) {
-            mList.get(i).setPlay(false);
-            if(mList.get(i).getSongID()==mListFull.get(temp).getSongID())
-            {
-                mList.get(i).setPlay(true);
-            }
-        }
+
     }
 
     @Override

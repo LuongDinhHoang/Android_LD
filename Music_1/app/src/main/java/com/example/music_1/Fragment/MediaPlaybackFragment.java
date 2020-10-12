@@ -521,37 +521,45 @@ public class MediaPlaybackFragment extends Fragment implements View.OnClickListe
                 break;
 
             case R.id.media_like:
-                mButtonLike.setImageResource(R.drawable.ic_thumbs_up_selected);
-                mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_default);
-                isFavorite = true;
-                Song song = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
-                ContentValues values = new ContentValues();
-                values.put(MusicDB.ID, song.getSongID());
-                values.put(MusicDB.ID_PROVIDER, song.getSongIDProvider());
-                values.put(MusicDB.TITLE, song.getSongName());
-                values.put(MusicDB.ARTIST, song.getSongArtist());
-                values.put(MusicDB.DATA, song.getSongImage());
-                values.put(MusicDB.DURATION, song.getSongTime());
-                values.put(MusicDB.IS_FAVORITE, 2);
-                getContext().getContentResolver().insert(MusicProvider.CONTENT_URI, values);
-                Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
+                if(!isFavorite)
+                {
+                    mButtonLike.setImageResource(R.drawable.ic_thumbs_up_selected);
+                    mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_default);
+                    isFavorite = true;
+                    Song song = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
+                    ContentValues values = new ContentValues();
+                    values.put(MusicDB.ID, song.getSongID());
+                    values.put(MusicDB.ID_PROVIDER, song.getSongIDProvider());
+                    values.put(MusicDB.TITLE, song.getSongName());
+                    values.put(MusicDB.ARTIST, song.getSongArtist());
+                    values.put(MusicDB.DATA, song.getSongImage());
+                    values.put(MusicDB.DURATION, song.getSongTime());
+                    values.put(MusicDB.IS_FAVORITE, 2);
+                    getContext().getContentResolver().insert(MusicProvider.CONTENT_URI, values);
+                    Toast.makeText(getActivity().getApplicationContext(), "Add Favorite", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
 
             case R.id.media_dislike:
-                isFavorite = false;
-                mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_selected);
-                mButtonLike.setImageResource(R.drawable.ic_thumbs_up_default);
-                Song song1 = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
-                final int id = (int) song1.getSongID();
-                final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
-                final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
-                ContentValues values1 = new ContentValues();
-                values1.put(MusicDB.IS_FAVORITE, 0);
-                if (cursor != null) {
-                    getContext().getContentResolver().delete(MusicProvider.CONTENT_URI, MusicDB.ID + "=" + id, null);
+                if(isFavorite)
+                {
+                    isFavorite = false;
+                    mButtonDisLike.setImageResource(R.drawable.ic_thumbs_down_selected);
+                    mButtonLike.setImageResource(R.drawable.ic_thumbs_up_default);
+                    Song song1 = mMediaPlaybackService.getListSong().get(mMediaPlaybackService.getCurrentSong());
+                    final int id = (int) song1.getSongID();
+                    final Uri uri = Uri.parse(MusicProvider.CONTENT_URI + "/" + id);
+                    final Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+                    ContentValues values1 = new ContentValues();
+                    values1.put(MusicDB.IS_FAVORITE, 0);
+                    if (cursor != null) {
+                        getContext().getContentResolver().delete(MusicProvider.CONTENT_URI, MusicDB.ID + "=" + id, null);
 
+                    }
+                    Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(getActivity().getApplicationContext(), "Remove Favorite", Toast.LENGTH_SHORT).show();
+
                 break;
 
         }
