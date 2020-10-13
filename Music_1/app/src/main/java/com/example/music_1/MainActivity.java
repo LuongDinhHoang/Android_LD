@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         setService();
+
         Log.d("HoangLD", "onStart: ");
         super.onStart();
     }
@@ -213,8 +214,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void addFragmentList() {
-        mMediaPlaybackService.setRepeat(Repeat);
-        mMediaPlaybackService.setShuffle(Shuffle);
+
         //mMediaPlaybackService.setListener(mediaPlaybackFragment);
         mOrientation = getResources().getConfiguration().orientation;
         Log.d("HoangLDssss", "addFragmentList: " + mOrientation);
@@ -327,6 +327,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mMediaPlaybackService = binder.getMusicService();
             mMediaPlaybackService.setListSong(mList);                     //đưa list vào list service nếu service chạy
             //mMediaPlaybackService.getMedia().setListMedia(mList);
+            mMediaPlaybackService.setRepeat(Repeat);
+            mMediaPlaybackService.setShuffle(Shuffle);
             addFragmentList();
 
             Log.d("HoangLD", "onServiceConnectedall: ");
