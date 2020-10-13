@@ -313,6 +313,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
 
 
                         }
+                        Log.d("HoangLD", "ItemClick: "+mList.get(pos).getSongImage());
 
                         mAdapter.notifyDataSetChanged();
                     }
@@ -419,10 +420,12 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     public static byte[] getAlbumArt(String uri) {
         byte[] albumArt = new byte[0];
         try {
-            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-            mediaMetadataRetriever.setDataSource(uri);
-            albumArt = mediaMetadataRetriever.getEmbeddedPicture();
-            mediaMetadataRetriever.release();
+
+                MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                mediaMetadataRetriever.setDataSource(uri);
+                albumArt = mediaMetadataRetriever.getEmbeddedPicture();
+                mediaMetadataRetriever.release();
+            Log.d("HoangLD", "getAlbumArt: "+albumArt);
         } catch (Exception e) {
             e.printStackTrace();
         }
