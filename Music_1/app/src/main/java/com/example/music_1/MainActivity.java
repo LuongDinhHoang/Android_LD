@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             getData();
         }
+
     }
 
     public void getData() {
@@ -212,6 +213,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void addFragmentList() {
+        mMediaPlaybackService.setRepeat(Repeat);
+        mMediaPlaybackService.setShuffle(Shuffle);
         //mMediaPlaybackService.setListener(mediaPlaybackFragment);
         mOrientation = getResources().getConfiguration().orientation;
         Log.d("HoangLDssss", "addFragmentList: " + mOrientation);
