@@ -62,11 +62,11 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
     protected List<Song> mList,mListFull;
     protected SongAdapter mAdapter;
     private LinearLayout mllBottom;
-    private int mPosition;
-    private ImageView mImagePlay;
-    private TextView mNameSongPlay, mSongArtistPlay, mSongID;
-    private ImageView mBtnPlay;
-    private View view;
+    protected int mPosition;
+    protected ImageView mImagePlay;
+    protected TextView mNameSongPlay, mSongArtistPlay, mSongID;
+    protected ImageView mBtnPlay;
+    protected View view;
     protected PopupMenu mPopup;
     protected MediaPlaybackService mMediaPlaybackService;
     SharedPreferences sharedPreferences;
@@ -76,22 +76,22 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         isFavorite = favorite;
     }
 
-    private  boolean isFavorite;
+    protected  boolean isFavorite;
 
-    private MediaPlaybackService getMusicService(){
+    protected MediaPlaybackService getMusicService(){
         return getActivityMusic().getMediaPlaybackService();
     }
-    private  List<Song> getListSong(){
+    protected  List<Song> getListSong(){
         return getActivityMusic().getList();
     }
     //get activity
-    private MainActivity getActivityMusic() {
+    protected MainActivity getActivityMusic() {
         if (getActivity() instanceof MainActivity) {
             return (MainActivity) getActivity();
         }
         return null;
     }
-    private SongAdapter getSongAdapter(){
+    protected SongAdapter getSongAdapter(){
         return getActivityMusic().getAdapter();
     }
 
@@ -104,7 +104,7 @@ public abstract class BaseSongListFragment extends Fragment implements View.OnCl
         this.isVertical = mCheck;
     }
 
-    private boolean isVertical;
+    protected boolean isVertical;
     public void setListView()
 
     {
